@@ -5,7 +5,7 @@ import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
-import logo from './assets/icon.svg'; // ← импорт локального логотипа
+import logo from './assets/Icon.svg'; // ← импорт локального логотипа
 import './App.css';
 
 function App() {
