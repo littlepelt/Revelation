@@ -13,13 +13,12 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Простая проверка — позже сделаем валидацию токена
       setUser({ username: 'temp' });
     }
     setLoading(false);
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка...</div>;
 
   return (
     <BrowserRouter>
@@ -40,13 +39,14 @@ function App() {
             right: 0,
             display: 'flex',
             justifyContent: 'space-around',
-            background: '#f5f5f5',
-            padding: '10px',
-            borderTop: '1px solid #ccc'
+            background: '#FFFFFF',
+            padding: '12px 10px',
+            borderTop: '1px solid #DFE2ED',
+            boxShadow: '0 -2px 10px rgba(0,0,0,0.05)'
           }}>
-            <Link to="/">📚 Лента</Link>
-            <Link to="/my-books">📖 Мои книги</Link>
-            <Link to="/profile">👤 Профиль</Link>
+            <Link to="/" style={{ color: '#1A1A1A', textDecoration: 'none', fontWeight: '500' }}>Лента</Link>
+            <Link to="/my-books" style={{ color: '#1A1A1A', textDecoration: 'none', fontWeight: '500' }}>Мои книги</Link>
+            <Link to="/profile" style={{ color: '#1A1A1A', textDecoration: 'none', fontWeight: '500' }}>Профиль</Link>
           </nav>
         )}
       </div>

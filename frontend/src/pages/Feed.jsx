@@ -28,27 +28,33 @@ export default function Feed() {
   if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка книг...</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>📚 Лента книг</h2>
-      <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))' }}>
+    <div className="container" style={{ padding: '20px 0' }}>
+      <h1 style={{ fontSize: '28px', marginBottom: '24px', fontWeight: '600' }}>Лента книг</h1>
+      <div style={{ 
+        display: 'grid', 
+        gap: '24px', 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' 
+      }}>
         {books.map(book => (
-          <Link to={`/book/${book.id}`} key={book.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              padding: '15px',
-              transition: 'transform 0.2s',
-              cursor: 'pointer'
-            }}>
+          <Link to={`/book/${book.id}`} key={book.id} style={{ textDecoration: 'none' }}>
+            <div className="book-card">
               <img 
-                src={book.cover_url || 'https://via.placeholder.com/200x300?text=No+Cover'} 
+                src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
                 alt={book.title}
-                style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '4px' }}
+                style={{ width: '100%', height: '320px', objectFit: 'cover' }}
               />
-              <h3 style={{ margin: '10px 0 5px' }}>{book.title}</h3>
-              <p style={{ color: '#666', margin: 0 }}>{book.author}</p>
-              <p style={{ color: '#888', fontSize: '14px' }}>{book.publication_year}</p>
-              <p>⭐ {book.rating_avg || 'Нет оценок'}</p>
+              <div style={{ padding: '12px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px', color: '#1A1A1A' }}>
+                  {book.title}
+                </h3>
+                <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>{book.author}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#888', fontSize: '13px' }}>{book.publication_year}</span>
+                  <span style={{ color: '#003BFF', fontWeight: '500', fontSize: '14px' }}>
+                    ★ {book.rating_avg || 'Нет оценок'}
+                  </span>
+                </div>
+              </div>
             </div>
           </Link>
         ))}

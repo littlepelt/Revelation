@@ -30,57 +30,48 @@ export default function BookPage() {
     fetchBook();
   }, [id, navigate]);
 
-  if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка книги...</div>;
+  if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка книги...</div>;
   if (!book) return null;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <button onClick={() => navigate(-1)} style={{ marginBottom: '20px' }}>← Назад</button>
+    <div className="container" style={{ padding: '20px 0' }}>
+      <button onClick={() => navigate(-1)} className="btn-outline" style={{ marginBottom: '24px' }}>
+        ← Назад
+      </button>
       
-      <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
         <img 
           src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
           alt={book.title}
-          style={{ width: '250px', objectFit: 'cover', borderRadius: '8px' }}
+          style={{ width: '280px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
         />
         
         <div style={{ flex: 1 }}>
-          <h1>{book.title}</h1>
-          <h3>{book.author}</h3>
-          <p><strong>Год публикации:</strong> {book.publication_year}</p>
-          <p><strong>Рейтинг:</strong> ⭐ {book.rating_avg || 'Нет оценок'} ({book.rating_count || 0} оценок)</p>
+          <h1 style={{ fontSize: '32px', marginBottom: '8px', fontWeight: '600' }}>{book.title}</h1>
+          <h2 style={{ fontSize: '20px', color: '#666', marginBottom: '16px', fontWeight: '400' }}>{book.author}</h2>
           
-          <div style={{ margin: '20px 0' }}>
-            <button 
-              onClick={() => alert('Книга будет добавлена в "Читаю"')}
-              style={{ padding: '10px 20px', marginRight: '10px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-            >
-              📖 Читаю
-            </button>
-            <button 
-              onClick={() => alert('Книга будет добавлена в "Прочитано"')}
-              style={{ padding: '10px 20px', marginRight: '10px', background: '#2196F3', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-            >
-              ✅ Прочитано
-            </button>
-            <button 
-              onClick={() => alert('Книга будет добавлена в "Буду читать"')}
-              style={{ padding: '10px 20px', background: '#FF9800', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-            >
-              📚 Буду читать
-            </button>
+          <div style={{ marginBottom: '16px' }}>
+            <span style={{ background: '#F5F5F5', padding: '4px 12px', borderRadius: '20px', fontSize: '14px' }}>
+              {book.publication_year}
+            </span>
+            <span style={{ marginLeft: '12px', color: '#003BFF', fontWeight: '500' }}>
+              ★ {book.rating_avg || 'Нет оценок'} ({book.rating_count || 0} оценок)
+            </span>
           </div>
           
-          <div style={{ marginTop: '30px' }}>
-            <h3>Описание</h3>
-            <p>{book.description || 'Описание отсутствует'}</p>
+          <div style={{ margin: '24px 0', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button className="btn-primary">Читаю</button>
+            <button className="btn-secondary">Прочитано</button>
+            <button className="btn-outline">Буду читать</button>
           </div>
           
-          <button 
-            onClick={() => alert('Читательский интерфейс будет здесь')}
-            style={{ padding: '15px 30px', marginTop: '20px', background: '#000', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', width: '100%' }}
-          >
-            📖 Читать книгу
+          <div style={{ marginTop: '32px' }}>
+            <h3 style={{ fontSize: '20px', marginBottom: '12px', fontWeight: '500' }}>Описание</h3>
+            <p style={{ lineHeight: '1.6', color: '#333' }}>{book.description || 'Описание отсутствует'}</p>
+          </div>
+          
+          <button className="btn-primary" style={{ width: '100%', marginTop: '32px', padding: '14px' }}>
+            Читать книгу
           </button>
         </div>
       </div>
