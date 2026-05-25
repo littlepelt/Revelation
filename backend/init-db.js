@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Pool } = require('pg');
+const { Pool } = require('fs');
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -7,17 +7,23 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+  ssl: { rejectUnauthorized: false }
 });
 
 const init = async () => {
+  console.log('Connecting with:', {
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME
+  });
+  
   const client = await pool.connect();
   try {
     const sql = require('fs').readFileSync('./db/init.sql').toString();
     await client.query(sql);
-    console.log('Database initialized');
+    console.log('✅ Database initialized');
   } catch (err) {
-    console.error('Init error:', err);
+    console.error('❌ Init error:', err.message);
   } finally {
     client.release();
     process.exit();
