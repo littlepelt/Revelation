@@ -5,7 +5,6 @@ import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const SAVE_INTERVAL = 60000; // 60 секунд (1 минута)
-const SCROLL_DEBOUNCE = 1000; // 1 секунда после остановки скролла
 
 export default function ReadBook() {
   const { id } = useParams();
@@ -16,7 +15,6 @@ export default function ReadBook() {
   const [savedProgress, setSavedProgress] = useState(0);
   const contentRef = useRef(null);
   const saveIntervalRef = useRef(null);
-  const scrollTimeoutRef = useRef(null);
   const isSavingRef = useRef(false);
 
   // Сохранение прогресса на сервер
@@ -34,9 +32,6 @@ export default function ReadBook() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSavedProgress(position);
-      if (!isFinal) {
-        console.log(`💾 Прогресс сохранён: ${position}%`);
-      }
     } catch (err) {
       console.error('Ошибка сохранения прогресса:', err);
     } finally {
@@ -49,10 +44,6 @@ export default function ReadBook() {
     if (saveIntervalRef.current) {
       clearInterval(saveIntervalRef.current);
     }
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-    // Сохраняем финальный прогресс
     await saveProgress(progress, true);
     navigate(`/book/${id}`);
   }, [progress, saveProgress, id, navigate]);
@@ -91,7 +82,6 @@ export default function ReadBook() {
       document.body.classList.remove('read-mode');
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
   }, [id, navigate, progress, saveProgress]);
 
@@ -120,34 +110,15 @@ export default function ReadBook() {
     }
   }, [loading, progress]);
 
-  // Обработка скролла с debounce
+  // Обработка скролла — просто обновляем процент, без задержек
   const handleScroll = () => {
     if (!contentRef.current) return;
     
-    // Очищаем предыдущий таймаут
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-    
-    // Вычисляем текущий прогресс
     const element = contentRef.current;
     const scrollPercent = (element.scrollTop / (element.scrollHeight - element.clientHeight)) * 100;
     const newProgress = Math.min(99, Math.max(0, Math.floor(scrollPercent)));
     
     setProgress(newProgress);
-    
-    // Сохраняем через 1 секунду после остановки скролла
-    scrollTimeoutRef.current = setTimeout(() => {
-      if (newProgress !== savedProgress) {
-        saveProgress(newProgress);
-      }
-    }, SCROLL_DEBOUNCE);
-  };
-
-  const scrollToTop = () => {
-    if (contentRef.current) {
-      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   };
 
   if (loading) return <div className="loading">Загрузка книги...</div>;
@@ -185,15 +156,6 @@ export default function ReadBook() {
             </div>
           );
         })}
-      </div>
-
-      <div className="read-footer">
-        <button className="scroll-top-btn" onClick={scrollToTop}>
-          ↑ Наверх
-        </button>
-        <button className="exit-reader-btn" onClick={handleExit}>
-          Выйти
-        </button>
       </div>
     </div>
   );

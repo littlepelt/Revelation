@@ -87,7 +87,7 @@ body.read-mode {
   scroll-behavior: smooth;
 }
 
-/* Убираем скроллбар у content, он и так единственный */
+/* Кастомный скроллбар */
 .read-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -125,33 +125,6 @@ body.read-mode {
   color: #333;
   margin-bottom: 20px;
   text-align: justify;
-}
-
-/* Футер читалки */
-.read-footer {
-  flex-shrink: 0;
-  background: #FFFFFF;
-  border-top: 1px solid #E9E9E9;
-  padding: 12px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.scroll-top-btn,
-.exit-reader-btn {
-  background: none;
-  border: 1px solid #DFE2ED;
-  padding: 8px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.scroll-top-btn:hover,
-.exit-reader-btn:hover {
-  border-color: #003BFF;
-  color: #003BFF;
 }
 
 /* Адаптив */
