@@ -29,7 +29,6 @@ export default function Feed() {
     fetchBooks();
   }, []);
 
-  // Фильтрация книг по поисковому запросу
   const filteredBooks = allBooks.filter(book => {
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -48,11 +47,12 @@ export default function Feed() {
     ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
     ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
     
+    // Удаляем старые ripple
     const oldRipples = card.querySelectorAll('.ripple');
     oldRipples.forEach(r => r.remove());
     
     card.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 500);
+    setTimeout(() => ripple.remove(), 600); // синхронизируем с анимацией
     
     setPendingBookId(bookId);
   };
@@ -72,7 +72,6 @@ export default function Feed() {
 
   return (
     <div className="feed-container">
-      {/* Поиск */}
       <div className="search-section">
         <input
           type="text"
@@ -83,7 +82,6 @@ export default function Feed() {
         />
       </div>
 
-      {/* Список книг */}
       <div className="books-list">
         {filteredBooks.length === 0 ? (
           <div className="empty-library">

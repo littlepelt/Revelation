@@ -16,7 +16,7 @@
   font-size: 16px;
   background-color: #F9F9F9;
   color: #333333;
-  transition: all 0.2s;
+  transition: border-color 0.2s;
 }
 
 .search-input:focus {
@@ -32,7 +32,7 @@
   gap: 0;
 }
 
-/* Карточка книги (без обводки, как в макете) */
+/* Карточка книги — без border, без тени, без поднятия */
 .book-card {
   display: flex;
   padding: 20px 0;
@@ -42,11 +42,18 @@
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  transition: background-color 0.2s;
+  /* Убираем все transition, кроме background-color */
+  transition: background-color 0.2s ease;
 }
 
+/* Никакого поднятия, только смена фона */
 .book-card:hover {
   background-color: #F9F9F9;
+}
+
+/* Убираем transform при нажатии — только ripple */
+.book-card:active {
+  transform: none;
 }
 
 /* Обложка */
@@ -60,7 +67,7 @@
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
-  border: 1px solid #E9E9E9;
+  border: 1px solid #E9E9E9; /* Это border обложки, не карточки — оставляем */
 }
 
 .book-cover img {
@@ -122,13 +129,13 @@
   font-size: 13px;
 }
 
-/* Ripple эффект (серый, как в макете) */
+/* Ripple эффект — медленный и серый, как в макете */
 .ripple {
   position: absolute;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.08); /* чуть светлее, как в макете */
   border-radius: 50%;
   transform: scale(0);
-  animation: ripple-effect 0.5s ease-out;
+  animation: ripple-effect 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 

@@ -5,6 +5,7 @@ import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
+import logo from './assets/icon.svg'; // ← импорт локального логотипа
 import './App.css';
 
 function App() {
@@ -24,22 +25,16 @@ function App() {
   return (
     <BrowserRouter>
       <div className="app-wrapper">
-        {/* Хедер (припаянный сверху) */}
         {user && (
           <header className="app-header">
             <div className="header-container">
               <Link to="/" className="logo-link">
-                <img 
-                  src="https://avatars.githubusercontent.com/u/104785127?v=4" 
-                  alt="Logo" 
-                  className="logo-img"
-                />
+                <img src={logo} alt="Logo" className="logo-img" />
               </Link>
             </div>
           </header>
         )}
 
-        {/* Основной контент */}
         <main className="app-main">
           <Routes>
             <Route path="/login" element={<LoginRegister setUser={setUser} />} />
@@ -50,7 +45,6 @@ function App() {
           </Routes>
         </main>
 
-        {/* Футер (припаянный снизу) */}
         {user && (
           <nav className="app-footer">
             <div className="footer-container">
