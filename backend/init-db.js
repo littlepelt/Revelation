@@ -21,9 +21,9 @@ const init = async () => {
   try {
     const sql = require('fs').readFileSync('./db/init.sql').toString();
     await client.query(sql);
-    console.log('✅ Database initialized');
+    console.log('Database initialized');
   } catch (err) {
-    console.error('❌ Init error:', err.message);
+    console.error('Init error:', err.message);
   } finally {
     client.release();
     process.exit();
