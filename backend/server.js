@@ -9,12 +9,13 @@ app.use(express.json());
 
 syncBooks().catch(console.error);
 
+const authMiddleware = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
-const authMiddleware = require('./middleware/auth');
+app.use('/api/books', authMiddleware, booksRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/books', booksRoutes);
-app.use('/api/books', authMiddleware, booksRoutes);
+
 
 
 app.get('/', (req, res) => {

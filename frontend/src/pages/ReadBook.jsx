@@ -16,25 +16,50 @@ export default function ReadBook() {
   const saveIntervalRef = useRef(null);
   const isSavingRef = useRef(false);
   const restoredRef = useRef(false);
+  const lastSavedProgressRef = useRef(0);
+
+  
 
   // Сохранение прогресса
   const saveProgress = useCallback(async (position) => {
+    // Не делаем повторный запрос, если уже идет сохранение
     if (isSavingRef.current) return;
-    
+
     isSavingRef.current = true;
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_URL}/api/books/${id}/progress`, 
-        { position },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      console.log(`💾 Прогресс сохранён: ${position}%`);
+        const token = localStorage.getItem('token');
+        // КРИТИЧЕСКИ ВАЖНО: Проверьте, что токен существует
+        if (!token) {
+            console.error("❌ Токен не найден в localStorage");
+            return;
+        }
+
+        console.log(`📤 Отправка прогресса (${position}%) с токеном:`, token.substring(0, 20) + '...');
+
+        const response = await axios.post(`${API_URL}/api/books/${id}/progress`,
+            { position },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`, // <- ПРОВЕРЬТЕ ЭТУ СТРОКУ
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        
+        if (response.status === 200) {
+            console.log(`✅ Прогресс (${position}%) успешно сохранен на сервере`);
+        }
     } catch (err) {
-      console.error('Ошибка сохранения:', err);
+        // Более детальное логирование ошибки
+        if (err.response) {
+            console.error(`❌ Ошибка сохранения (${err.response.status}):`, err.response.data);
+        } else {
+            console.error('❌ Ошибка сети или другая:', err.message);
+        }
     } finally {
-      isSavingRef.current = false;
+        isSavingRef.current = false;
     }
-  }, [id]);
+}, [id]);
 
   // Восстановление позиции прокрутки по сохранённому прогрессу
   const restoreScrollPosition = useCallback((savedProgress) => {
@@ -51,6 +76,55 @@ export default function ReadBook() {
       restoredRef.current = true;
     }
   }, []);
+
+  useEffect(() => {
+    if (!loading && contentRef.current && book && progress > 0) {
+        const element = contentRef.current;
+        // Небольшая задержка, чтобы DOM точно отрисовался
+        const timer = setTimeout(() => {
+            const scrollHeight = element.scrollHeight;
+            const clientHeight = element.clientHeight;
+            const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
+            element.scrollTop = targetScroll;
+            console.log(`🔄 Скролл восстановлен на позицию ${targetScroll} (${progress}%)`);
+            lastSavedProgressRef.current = progress;
+        }, 100);
+        return () => clearTimeout(timer);
+    }
+}, [loading, book, progress]); // Зависимость ТОЛЬКО от loading, book, progress
+
+// 3. Эффект для авто-сохранения прогресса (без влияния на скролл)
+useEffect(() => {
+    if (!contentRef.current || loading) return;
+    
+    const saveCurrentProgress = () => {
+        const element = contentRef.current;
+        const scrollPercent = (element.scrollTop / (element.scrollHeight - element.clientHeight)) * 100;
+        const currentProgress = Math.floor(Math.min(99, Math.max(0, scrollPercent)));
+        
+        if (currentProgress !== lastSavedProgressRef.current) {
+            console.log(`🔄 Скролл изменился: ${currentProgress}%`);
+            lastSavedProgressRef.current = currentProgress;
+            saveProgress(currentProgress); // Ваша функция сохранения
+        }
+    };
+
+    // Сохраняем прогресс при скролле (без задержек)
+    const handleScrollDirect = () => {
+        requestAnimationFrame(saveCurrentProgress);
+    };
+    
+    const element = contentRef.current;
+    element.addEventListener('scroll', handleScrollDirect);
+    
+    // Запускаем интервал для подстраховки (каждые 30 секунд)
+    const intervalId = setInterval(saveCurrentProgress, 30000);
+    
+    return () => {
+        element.removeEventListener('scroll', handleScrollDirect);
+        clearInterval(intervalId);
+    };
+}, [loading, saveProgress]); // Зависит от loading и стабильной функции saveProgress
 
   // Загрузка книги и прогресса
   useEffect(() => {
