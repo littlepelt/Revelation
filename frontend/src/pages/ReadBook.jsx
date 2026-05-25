@@ -4,7 +4,7 @@ import axios from 'axios';
 import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const SAVE_INTERVAL = 60000; // 60 секунд
+const SAVE_INTERVAL = 60000;
 
 export default function ReadBook() {
   const { id } = useParams();
@@ -16,12 +16,12 @@ export default function ReadBook() {
   const contentRef = useRef(null);
   const saveIntervalRef = useRef(null);
   const isSavingRef = useRef(false);
-  const isRestoringRef = useRef(false); // Флаг восстановления позиции
+  const hasRestoredRef = useRef(false); // Флаг: восстанавливали ли уже позицию
 
   // Сохранение прогресса на сервер
   const saveProgress = useCallback(async (position, isFinal = false) => {
     if (isSavingRef.current) return;
-    if (position === savedProgress) return;
+    if (position === savedProgress && !isFinal) return;
     
     isSavingRef.current = true;
     try {
@@ -31,6 +31,7 @@ export default function ReadBook() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSavedProgress(position);
+      console.log(`💾 Прогресс сохранён: ${position}%`);
     } catch (err) {
       console.error('Ошибка сохранения прогресса:', err);
     } finally {
@@ -38,7 +39,7 @@ export default function ReadBook() {
     }
   }, [id, savedProgress]);
 
-  // При выходе
+  // При выходе — сохраняем и идём на страницу книги
   const handleExit = useCallback(async () => {
     if (saveIntervalRef.current) {
       clearInterval(saveIntervalRef.current);
@@ -82,12 +83,12 @@ export default function ReadBook() {
     };
   }, [id, navigate]);
 
-  // Восстановление позиции прокрутки ТОЛЬКО один раз при загрузке
+  // Восстановление позиции прокрутки — ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
-    if (contentRef.current && !loading && progress > 0 && !isRestoringRef.current) {
-      isRestoringRef.current = true;
+    if (contentRef.current && !loading && progress > 0 && !hasRestoredRef.current) {
+      hasRestoredRef.current = true;
       
-      // Небольшая задержка для полного рендера
+      // Даём время на рендер
       setTimeout(() => {
         if (contentRef.current) {
           const element = contentRef.current;
@@ -95,12 +96,13 @@ export default function ReadBook() {
           const clientHeight = element.clientHeight;
           const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
           element.scrollTop = targetScroll;
+          console.log(`🔄 Восстановлена позиция: ${progress}%`);
         }
-      }, 100);
+      }, 150);
     }
   }, [loading, progress]);
 
-  // Настройка автосохранения
+  // Автосохранение каждую минуту
   useEffect(() => {
     if (!loading && book) {
       saveIntervalRef.current = setInterval(() => {
@@ -114,7 +116,7 @@ export default function ReadBook() {
     };
   }, [loading, book, progress, savedProgress, saveProgress]);
 
-  // Обработка скролла — только обновляем процент, НЕ восстанавливаем позицию
+  // Обработка скролла — только обновляем процент
   const handleScroll = () => {
     if (!contentRef.current) return;
     
@@ -128,7 +130,6 @@ export default function ReadBook() {
   if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
 
-  // Разбиваем текст на главы
   const chapters = book.text?.split(/\n(?=ГЛАВА|ЧАСТЬ)/) || [];
 
   return (

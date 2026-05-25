@@ -36,7 +36,7 @@ export default function BookPage() {
 
   return (
     <div className="container" style={{ padding: '20px 0' }}>
-      <button onClick={() => navigate(-1)} className="btn-outline" style={{ marginBottom: '24px' }}>
+      <button onClick={() => navigate('/')} className="btn-outline" style={{ marginBottom: '24px' }}>
         ← Назад
       </button>
       

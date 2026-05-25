@@ -53,7 +53,6 @@ router.get('/:id/read', async (req, res) => {
   const userId = req.user?.userId;
   
   try {
-    // Получаем информацию о книге и путь к файлу
     const bookResult = await pool.query(`
       SELECT title, author, file_path 
       FROM books 
@@ -76,6 +75,7 @@ router.get('/:id/read', async (req, res) => {
         WHERE user_id = $1 AND book_id = $2
       `, [userId, id]);
       progress = progressResult.rows[0]?.last_read_position || 0;
+      console.log(`📖 Прогресс для книги ${id}, пользователь ${userId}: ${progress}%`);
     }
     
     res.json({
