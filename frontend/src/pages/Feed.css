@@ -32,7 +32,7 @@
   gap: 0;
 }
 
-/* Карточка книги — без border, без тени, без поднятия */
+/* ЕДИНСТВЕННЫЙ стиль карточки — без border, без тени, без transform */
 .book-card {
   display: flex;
   padding: 20px 0;
@@ -42,18 +42,20 @@
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  /* Убираем все transition, кроме background-color */
   transition: background-color 0.2s ease;
+  border: none;
+  border-radius: 0;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Никакого поднятия, только смена фона */
 .book-card:hover {
   background-color: #F9F9F9;
 }
 
-/* Убираем transform при нажатии — только ripple */
 .book-card:active {
   transform: none;
+  box-shadow: none;
 }
 
 /* Обложка */
@@ -67,7 +69,7 @@
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
-  border: 1px solid #E9E9E9; /* Это border обложки, не карточки — оставляем */
+  border: 1px solid #E9E9E9;
 }
 
 .book-cover img {
@@ -129,10 +131,10 @@
   font-size: 13px;
 }
 
-/* Ripple эффект — медленный и серый, как в макете */
+/* Ripple эффект */
 .ripple {
   position: absolute;
-  background: rgba(0, 0, 0, 0.08); /* чуть светлее, как в макете */
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 50%;
   transform: scale(0);
   animation: ripple-effect 0.6s cubic-bezier(0.4, 0, 0.2, 1);

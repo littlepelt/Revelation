@@ -5,78 +5,38 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #FFFFFF;
-  color: #1A1A1A;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #F9F9F9;
+  color: #333333;
   line-height: 1.5;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
+/* Кнопки без теней и деформаций */
 button {
   font-family: inherit;
-  transition: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button:active {
   transform: none;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Стили для ссылок */
-a {
-  text-decoration: none;
-  color: #003BFF;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Стили для карточек книг */
-.book-card {
-  border: 1px solid #DFE2ED;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-  background: #FFFFFF;
-}
-
-.book-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-}
-
-/* Кнопки */
 .btn-primary {
   background-color: #003BFF;
   color: white;
-  border: none;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-}
-
-.btn-primary:hover {
-  opacity: 0.9;
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: #003BFF;
-  border: 1px solid #003BFF;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-  background-color: #003BFF10;
+  border: none;
 }
 
 .btn-outline {
@@ -93,14 +53,4 @@ a:hover {
 .btn-outline:hover {
   border-color: #003BFF;
   color: #003BFF;
-}
-
-.btn-primary .ripple,
-.btn-outline .ripple,
-.footer-link .ripple {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.btn-outline .ripple {
-  background: rgba(0, 59, 255, 0.1);
 }
