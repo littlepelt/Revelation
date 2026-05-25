@@ -4,6 +4,7 @@ import Feed from './pages/Feed';
 import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
+import BookPage from './pages/BookPage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -28,6 +29,7 @@ function App() {
           <Route path="/" element={user ? <Feed /> : <Navigate to="/login" />} />
           <Route path="/my-books" element={user ? <MyBooks /> : <Navigate to="/login" />} />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
         </Routes>
 
         {user && (

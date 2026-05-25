@@ -9,6 +9,12 @@ app.use(express.json());
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const booksRoutes = require('./routes/books');
+app.use('/api/books', booksRoutes);
+
+const authMiddleware = require('./middleware/auth');
+app.use('/api/books', authMiddleware, booksRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Book Social API is running' });
 });
