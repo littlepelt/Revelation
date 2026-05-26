@@ -34,10 +34,13 @@ body.read-mode {
   background: none;
   border: none;
   color: #003BFF;
-  font-size: 14px;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 8px;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
 }
 
 .back-btn:hover {
@@ -59,14 +62,6 @@ body.read-mode {
   font-size: 14px;
   color: #666;
   margin: 4px 0 0;
-}
-
-.page-indicator {
-  font-size: 14px;
-  color: #003BFF;
-  background: #F0F4FF;
-  padding: 6px 12px;
-  border-radius: 20px;
 }
 
 /* Контент */
@@ -102,12 +97,15 @@ body.read-mode {
 .nav-btn {
   background: none;
   border: 1px solid #DFE2ED;
-  padding: 10px 20px;
-  border-radius: 40px;
-  font-size: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 44px;
   cursor: pointer;
   transition: all 0.2s;
-  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
 }
 
 .nav-btn:hover:not(.disabled) {
@@ -130,19 +128,20 @@ body.read-mode {
 .settings-btn {
   background: none;
   border: 1px solid #DFE2ED;
-  width: 40px;
-  height: 40px;
-  border-radius: 40px;
-  font-size: 18px;
+  width: 44px;
+  height: 44px;
+  border-radius: 44px;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #1A1A1A;
 }
 
 .settings-btn:hover {
   border-color: #003BFF;
+  color: #003BFF;
 }
 
 /* Адаптив */
@@ -163,8 +162,8 @@ body.read-mode {
     font-size: 16px;
   }
   
-  .nav-btn {
-    padding: 8px 16px;
-    min-width: 80px;
+  .nav-btn, .settings-btn {
+    width: 40px;
+    height: 40px;
   }
 }

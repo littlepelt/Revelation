@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ArrowLeft, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -13,9 +14,7 @@ export default function ReadBook() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(parseInt(pageNum) || 1);
   const [totalPages, setTotalPages] = useState(0);
-  const [scrollPercent, setScrollPercent] = useState(0);
   const contentRef = useRef(null);
-  const saveTimeoutRef = useRef(null);
   const restoredRef = useRef(false);
 
   // Загрузка страницы
@@ -31,12 +30,8 @@ export default function ReadBook() {
         setBook(data);
         setTotalPages(data.totalPages);
         
-        // Восстанавливаем позицию на странице
-        if (data.savedPage === currentPage && data.savedPercent > 0) {
-          setScrollPercent(data.savedPercent);
-        } else {
-          setScrollPercent(0);
-        }
+        // Всегда начинаем с 0%
+        restoredRef.current = false;
         
       } catch (err) {
         console.error('Ошибка:', err);
@@ -51,92 +46,60 @@ export default function ReadBook() {
     
     return () => {
       document.body.classList.remove('read-mode');
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
   }, [id, currentPage, navigate]);
 
-  // Восстановление скролла после рендера
+  // Скролл всегда в начало при смене страницы
   useEffect(() => {
-    if (!loading && contentRef.current && !restoredRef.current) {
-      if (scrollPercent > 0) {
-        const element = contentRef.current;
-        const scrollHeight = element.scrollHeight;
-        const clientHeight = element.clientHeight;
-        const targetScroll = scrollPercent * (scrollHeight - clientHeight);
-        element.scrollTop = targetScroll;
-        console.log(`🔄 Восстановлен: страница ${currentPage}, позиция ${Math.round(scrollPercent * 100)}%`);
-      }
+    if (!loading && contentRef.current) {
+      contentRef.current.scrollTop = 0;
       restoredRef.current = true;
     }
-  }, [loading, scrollPercent, currentPage]);
+  }, [currentPage, loading]);
 
-  // Сохранение прогресса
-  const saveProgress = async (page, percent) => {
-    const positionValue = `${page}.${Math.floor(percent * 100)}`;
-    
+  // Сохранение прогресса (только номер страницы)
+  const saveProgress = async (page) => {
     try {
       const token = localStorage.getItem('token');
+      // Сохраняем как "страница.0" (0% всегда)
+      const positionValue = `${page}.0`;
       await axios.post(`${API_URL}/api/books/${id}/progress`, 
         { position: positionValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(`💾 Сохранено: страница ${page}, позиция ${Math.floor(percent * 100)}%`);
+      console.log(`💾 Сохранена страница: ${page}`);
     } catch (err) {
-      console.error('❌ Ошибка:', err.response?.status);
+      console.error('❌ Ошибка сохранения:', err.response?.status);
     }
-  };
-
-  // Обработка скролла
-  const handleScroll = () => {
-    if (!contentRef.current) return;
-    
-    const element = contentRef.current;
-    const scrollHeight = element.scrollHeight;
-    const clientHeight = element.clientHeight;
-    
-    if (scrollHeight <= clientHeight) return;
-    
-    const percent = element.scrollTop / (scrollHeight - clientHeight);
-    setScrollPercent(percent);
-    
-    // Сохраняем с задержкой
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    saveTimeoutRef.current = setTimeout(() => {
-      saveProgress(currentPage, percent);
-    }, 1000);
   };
 
   // Навигация по страницам
   const goToPrevPage = () => {
     if (currentPage > 1) {
-      // Сохраняем прогресс перед уходом
-      saveProgress(currentPage, scrollPercent);
-      setCurrentPage(currentPage - 1);
-      restoredRef.current = false;
-      setScrollPercent(0);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      saveProgress(newPage);
     }
   };
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
-      saveProgress(currentPage, scrollPercent);
-      setCurrentPage(currentPage + 1);
-      restoredRef.current = false;
-      setScrollPercent(0);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      saveProgress(newPage);
     }
   };
 
   // Выход
   const handleExit = async () => {
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    await saveProgress(currentPage, scrollPercent);
+    await saveProgress(currentPage);
     navigate(`/book/${id}`);
   };
 
   // Сохранение при закрытии
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const positionValue = `${currentPage}.${Math.floor(scrollPercent * 100)}`;
+      const positionValue = `${currentPage}.0`;
       const token = localStorage.getItem('token');
       if (token) {
         const url = `${API_URL}/api/books/${id}/progress`;
@@ -147,30 +110,26 @@ export default function ReadBook() {
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [id, currentPage, scrollPercent]);
+  }, [id, currentPage]);
 
   if (loading) return <div className="loading">Загрузка...</div>;
   if (!book) return null;
 
-  // Разбиваем текст на главы (для отображения)
   const paragraphs = book.text?.split('\n') || [];
 
   return (
     <div className="read-container">
       <div className="read-header">
         <button className="back-btn" onClick={handleExit}>
-          ← Вернуться
+          <ArrowLeft size={20} />
         </button>
         <div className="read-title">
           <h2>{book.title}</h2>
           <p>{book.author}</p>
         </div>
-        <div className="page-indicator">
-          {currentPage} / {totalPages}
-        </div>
       </div>
 
-      <div className="read-content" ref={contentRef} onScroll={handleScroll}>
+      <div className="read-content" ref={contentRef}>
         {paragraphs.map((paragraph, i) => (
           <p key={i}>{paragraph}</p>
         ))}
@@ -182,7 +141,7 @@ export default function ReadBook() {
           onClick={goToPrevPage}
           disabled={currentPage === 1}
         >
-          ← Назад
+          <ChevronLeft size={20} />
         </button>
         
         <div className="page-info">
@@ -194,11 +153,11 @@ export default function ReadBook() {
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
         >
-          Вперёд →
+          <ChevronRight size={20} />
         </button>
         
         <button className="settings-btn">
-          ⚙️
+          <Settings size={20} />
         </button>
       </div>
     </div>
