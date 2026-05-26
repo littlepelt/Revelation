@@ -10,10 +10,9 @@ export default function ReadBook() {
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
   const contentRef = useRef(null);
-  const saveTimeoutRef = useRef(null);
   const restoredRef = useRef(false);
-  const scrollListenerRef = useRef(null);
 
   // Загрузка книги
   useEffect(() => {
@@ -24,6 +23,7 @@ export default function ReadBook() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBook(response.data);
+        setProgress(response.data.progress || 0);
       } catch (err) {
         console.error('Ошибка:', err);
         navigate('/');
@@ -37,28 +37,23 @@ export default function ReadBook() {
     
     return () => {
       document.body.classList.remove('read-mode');
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
     };
   }, [id, navigate]);
 
-  // Восстановление скролла (один раз после рендера)
+  // Восстановление скролла (один раз)
   useEffect(() => {
-    if (!loading && contentRef.current && book && !restoredRef.current) {
-      const savedProgress = book.progress || 0;
-      
-      if (savedProgress > 0) {
-        const element = contentRef.current;
-        const scrollHeight = element.scrollHeight;
-        const clientHeight = element.clientHeight;
-        const targetScroll = (savedProgress / 100) * (scrollHeight - clientHeight);
-        element.scrollTop = targetScroll;
-        console.log(`🔄 Восстановлен скролл: ${savedProgress}%`);
-      }
+    if (!loading && contentRef.current && progress > 0 && !restoredRef.current) {
+      const element = contentRef.current;
+      const scrollHeight = element.scrollHeight;
+      const clientHeight = element.clientHeight;
+      const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
+      element.scrollTop = targetScroll;
+      console.log(`🔄 Восстановлен скролл: ${progress}%`);
       restoredRef.current = true;
     }
-  }, [loading, book]);
+  }, [loading, progress]);
 
-  // Сохранение прогресса
+  // Сохранение прогресса на сервер
   const saveProgress = async (position) => {
     try {
       const token = localStorage.getItem('token');
@@ -68,13 +63,13 @@ export default function ReadBook() {
       );
       console.log(`💾 Сохранено: ${position}%`);
     } catch (err) {
-      console.error('❌ Ошибка:', err.response?.status);
+      console.error('❌ Ошибка сохранения:', err.response?.status);
     }
   };
 
-  // Обработка скролла
+  // Обработка скролла — только обновляем процент (НЕ сохраняем)
   const handleScroll = () => {
-    if (!contentRef.current || !restoredRef.current) return;
+    if (!contentRef.current) return;
     
     const element = contentRef.current;
     const scrollHeight = element.scrollHeight;
@@ -83,29 +78,39 @@ export default function ReadBook() {
     if (scrollHeight <= clientHeight) return;
     
     const scrollPercent = element.scrollTop / (scrollHeight - clientHeight);
-    const currentProgress = Math.floor(scrollPercent * 100);
+    // Округляем до одного знака после запятой
+    const currentProgress = Math.round(scrollPercent * 1000) / 10;
     
-    // Сохраняем только если прогресс изменился
-    if (currentProgress !== book?.progress) {
-      // Обновляем состояние книги
-      setBook(prev => ({ ...prev, progress: currentProgress }));
-      
-      // Сохраняем с задержкой
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-      saveTimeoutRef.current = setTimeout(() => {
-        saveProgress(currentProgress);
-      }, 1000);
+    if (currentProgress !== progress) {
+      setProgress(currentProgress);
     }
   };
 
-  // Выход
+  // Выход — сохраняем финальный прогресс
   const handleExit = async () => {
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    if (book?.progress > 0) {
-      await saveProgress(book.progress);
+    if (progress > 0) {
+      await saveProgress(progress);
     }
     navigate(`/book/${id}`);
   };
+
+  // Сохранение при закрытии вкладки
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (progress > 0) {
+        // Используем sendBeacon для надёжной отправки перед закрытием
+        const token = localStorage.getItem('token');
+        if (token) {
+          const url = `${API_URL}/api/books/${id}/progress`;
+          const data = JSON.stringify({ position: progress });
+          navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
+        }
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [id, progress]);
 
   if (loading) return <div className="loading">Загрузка...</div>;
   if (!book) return null;
@@ -123,7 +128,7 @@ export default function ReadBook() {
           <p>{book.author}</p>
         </div>
         <div className="progress-indicator">
-          {book.progress || 0}%
+          {progress}%
         </div>
       </div>
 
