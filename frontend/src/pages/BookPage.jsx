@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ArrowLeft } from 'lucide-react';
 import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// Ripple эффект (как в читалке)
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');
@@ -89,11 +91,11 @@ export default function BookPage() {
   return (
     <div className="book-page">
       <button 
-        className="back-button" 
+        className="back-button"
         onClick={() => navigate('/')}
         onMouseDown={createRipple}
       >
-        ← Назад
+        <ArrowLeft size={20} />
       </button>
       
       <div className="book-content">

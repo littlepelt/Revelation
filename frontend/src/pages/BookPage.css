@@ -5,7 +5,7 @@
   min-height: calc(100vh - 120px);
 }
 
-/* Кнопка "Назад" - квадратная */
+/* Кнопка "Назад" - как в читалке */
 .back-button {
   background: none;
   border: 1px solid #DFE2ED;
@@ -19,6 +19,7 @@
   margin-bottom: 20px;
   position: relative;
   overflow: hidden;
+  transition: none;
 }
 
 /* Светлая тема */
@@ -33,7 +34,7 @@ body.dark-theme .back-button {
   border-color: #404040;
 }
 
-/* Убираем ВСЕ изменения при наведении */
+/* Убираем изменение цвета при наведении */
 .back-button:hover {
   border-color: #DFE2ED;
   color: #003BFF;
@@ -128,6 +129,7 @@ body.dark-theme .rating-badge {
   color: #FFFFFF;
 }
 
+/* Кнопки действий - как в настройках читалки */
 .book-actions {
   display: flex;
   gap: 12px;
@@ -144,6 +146,7 @@ body.dark-theme .rating-badge {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: none;
 }
 
 /* Светлая тема - неактивная кнопка */
@@ -172,7 +175,7 @@ body.dark-theme .status-btn.active {
   color: #1A1A1A;
 }
 
-/* Убираем ВСЕ изменения при наведении */
+/* Убираем изменение цвета при наведении */
 .status-btn:hover,
 .status-btn.active:hover {
   border-color: inherit;
@@ -200,6 +203,7 @@ body.dark-theme .status-btn.active .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
+/* Кнопка "Читать книгу" */
 .read-button {
   width: 100%;
   border: none;
@@ -214,13 +218,13 @@ body.dark-theme .status-btn.active .ripple {
   overflow: hidden;
 }
 
-/* Светлая тема - кнопка "Читать" */
+/* Светлая тема */
 .read-button {
   background-color: #003BFF;
   color: white;
 }
 
-/* Тёмная тема - кнопка "Читать" */
+/* Тёмная тема */
 body.dark-theme .read-button {
   background-color: #FFFFFF;
   color: #1A1A1A;
@@ -238,6 +242,7 @@ body.dark-theme .read-button .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
+/* Описание книги */
 .book-description h3 {
   font-size: 20px;
   margin-bottom: 12px;
@@ -262,6 +267,22 @@ body.dark-theme .book-description p {
   text-align: center;
   padding: 60px;
   color: #888;
+}
+
+/* Ripple эффект */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-effect 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  pointer-events: none;
+}
+
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 /* Адаптив */
@@ -290,5 +311,10 @@ body.dark-theme .book-description p {
   
   .book-actions {
     justify-content: center;
+  }
+  
+  .back-button {
+    width: 40px;
+    height: 40px;
   }
 }
