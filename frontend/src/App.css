@@ -172,6 +172,53 @@ body.dark-theme .footer-link .ripple {
   color: #888888;
 }
 
+/* Добавь или обнови в App.css */
+
+.footer-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 20px;
+}
+
+.footer-link {
+  color: #333333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+body.dark-theme .footer-link {
+  color: #E0E0E0;
+}
+
+.footer-link:hover {
+  background-color: #F9F9F9;
+}
+
+body.dark-theme .footer-link:hover {
+  background-color: #3A3A3A;
+}
+
+.footer-link .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .footer-link .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* Адаптив */
 @media (max-width: 768px) {
   .app-main {

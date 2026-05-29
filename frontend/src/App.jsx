@@ -1,12 +1,11 @@
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, ScrollText, BookOpen, User } from 'lucide-react';
 import Feed from './pages/Feed';
 import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
 import ReadBook from './pages/ReadBook';
-import UserProfile from './pages/UserProfile';
 import { useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
@@ -63,18 +62,27 @@ function AppContent() {
           <Route path="/" element={user ? <Feed /> : <Navigate to="/login" />} />
           <Route path="/my-books" element={user ? <MyBooks /> : <Navigate to="/login" />} />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/user/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
           <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
-          <Route path="/user/:username" element={<UserProfile />} />
         </Routes>
       </main>
 
       {user && (
         <nav className="app-footer">
           <div className="footer-container">
-            <Link to="/" className="footer-link" onMouseDown={createRipple}>Лента</Link>
-            <Link to="/my-books" className="footer-link" onMouseDown={createRipple}>Мои книги</Link>
-            <Link to="/profile" className="footer-link" onMouseDown={createRipple}>Профиль</Link>
+            <Link to="/" className="footer-link" onMouseDown={createRipple}>
+              <ScrollText size={20} />
+              <span>Лента</span>
+            </Link>
+            <Link to="/my-books" className="footer-link" onMouseDown={createRipple}>
+              <BookOpen size={20} />
+              <span>Мои книги</span>
+            </Link>
+            <Link to={`/user/${user.username}`} className="footer-link" onMouseDown={createRipple}>
+              <User size={20} />
+              <span>Профиль</span>
+            </Link>
           </div>
         </nav>
       )}
