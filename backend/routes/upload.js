@@ -38,7 +38,9 @@ router.post('/', upload.single('avatar'), (req, res) => {
     return res.status(400).json({ error: 'No file uploaded' });
   }
   
-  const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  // Используем HTTPS принудительно
+  const protocol = 'https';
+  const fileUrl = `${protocol}://${req.get('host')}/uploads/${req.file.filename}`;
   res.json({ url: fileUrl });
 });
 
