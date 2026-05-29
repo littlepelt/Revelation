@@ -1,0 +1,184 @@
+.profile-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.profile-header {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.profile-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  object-fit: cover;
+  border: 3px solid #003BFF;
+}
+
+.edit-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #003BFF;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.edit-avatar-btn:hover {
+  opacity: 0.8;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+body.dark-theme .profile-info h1 {
+  color: #E0E0E0;
+}
+
+.profile-email {
+  color: #666;
+  margin-bottom: 8px;
+}
+
+body.dark-theme .profile-email {
+  color: #AAAAAA;
+}
+
+.profile-joined {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.edit-profile-btn, .logout-btn {
+  background: none;
+  border: 1px solid #DFE2ED;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 12px;
+  transition: all 0.2s;
+}
+
+body.dark-theme .edit-profile-btn,
+body.dark-theme .logout-btn {
+  border-color: #404040;
+  color: #E0E0E0;
+}
+
+.edit-profile-btn:hover {
+  background-color: #003BFF;
+  border-color: #003BFF;
+  color: white;
+}
+
+.logout-btn:hover {
+  border-color: #DC2626;
+  color: #DC2626;
+}
+
+.profile-shelves h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+body.dark-theme .profile-shelves h2 {
+  color: #E0E0E0;
+}
+
+.shelves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.shelf-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid #DFE2ED;
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+body.dark-theme .shelf-card {
+  background: #2A2A2A;
+  border-color: #404040;
+}
+
+.shelf-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.shelf-color {
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+}
+
+.shelf-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #222;
+}
+
+body.dark-theme .shelf-info h3 {
+  color: #E0E0E0;
+}
+
+.shelf-info p {
+  font-size: 14px;
+  color: #888;
+}
+
+body.dark-theme .shelf-info p {
+  color: #AAAAAA;
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profile-info {
+    text-align: center;
+  }
+  
+  .shelves-grid {
+    grid-template-columns: 1fr;
+  }
+}

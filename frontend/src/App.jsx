@@ -8,12 +8,12 @@ import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
 import ReadBook from './pages/ReadBook';
 import { useTheme } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
 
 import LightIcon from './assets/Icon.svg';
 import DarkIcon from './assets/DarkIcon.svg';
 
-// Ripple эффект для кнопки темы
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');
@@ -32,64 +32,59 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+function AppContent() {
+  const { user, loading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setUser({ username: 'temp' });
-    }
-    setLoading(false);
-  }, []);
 
   if (loading) return <div className="loading">Загрузка...</div>;
 
   const logoSrc = theme === 'light' ? LightIcon : DarkIcon;
 
   return (
+    <div className="app-wrapper">
+      {user && (
+        <header className="app-header">
+          <div className="header-container">
+            <Link to="/" className="logo-link" onMouseDown={createRipple}>
+              <img src={logoSrc} alt="Logo" className="logo-img" />
+            </Link>
+            <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+          </div>
+        </header>
+      )}
+
+      <main className="app-main">
+        <Routes>
+          <Route path="/login" element={<LoginRegister />} />
+          <Route path="/" element={user ? <Feed /> : <Navigate to="/login" />} />
+          <Route path="/my-books" element={user ? <MyBooks /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
+          <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
+        </Routes>
+      </main>
+
+      {user && (
+        <nav className="app-footer">
+          <div className="footer-container">
+            <Link to="/" className="footer-link" onMouseDown={createRipple}>Лента</Link>
+            <Link to="/my-books" className="footer-link" onMouseDown={createRipple}>Мои книги</Link>
+            <Link to="/profile" className="footer-link" onMouseDown={createRipple}>Профиль</Link>
+          </div>
+        </nav>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  return (
     <BrowserRouter>
-      <div className="app-wrapper">
-        {user && (
-          <header className="app-header">
-            <div className="header-container">
-              <Link to="/" className="logo-link" onMouseDown={createRipple}>
-                <img src={logoSrc} alt="Logo" className="logo-img" />
-              </Link>
-              <button 
-                onClick={toggleTheme} 
-                className="theme-toggle-btn" 
-                onMouseDown={createRipple}
-              >
-                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-              </button>
-            </div>
-          </header>
-        )}
-
-        <main className="app-main">
-          <Routes>
-            <Route path="/login" element={<LoginRegister setUser={setUser} />} />
-            <Route path="/" element={user ? <Feed /> : <Navigate to="/login" />} />
-            <Route path="/my-books" element={user ? <MyBooks /> : <Navigate to="/login" />} />
-            <Route path="/profile" element={user ? <Profile setUser={setUser} /> : <Navigate to="/login" />} />
-            <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
-            <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
-          </Routes>
-        </main>
-
-        {user && (
-          <nav className="app-footer">
-            <div className="footer-container">
-              <Link to="/" className="footer-link" onMouseDown={createRipple}>Лента</Link>
-              <Link to="/my-books" className="footer-link" onMouseDown={createRipple}>Мои книги</Link>
-              <Link to="/profile" className="footer-link" onMouseDown={createRipple}>Профиль</Link>
-            </div>
-          </nav>
-        )}
-      </div>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

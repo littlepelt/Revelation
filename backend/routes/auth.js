@@ -82,3 +82,50 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router; // 👈 Убедись, что эта строка есть
+
+// Получить информацию о текущем пользователе
+router.get('/me', async (req, res) => {
+  const userId = req.user?.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query(
+      'SELECT id, username, email, avatar_url, created_at FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Обновить профиль пользователя
+router.put('/profile', async (req, res) => {
+  const userId = req.user?.userId;
+  const { username, avatar_url } = req.body;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query(
+      'UPDATE users SET username = $1, avatar_url = $2 WHERE id = $3 RETURNING id, username, email, avatar_url, created_at',
+      [username, avatar_url, userId]
+    );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error updating user:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
