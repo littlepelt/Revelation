@@ -39,34 +39,41 @@ body.dark-theme .read-header {
   border-bottom-color: #404040;
 }
 
+/* Кнопка "Назад" - квадратная, с ripple */
 .back-btn {
   background: none;
-  border: none;
+  border: 1px solid #DFE2ED;
+  width: 44px;
+  height: 44px;
+  border-radius: 44px;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  transition: opacity 0.2s;
+  transition: none;
 }
 
 /* Светлая тема */
 .back-btn {
   color: #003BFF;
+  border-color: #DFE2ED;
 }
 
 /* Тёмная тема */
 body.dark-theme .back-btn {
   color: #FFFFFF;
+  border-color: #404040;
 }
 
+/* Убираем изменение цвета при наведении */
 .back-btn:hover {
-  opacity: 0.7;
+  border-color: inherit;
+  color: inherit;
 }
 
+/* Ripple для кнопки назад */
 .back-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -197,6 +204,7 @@ body.dark-theme .settings-btn {
   cursor: not-allowed;
 }
 
+/* Ripple для кнопок футера */
 .nav-btn .ripple, .settings-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -269,7 +277,7 @@ body.dark-theme .loader {
     font-size: 16px;
   }
   
-  .nav-btn, .settings-btn {
+  .nav-btn, .settings-btn, .back-btn {
     width: 40px;
     height: 40px;
   }

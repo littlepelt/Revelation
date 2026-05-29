@@ -5,34 +5,39 @@
   min-height: calc(100vh - 120px);
 }
 
+/* Кнопка "Назад" - квадратная, как в читалке */
 .back-button {
   background: none;
-  border: none;
-  font-size: 16px;
+  border: 1px solid #DFE2ED;
+  width: 44px;
+  height: 44px;
+  border-radius: 44px;
   cursor: pointer;
-  padding: 10px 0;
-  margin-bottom: 20px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  transition: opacity 0.2s;
+  transition: none;
 }
 
 /* Светлая тема */
 .back-button {
   color: #003BFF;
-}
-
-.back-button:hover {
-  opacity: 0.7;
+  border-color: #DFE2ED;
 }
 
 /* Тёмная тема */
 body.dark-theme .back-button {
   color: #FFFFFF;
+  border-color: #404040;
+}
+
+/* Убираем изменение цвета при наведении */
+.back-button:hover {
+  border-color: inherit;
+  color: inherit;
 }
 
 .back-button .ripple {
@@ -175,12 +180,19 @@ body.dark-theme .status-btn:hover {
   color: inherit;
 }
 
+/* Ripple для кнопок статуса */
 .status-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
 
+/* Тёмная тема: неактивная кнопка - светлый ripple */
 body.dark-theme .status-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
+}
+
+/* Тёмная тема: активная кнопка - тёмный ripple */
+body.dark-theme .status-btn.active .ripple {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .read-button {
