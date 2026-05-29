@@ -9,12 +9,15 @@ export default function Profile() {
 
   if (!user) return null;
 
-  // Данные о полках (позже будут из БД)
   const shelves = [
     { id: 'reading', name: 'Читаю', count: 0, color: '#003BFF' },
     { id: 'read', name: 'Прочитано', count: 0, color: '#10B981' },
     { id: 'want_to_read', name: 'Буду читать', count: 0, color: '#F59E0B' }
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="profile-page">
@@ -37,7 +40,7 @@ export default function Profile() {
           <button className="edit-profile-btn" onClick={() => setShowEditModal(true)}>
             Редактировать профиль
           </button>
-          <button className="logout-btn" onClick={logout}>
+          <button className="logout-btn" onClick={handleLogout}>
             Выйти
           </button>
         </div>

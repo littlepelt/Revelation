@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { Sun, Moon } from 'lucide-react';
 import Feed from './pages/Feed';
@@ -36,7 +35,9 @@ function AppContent() {
   const { user, loading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
-  if (loading) return <div className="loading">Загрузка...</div>;
+  if (loading) {
+    return <div className="loading">Загрузка...</div>;
+  }
 
   const logoSrc = theme === 'light' ? LightIcon : DarkIcon;
 

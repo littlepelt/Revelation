@@ -9,32 +9,49 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
 
-  // Проверяем токен при загрузке
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
-      setToken(storedToken);
-      fetchUser(storedToken);
-    } else {
-      setLoading(false);
+  // Функция для проверки токена и получения пользователя
+  const verifyTokenAndGetUser = async (storedToken) => {
+    if (!storedToken || storedToken === 'null' || storedToken === 'undefined') {
+      return false;
     }
-  }, []);
-
-  const fetchUser = async (authToken) => {
+    
     try {
       const response = await axios.get(`${API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${authToken}` }
+        headers: { Authorization: `Bearer ${storedToken}` }
       });
-      setUser(response.data);
+      
+      if (response.data) {
+        setUser(response.data);
+        setToken(storedToken);
+        return true;
+      }
+      return false;
     } catch (err) {
-      console.error('Error fetching user:', err);
-      localStorage.removeItem('token');
-      setToken(null);
-      setUser(null);
-    } finally {
-      setLoading(false);
+      console.error('Token verification failed:', err.response?.status);
+      return false;
     }
   };
+
+  // Загрузка при монтировании
+  useEffect(() => {
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      
+      if (storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
+        const isValid = await verifyTokenAndGetUser(storedToken);
+        if (!isValid) {
+          // Токен невалидный — очищаем
+          localStorage.removeItem('token');
+          setToken(null);
+          setUser(null);
+        }
+      }
+      
+      setLoading(false);
+    };
+    
+    initAuth();
+  }, []);
 
   const login = (newToken, userData) => {
     if (!newToken || newToken === 'null' || newToken === 'undefined') {
