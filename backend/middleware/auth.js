@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
   
+  console.log('🔐 Middleware: Checking authorization header');
+  
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     console.log('❌ Middleware: No token provided');
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
@@ -18,7 +20,14 @@ module.exports = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log(`✅ Middleware: Token verified for user: ${decoded.userId}`);
-    req.user = decoded;
+    
+    // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: прикрепляем данные пользователя к req
+    req.user = {
+      userId: decoded.userId,
+      username: decoded.username
+    };
+    
+    console.log(`📌 Middleware: req.user.userId = ${req.user.userId}`);
     next();
   } catch (err) {
     console.log(`❌ Middleware: Invalid token: ${err.message}`);

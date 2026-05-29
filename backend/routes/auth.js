@@ -85,33 +85,37 @@ router.post('/login', async (req, res) => {
 });
 
 // Получить текущего пользователя
-router.get('/me', async (req, res) => {
+router.get('/me', (req, res) => {
+  // Добавляем подробное логирование
+  console.log('🔍 /me called');
+  console.log('📌 req.user:', req.user);
+  console.log('📌 req.user?.userId:', req.user?.userId);
+  
   const userId = req.user?.userId;
   
-  console.log('🔍 /me called, userId:', userId);
-  
   if (!userId) {
-    console.log('❌ No userId in token');
-    return res.status(401).json({ error: 'Unauthorized' });
+    console.log('❌ No userId in request, returning 401');
+    return res.status(401).json({ error: 'Unauthorized: No user ID in token' });
   }
   
-  try {
-    const result = await pool.query(
-      'SELECT id, username, email, avatar_url, created_at FROM users WHERE id = $1',
-      [userId]
-    );
-    
-    if (result.rows.length === 0) {
-      console.log('❌ User not found in database:', userId);
-      return res.status(404).json({ error: 'User not found' });
+  pool.query(
+    'SELECT id, username, email, avatar_url, created_at FROM users WHERE id = $1',
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Server error' });
+      }
+      
+      if (result.rows.length === 0) {
+        console.log('❌ User not found in database:', userId);
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      console.log('✅ User found:', result.rows[0].username);
+      res.json(result.rows[0]);
     }
-    
-    console.log('✅ User found:', result.rows[0].username);
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error fetching user:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
+  );
 });
 
 // Обновить профиль

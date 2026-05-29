@@ -1,22 +1,25 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const authMiddleware = require('./middleware/auth');
 const { syncBooks } = require('./utils/bookParser');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Синхронизация книг
 syncBooks().catch(console.error);
 
-const authMiddleware = require('./middleware/auth');
+// Маршруты
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
-app.use('/api/books', authMiddleware, booksRoutes);
+
+// Публичные маршруты (без аутентификации)
 app.use('/api/auth', authRoutes);
-app.use('/api/books', booksRoutes);
 
-
+// Защищённые маршруты
+app.use('/api/books', authMiddleware, booksRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Book Social API is running' });
