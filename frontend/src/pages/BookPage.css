@@ -1,13 +1,11 @@
 .book-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 0; /* Убрал padding слева и справа, оставил только вертикальные */
   min-height: calc(100vh - 120px);
 }
 
-/* ============================================
-   КНОПКА "НАЗАД"
-   ============================================ */
+/* Остальные стили остаются без изменений */
 .back-button {
   background: none;
   border: 1px solid #DFE2ED;
@@ -30,7 +28,6 @@ body.dark-theme .back-button {
   border-color: #404040;
 }
 
-/* Убираем любые изменения при наведении */
 .back-button:hover,
 .back-button:focus,
 .back-button:active {
@@ -53,9 +50,6 @@ body.dark-theme .back-button .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ============================================
-   ОСНОВНОЙ КОНТЕНТ
-   ============================================ */
 .book-content {
   display: flex;
   gap: 40px;
@@ -132,9 +126,6 @@ body.dark-theme .rating-badge {
   color: #FFFFFF;
 }
 
-/* ============================================
-   КНОПКИ СТАТУСА (идентично настройкам)
-   ============================================ */
 .book-actions {
   display: flex;
   gap: 12px;
@@ -160,21 +151,18 @@ body.dark-theme .status-btn {
   border-color: #404040;
 }
 
-/* Активная кнопка - светлая тема */
 .status-btn.active {
   background-color: #003BFF;
   border-color: #003BFF;
   color: white;
 }
 
-/* Активная кнопка - тёмная тема */
 body.dark-theme .status-btn.active {
   background-color: #FFFFFF;
   border-color: #FFFFFF;
   color: #1A1A1A;
 }
 
-/* Убираем ЛЮБЫЕ изменения при наведении */
 .status-btn:hover,
 .status-btn:focus,
 .status-btn:active {
@@ -191,7 +179,6 @@ body.dark-theme .status-btn:active {
   background-color: transparent;
 }
 
-/* Активная кнопка — при наведении не меняется */
 .status-btn.active:hover,
 .status-btn.active:focus,
 .status-btn.active:active {
@@ -208,7 +195,6 @@ body.dark-theme .status-btn.active:active {
   color: #1A1A1A;
 }
 
-/* Ripple для кнопок статуса */
 .status-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -221,9 +207,6 @@ body.dark-theme .status-btn.active .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* ============================================
-   КНОПКА "ЧИТАТЬ КНИГУ"
-   ============================================ */
 .read-button {
   width: 100%;
   border: none;
@@ -256,9 +239,6 @@ body.dark-theme .read-button .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* ============================================
-   ОПИСАНИЕ КНИГИ
-   ============================================ */
 .book-description h3 {
   font-size: 20px;
   margin-bottom: 12px;
@@ -279,9 +259,6 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
-/* ============================================
-   ЗАГРУЗКА И АДАПТИВ
-   ============================================ */
 .loading {
   text-align: center;
   padding: 60px;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Sun, Moon } from 'lucide-react';
 import Feed from './pages/Feed';
 import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
@@ -12,22 +13,22 @@ import './App.css';
 import LightIcon from './assets/Icon.svg';
 import DarkIcon from './assets/DarkIcon.svg';
 
-// Ripple эффект для кнопок
+// Ripple эффект для кнопки темы
 const createRipple = (event) => {
-  const element = event.currentTarget;
+  const button = event.currentTarget;
   const ripple = document.createElement('span');
-  const rect = element.getBoundingClientRect();
-  const size = Math.max(element.clientWidth, element.clientHeight);
+  const rect = button.getBoundingClientRect();
+  const size = Math.max(button.clientWidth, button.clientHeight);
   
   ripple.classList.add('ripple');
   ripple.style.width = ripple.style.height = `${size}px`;
   ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
   ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
   
-  const oldRipples = element.querySelectorAll('.ripple');
+  const oldRipples = button.querySelectorAll('.ripple');
   oldRipples.forEach(r => r.remove());
   
-  element.appendChild(ripple);
+  button.appendChild(ripple);
   setTimeout(() => ripple.remove(), 600);
 };
 
@@ -57,8 +58,12 @@ function App() {
               <Link to="/" className="logo-link" onMouseDown={createRipple}>
                 <img src={logoSrc} alt="Logo" className="logo-img" />
               </Link>
-              <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
-                {theme === 'light' ? '🌙' : '☀️'}
+              <button 
+                onClick={toggleTheme} 
+                className="theme-toggle-btn" 
+                onMouseDown={createRipple}
+              >
+                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </button>
             </div>
           </header>
