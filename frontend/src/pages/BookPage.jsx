@@ -53,16 +53,22 @@ export default function BookPage() {
       try {
         const token = localStorage.getItem('token');
         
-        const [bookRes, reviewsRes] = await Promise.all([
-          axios.get(`${API_URL}/api/books/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          axios.get(`${API_URL}/api/books/${id}/reviews`)
-        ]);
-        
+        // Загружаем книгу
+        const bookRes = await axios.get(`${API_URL}/api/books/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         setBook(bookRes.data);
-        setReviews(reviewsRes.data);
         
+        // Загружаем отзывы (публичный доступ, без токена)
+        try {
+          const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
+          setReviews(reviewsRes.data);
+        } catch (reviewsErr) {
+          console.error('Ошибка загрузки отзывов:', reviewsErr);
+          setReviews([]);
+        }
+        
+        // Загружаем прогресс чтения
         try {
           const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -76,6 +82,7 @@ export default function BookPage() {
           console.error('Ошибка загрузки прогресса:', progressErr);
         }
         
+        // Загружаем статус книги
         try {
           const statusResponse = await axios.get(`${API_URL}/api/books/${id}/status`, {
             headers: { Authorization: `Bearer ${token}` }
