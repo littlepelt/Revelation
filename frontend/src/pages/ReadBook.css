@@ -66,7 +66,7 @@ body.dark-theme .back-btn {
   border-color: #404040;
 }
 
-/* Убираем ВСЕ изменения при наведении */
+/* Убираем изменение цвета при наведении */
 .back-btn:hover {
   border-color: #DFE2ED;
   color: #003BFF;
@@ -119,6 +119,42 @@ body.dark-theme .read-title p {
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* ============================================
+   КАСТОМНЫЙ СКРОЛЛБАР - СВЕТЛАЯ ТЕМА
+   ============================================ */
+.read-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.read-content::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 4px;
+}
+
+.read-content::-webkit-scrollbar-thumb {
+  background: #C1C1C1;
+  border-radius: 4px;
+}
+
+.read-content::-webkit-scrollbar-thumb:hover {
+  background: #A8A8A8;
+}
+
+/* ============================================
+   КАСТОМНЫЙ СКРОЛЛБАР - ТЁМНАЯ ТЕМА
+   ============================================ */
+body.dark-theme .read-content::-webkit-scrollbar-track {
+  background: #2A2A2A;
+}
+
+body.dark-theme .read-content::-webkit-scrollbar-thumb {
+  background: #555555;
+}
+
+body.dark-theme .read-content::-webkit-scrollbar-thumb:hover {
+  background: #777777;
 }
 
 /* Стили для параграфов */
@@ -180,6 +216,7 @@ body.dark-theme .read-footer {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  transition: none;
 }
 
 /* Светлая тема */
