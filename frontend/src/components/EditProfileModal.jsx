@@ -6,7 +6,6 @@ import './EditProfileModal.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Ripple эффект
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');
@@ -51,15 +50,31 @@ export default function EditProfileModal({ onClose }) {
     setError('');
     
     try {
-      // Здесь будет логика загрузки файла на сервер
-      // Пока просто обновляем username
+      // Проверяем, что токен существует
+      if (!token) {
+        throw new Error('No auth token');
+      }
+      
+      // Для загрузки файла нужно будет использовать FormData
+      const formData = new FormData();
+      formData.append('username', username);
+      if (avatarFile) {
+        formData.append('avatar', avatarFile);
+      }
+      
       const response = await axios.put(`${API_URL}/api/auth/profile`,
         { username, avatar_url: avatarPreview },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { 
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          } 
+        }
       );
       updateUser(response.data);
       onClose();
     } catch (err) {
+      console.error('Profile update error:', err.response?.status, err.response?.data);
       setError(err.response?.data?.error || 'Ошибка сохранения');
     } finally {
       setLoading(false);

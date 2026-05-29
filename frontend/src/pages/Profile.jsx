@@ -29,13 +29,18 @@ export default function Profile() {
   if (!user) return null;
 
   const shelves = [
-    { id: 'reading', name: 'Читаю', count: 0, color: '#003BFF' },
-    { id: 'read', name: 'Прочитано', count: 0, color: '#10B981' },
-    { id: 'want_to_read', name: 'Буду читать', count: 0, color: '#F59E0B' }
+    { id: 'reading', name: 'Читаю', count: 0 },
+    { id: 'read', name: 'Прочитано', count: 0 },
+    { id: 'want_to_read', name: 'Буду читать', count: 0 }
   ];
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleShelfClick = (shelfId) => {
+    // TODO: фильтрация книг по полке
+    console.log('Shelf clicked:', shelfId);
   };
 
   const joinedDate = user.created_at 
@@ -81,7 +86,8 @@ export default function Profile() {
             <div 
               key={shelf.id} 
               className="shelf-card"
-              data-shelf={shelf.id}
+              onClick={() => handleShelfClick(shelf.id)}
+              onMouseDown={createRipple}
             >
               <div className="shelf-info">
                 <h3>{shelf.name}</h3>

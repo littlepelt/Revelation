@@ -12,7 +12,6 @@
 }
 
 .profile-avatar {
-  position: relative;
   flex-shrink: 0;
 }
 
@@ -21,16 +20,8 @@
   height: 120px;
   border-radius: 60px;
   object-fit: cover;
-}
-
-/* Светлая тема - рамка аватара синяя */
-.profile-avatar img {
-  border: 3px solid #003BFF;
-}
-
-/* Тёмная тема - рамка аватара белая */
-body.dark-theme .profile-avatar img {
-  border: 3px solid #FFFFFF;
+  /* Убираем рамку */
+  border: none;
 }
 
 .profile-info {
@@ -62,7 +53,7 @@ body.dark-theme .profile-email {
   margin-bottom: 20px;
 }
 
-/* Кнопки как в проекте */
+/* Кнопки как в проекте - убираем изменение обводки при наведении */
 .edit-profile-btn, .logout-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -89,10 +80,27 @@ body.dark-theme .logout-btn {
   border-color: #404040;
 }
 
-/* Убираем изменения при наведении */
-.edit-profile-btn:hover, .logout-btn:hover {
-  border-color: inherit;
-  color: inherit;
+/* Явно запрещаем любые изменения при наведении */
+.edit-profile-btn:hover, 
+.edit-profile-btn:focus, 
+.edit-profile-btn:active,
+.logout-btn:hover,
+.logout-btn:focus,
+.logout-btn:active {
+  border-color: #DFE2ED !important;
+  color: #1A1A1A !important;
+  background-color: transparent !important;
+}
+
+body.dark-theme .edit-profile-btn:hover,
+body.dark-theme .edit-profile-btn:focus,
+body.dark-theme .edit-profile-btn:active,
+body.dark-theme .logout-btn:hover,
+body.dark-theme .logout-btn:focus,
+body.dark-theme .logout-btn:active {
+  border-color: #404040 !important;
+  color: #E0E0E0 !important;
+  background-color: transparent !important;
 }
 
 /* Ripple для кнопок */
@@ -129,8 +137,10 @@ body.dark-theme .profile-shelves h2 {
   background: #FFFFFF;
   border: 1px solid #DFE2ED;
   border-radius: 12px;
-  transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: none;
 }
 
 body.dark-theme .shelf-card {
@@ -138,12 +148,13 @@ body.dark-theme .shelf-card {
   border-color: #404040;
 }
 
+/* Убираем анимации приподнятия и тени */
 .shelf-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: none;
+  box-shadow: none;
 }
 
-/* Убираем shelf-color, используем вместо него цвет текста */
+/* Обычный цвет текста для всех полок */
 .shelf-info h3 {
   font-size: 16px;
   font-weight: 600;
@@ -155,30 +166,6 @@ body.dark-theme .shelf-info h3 {
   color: #E0E0E0;
 }
 
-/* Читаю - синий в светлой теме, белый в тёмной */
-.shelf-card[data-shelf="reading"] .shelf-info h3 {
-  color: #003BFF;
-}
-body.dark-theme .shelf-card[data-shelf="reading"] .shelf-info h3 {
-  color: #FFFFFF;
-}
-
-/* Прочитано - зелёный в светлой теме */
-.shelf-card[data-shelf="read"] .shelf-info h3 {
-  color: #10B981;
-}
-body.dark-theme .shelf-card[data-shelf="read"] .shelf-info h3 {
-  color: #10B981;
-}
-
-/* Буду читать - оранжевый в светлой теме */
-.shelf-card[data-shelf="want_to_read"] .shelf-info h3 {
-  color: #F59E0B;
-}
-body.dark-theme .shelf-card[data-shelf="want_to_read"] .shelf-info h3 {
-  color: #F59E0B;
-}
-
 .shelf-info p {
   font-size: 14px;
   color: #888;
@@ -186,6 +173,15 @@ body.dark-theme .shelf-card[data-shelf="want_to_read"] .shelf-info h3 {
 
 body.dark-theme .shelf-info p {
   color: #AAAAAA;
+}
+
+/* Ripple для полок */
+.shelf-card .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .shelf-card .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 @media (max-width: 768px) {
