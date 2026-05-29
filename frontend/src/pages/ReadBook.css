@@ -39,7 +39,7 @@ body.dark-theme .read-header {
   border-bottom-color: #404040;
 }
 
-/* Кнопка "Назад" - квадратная, с ripple */
+/* Кнопка "Назад" */
 .back-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -52,7 +52,6 @@ body.dark-theme .read-header {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  transition: none;
 }
 
 /* Светлая тема */
@@ -67,13 +66,17 @@ body.dark-theme .back-btn {
   border-color: #404040;
 }
 
-/* Убираем изменение цвета при наведении */
+/* Убираем ВСЕ изменения при наведении */
 .back-btn:hover {
-  border-color: inherit;
-  color: inherit;
+  border-color: #DFE2ED;
+  color: #003BFF;
 }
 
-/* Ripple для кнопки назад */
+body.dark-theme .back-btn:hover {
+  border-color: #404040;
+  color: #FFFFFF;
+}
+
 .back-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -177,7 +180,6 @@ body.dark-theme .read-footer {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  transition: none;
 }
 
 /* Светлая тема */
@@ -193,10 +195,16 @@ body.dark-theme .settings-btn {
   border-color: #404040;
 }
 
-/* Убираем изменение цвета при наведении */
+/* Убираем ВСЕ изменения при наведении */
 .nav-btn:hover, .settings-btn:hover {
-  border-color: inherit;
-  color: inherit;
+  border-color: #DFE2ED;
+  color: #1A1A1A;
+}
+
+body.dark-theme .nav-btn:hover,
+body.dark-theme .settings-btn:hover {
+  border-color: #404040;
+  color: #E0E0E0;
 }
 
 .nav-btn.disabled {
@@ -204,7 +212,6 @@ body.dark-theme .settings-btn {
   cursor: not-allowed;
 }
 
-/* Ripple для кнопок футера */
 .nav-btn .ripple, .settings-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }

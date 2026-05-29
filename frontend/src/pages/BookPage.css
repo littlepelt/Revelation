@@ -5,7 +5,7 @@
   min-height: calc(100vh - 120px);
 }
 
-/* Кнопка "Назад" - квадратная, как в читалке */
+/* Кнопка "Назад" - квадратная */
 .back-button {
   background: none;
   border: 1px solid #DFE2ED;
@@ -19,7 +19,6 @@
   margin-bottom: 20px;
   position: relative;
   overflow: hidden;
-  transition: none;
 }
 
 /* Светлая тема */
@@ -34,10 +33,15 @@ body.dark-theme .back-button {
   border-color: #404040;
 }
 
-/* Убираем изменение цвета при наведении */
+/* Убираем ВСЕ изменения при наведении */
 .back-button:hover {
-  border-color: inherit;
-  color: inherit;
+  border-color: #DFE2ED;
+  color: #003BFF;
+}
+
+body.dark-theme .back-button:hover {
+  border-color: #404040;
+  color: #FFFFFF;
 }
 
 .back-button .ripple {
@@ -140,7 +144,6 @@ body.dark-theme .rating-badge {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: none;
 }
 
 /* Светлая тема - неактивная кнопка */
@@ -169,15 +172,19 @@ body.dark-theme .status-btn.active {
   color: #1A1A1A;
 }
 
-/* Убираем изменение цвета при наведении */
-.status-btn:hover {
+/* Убираем ВСЕ изменения при наведении */
+.status-btn:hover,
+.status-btn.active:hover {
   border-color: inherit;
   color: inherit;
+  background-color: inherit;
 }
 
-body.dark-theme .status-btn:hover {
+body.dark-theme .status-btn:hover,
+body.dark-theme .status-btn.active:hover {
   border-color: inherit;
   color: inherit;
+  background-color: inherit;
 }
 
 /* Ripple для кнопок статуса */
@@ -185,12 +192,10 @@ body.dark-theme .status-btn:hover {
   background: rgba(0, 0, 0, 0.1);
 }
 
-/* Тёмная тема: неактивная кнопка - светлый ripple */
 body.dark-theme .status-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Тёмная тема: активная кнопка - тёмный ripple */
 body.dark-theme .status-btn.active .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
