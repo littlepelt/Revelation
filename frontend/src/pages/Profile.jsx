@@ -19,6 +19,11 @@ export default function Profile() {
     logout();
   };
 
+  // Форматируем дату регистрации
+  const joinedDate = user.created_at 
+    ? new Date(user.created_at).toLocaleDateString('ru-RU')
+    : 'неизвестно';
+
   return (
     <div className="profile-page">
       <div className="profile-header">
@@ -35,7 +40,7 @@ export default function Profile() {
           <h1>{user.username}</h1>
           <p className="profile-email">{user.email}</p>
           <p className="profile-joined">
-            Присоединился: {new Date(user.created_at).toLocaleDateString('ru-RU')}
+            Присоединился: {joinedDate}
           </p>
           <button className="edit-profile-btn" onClick={() => setShowEditModal(true)}>
             Редактировать профиль

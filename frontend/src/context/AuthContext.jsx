@@ -1,66 +1,53 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 
 const AuthContext = createContext();
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initAuth = async () => {
-      const storedToken = localStorage.getItem('token');
-      
-      console.log('🔐 Initializing auth, token exists:', !!storedToken);
-      
-      if (!storedToken || storedToken === 'null' || storedToken === 'undefined') {
-        console.log('❌ No valid token found');
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        console.log('🔍 Verifying token with server...');
-        const response = await axios.get(`${API_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${storedToken}` }
-        });
-        
-        if (response.data && response.data.id) {
-          console.log('✅ User authenticated:', response.data.username);
-          setUser(response.data);
-        } else {
-          console.log('❌ Invalid response from server');
-          localStorage.removeItem('token');
-        }
-      } catch (err) {
-        console.error('❌ Token verification failed:', err.response?.status, err.response?.data);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
-      }
-    };
+    // При загрузке просто достаём пользователя из localStorage
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
     
-    initAuth();
+    if (storedUser && storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        console.log('✅ User restored from localStorage:', parsedUser.username);
+      } catch (e) {
+        console.error('Failed to parse stored user:', e);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+      }
+    }
+    
+    setLoading(false);
   }, []);
 
-  const login = (newToken, userData) => {
-    if (!newToken || newToken === 'null' || newToken === 'undefined') {
+  const login = (token, userData) => {
+    if (!token || token === 'null' || token === 'undefined') {
       console.error('Invalid token provided to login');
       return;
     }
-    console.log('🔐 Logging in user:', userData.username);
-    localStorage.setItem('token', newToken);
+    
+    // Сохраняем и токен, и данные пользователя
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
+    console.log('✅ User logged in:', userData.username);
   };
 
   const logout = () => {
-    console.log('🔐 Logging out user');
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
+    console.log('✅ User logged out');
   };
 
   const updateUser = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 

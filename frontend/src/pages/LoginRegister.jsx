@@ -30,6 +30,7 @@ export default function LoginRegister() {
         throw new Error('Invalid token received');
       }
       
+      // Сохраняем пользователя и токен
       login(response.data.token, response.data.user);
       navigate('/');
     } catch (err) {
