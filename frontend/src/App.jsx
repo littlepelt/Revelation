@@ -10,8 +10,8 @@ import { useTheme } from './context/ThemeContext';
 import './App.css';
 
 // Импорт иконок для темы
-import LightIcon from './assets/icon.svg';
-import DarkIcon from './assets/dark-icon.svg';
+import LightIcon from './assets/Icon.svg';
+import DarkIcon from './assets/DarkIcon.svg';
 
 function App() {
   const [user, setUser] = useState(null);
