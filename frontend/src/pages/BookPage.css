@@ -66,12 +66,11 @@ body.dark-theme .back-button .ripple {
   flex-shrink: 0;
 }
 
-/* Обложка - чуть меньше */
+/* Обложка - без тени */
 .book-cover-large {
   width: 260px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .book-cover-large img {
@@ -80,7 +79,7 @@ body.dark-theme .back-button .ripple {
   display: block;
 }
 
-/* Кнопка "Читать книгу" - под обложкой, такой же ширины */
+/* Кнопка "Читать книгу" - под обложкой, такой же ширины, с анимацией как у book-card */
 .read-button {
   width: 260px;
   border: none;
@@ -91,17 +90,31 @@ body.dark-theme .back-button .ripple {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: transform 0.15s ease;
+  transform: scale(1);
+}
+
+/* Светлая тема */
+.read-button {
   background-color: #003BFF;
   color: white;
 }
 
+/* Тёмная тема */
 body.dark-theme .read-button {
   background-color: #FFFFFF;
   color: #1A1A1A;
 }
 
+/* Анимация при нажатии (как у book-card) */
+.read-button:active {
+  transform: scale(0.98);
+  transition: transform 0.08s ease;
+}
+
+/* Убираем изменение opacity при наведении */
 .read-button:hover {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .read-button .ripple {
