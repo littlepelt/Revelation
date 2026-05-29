@@ -1,7 +1,6 @@
 .profile-page {
-  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px 0;
+  padding: 20px;
 }
 
 .profile-container {
@@ -14,20 +13,22 @@
 .profile-left {
   flex-shrink: 0;
   width: 260px;
-  text-align: center;
+  text-align: left;
 }
 
 .profile-avatar {
   margin-bottom: 16px;
+  width: 100%;
+  max-width: 240px;
 }
 
 .profile-avatar img {
   width: 100%;
-  max-width: 240px;
-  height: auto;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
   border: none;
+  display: block;
 }
 
 .profile-username {
@@ -36,6 +37,7 @@
   margin: 12px 0 20px;
   color: #222;
   word-break: break-word;
+  text-align: left;
 }
 
 body.dark-theme .profile-username {
@@ -206,6 +208,11 @@ body.dark-theme .shelf-card .ripple {
   
   .profile-left {
     width: 220px;
+    text-align: center;
+  }
+  
+  .profile-username {
+    text-align: center;
   }
   
   .profile-right {
