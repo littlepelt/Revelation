@@ -24,6 +24,12 @@
   background-color: #FFFFFF;
 }
 
+body.dark-theme .search-input {
+  background-color: #2A2A2A;
+  border-color: #404040;
+  color: #E0E0E0;
+}
+
 .books-list {
   display: flex;
   flex-direction: column;
@@ -39,7 +45,7 @@
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  transition: all 0.25s ease;
+  transition: background-color 0.2s ease, transform 0.15s ease;
   border: none;
   border-radius: 12px;
   transform: scale(1);
@@ -51,8 +57,13 @@
   background-color: #F9F9F9;
 }
 
+body.dark-theme .book-card:hover {
+  background-color: #2A2A2A;
+}
+
 .book-card:active {
   transform: scale(0.95);
+  transition: transform 0.08s ease;
 }
 
 .book-cover {
@@ -66,6 +77,11 @@
   overflow: hidden;
   flex-shrink: 0;
   border: 1px solid #E9E9E9;
+}
+
+body.dark-theme .book-cover {
+  background-color: #3A3A3A;
+  border-color: #404040;
 }
 
 .book-cover img {
@@ -86,6 +102,11 @@
   justify-content: center;
 }
 
+body.dark-theme .cover-placeholder {
+  background: #1A1A1A;
+  color: #FFFFFF;
+}
+
 .book-main {
   flex: 1;
 }
@@ -97,10 +118,18 @@
   color: #222222;
 }
 
+body.dark-theme .book-title {
+  color: #E0E0E0;
+}
+
 .book-author {
   color: #666666;
   margin-bottom: 6px;
   font-size: 14px;
+}
+
+body.dark-theme .book-author {
+  color: #AAAAAA;
 }
 
 .book-rating {
@@ -121,9 +150,17 @@
   font-size: 13px;
 }
 
+body.dark-theme .rating-value {
+  color: #AAAAAA;
+}
+
 .book-date {
   color: #888888;
   font-size: 13px;
+}
+
+body.dark-theme .book-date {
+  color: #AAAAAA;
 }
 
 .ripple {
@@ -133,6 +170,16 @@
   transform: scale(0);
   animation: ripple-effect 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+}
+
+/* Светлая тема - тёмный ripple */
+.book-card .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Тёмная тема - светлый ripple */
+body.dark-theme .book-card .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 @keyframes ripple-effect {
@@ -158,64 +205,23 @@
   font-size: 14px;
 }
 
-/* Тёмная тема для ленты */
-body.dark-theme .search-input {
-  background-color: #2A2A2A;
-  border-color: #404040;
-  color: #E0E0E0;
-}
-
-body.dark-theme .search-input:focus {
-  border-color: #003BFF;
-  background-color: #333333;
-}
-
-body.dark-theme .book-card:hover {
-  background-color: #2A2A2A;
-}
-
-body.dark-theme .book-title {
-  color: #E0E0E0;
-}
-
-body.dark-theme .book-author {
-  color: #AAAAAA;
-}
-
-body.dark-theme .book-date {
-  color: #888888;
-}
-
-body.dark-theme .cover-placeholder {
-  background-color: #333333;
-}
-
-/* Адаптив для планшетов и телефонов */
 @media (max-width: 768px) {
   .feed-container {
     padding: 16px 0;
   }
   
   .book-card {
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-    align-items: center;
-    text-align: center;
+    gap: 15px;
+    padding: 15px 0;
+  }
+  
+  .book-card:active {
+    transform: scale(0.95);
   }
   
   .book-cover {
-    width: 120px;
-    height: 180px;
-    margin-bottom: 8px;
-  }
-  
-  .book-main {
-    text-align: center;
-  }
-  
-  .book-rating {
-    justify-content: center;
+    width: 60px;
+    height: 90px;
   }
   
   .book-title {
@@ -229,37 +235,5 @@ body.dark-theme .cover-placeholder {
   .search-input {
     padding: 10px 14px;
     font-size: 14px;
-  }
-}
-
-/* Адаптив для очень маленьких телефонов */
-@media (max-width: 480px) {
-  .book-cover {
-    width: 100px;
-    height: 150px;
-  }
-  
-  .book-card {
-    padding: 12px;
-  }
-  
-  .book-title {
-    font-size: 15px;
-  }
-  
-  .book-author {
-    font-size: 12px;
-  }
-  
-  .rating-stars {
-    font-size: 12px;
-  }
-  
-  .rating-value {
-    font-size: 11px;
-  }
-  
-  .book-date {
-    font-size: 11px;
   }
 }

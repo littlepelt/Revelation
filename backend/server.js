@@ -40,25 +40,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
-
-// Временный маршрут для миграции
-app.get('/api/migrate', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  try {
-    await pool.query('ALTER TABLE user_book_status ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating >= 1 AND rating <= 5)');
-    await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT');
-    res.json({ success: true, message: 'Migration completed' });
-  } catch (err) {
-    console.error('Migration error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
