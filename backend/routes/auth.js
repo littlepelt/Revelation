@@ -154,6 +154,7 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
   }
   
   try {
+    // Сначала получаем пользователя
     const userResult = await pool.query(
       'SELECT id FROM users WHERE username = $1',
       [username]
@@ -165,8 +166,16 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
     
     const userId = userResult.rows[0].id;
     
+    // Получаем книги с этой полки
     const booksResult = await pool.query(`
-      SELECT b.id, b.title, b.author, b.cover_url, b.publication_year, ubs.rating
+      SELECT 
+        b.id, 
+        b.title, 
+        b.author, 
+        b.cover_url, 
+        b.publication_year,
+        ubs.rating,
+        ubs.updated_at
       FROM user_book_status ubs
       JOIN books b ON ubs.book_id = b.id
       WHERE ubs.user_id = $1 AND ubs.status = $2
@@ -176,7 +185,7 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
     res.json(booksResult.rows);
   } catch (err) {
     console.error('Error fetching shelf:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + err.message });
   }
 });
 
