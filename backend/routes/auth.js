@@ -85,42 +85,33 @@ router.post('/login', async (req, res) => {
 });
 
 // Получить текущего пользователя
-router.get('/me', (req, res) => {
-  // Добавляем подробное логирование
-  console.log('🔍 /me called');
-  console.log('📌 req.user:', req.user);
-  console.log('📌 req.user?.userId:', req.user?.userId);
-  
-  const userId = req.user?.userId;
+router.get('/me', async (req, res) => {
+  const userId = req.userId; // Берём из middleware
   
   if (!userId) {
-    console.log('❌ No userId in request, returning 401');
-    return res.status(401).json({ error: 'Unauthorized: No user ID in token' });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  pool.query(
-    'SELECT id, username, email, avatar_url, created_at FROM users WHERE id = $1',
-    [userId],
-    (err, result) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ error: 'Server error' });
-      }
-      
-      if (result.rows.length === 0) {
-        console.log('❌ User not found in database:', userId);
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      console.log('✅ User found:', result.rows[0].username);
-      res.json(result.rows[0]);
+  try {
+    const result = await pool.query(
+      'SELECT id, username, email, avatar_url, created_at FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
     }
-  );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Обновить профиль
 router.put('/profile', async (req, res) => {
-  const userId = req.user?.userId;
+  const userId = req.userId;
   const { username, avatar_url } = req.body;
   
   if (!userId) {

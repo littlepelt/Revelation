@@ -150,7 +150,7 @@ router.get('/:id/page/:pageNum', async (req, res) => {
 router.post('/:id/progress', async (req, res) => {
   const { id } = req.params;
   const { position } = req.body;
-  const userId = req.user?.userId;
+  const userId = req.userId;
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -212,7 +212,7 @@ router.post('/:id/status', async (req, res) => {
 // ============================================
 router.get('/:id/progress', async (req, res) => {
   const { id } = req.params;
-  const userId = req.user?.userId;
+  const userId = req.userId;
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
