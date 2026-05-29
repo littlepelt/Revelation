@@ -193,16 +193,29 @@ router.put('/profile', authMiddleware, async (req, res) => {
   const userId = req.userId;
   const { username, avatar_url } = req.body;
   
+  console.log('Updating profile for user:', userId);
+  console.log('New username:', username);
+  console.log('New avatar_url:', avatar_url);
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
   try {
     const result = await pool.query(
       'UPDATE users SET username = $1, avatar_url = $2 WHERE id = $3 RETURNING id, username, email, avatar_url, created_at',
       [username, avatar_url, userId]
     );
     
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    console.log('Profile updated successfully:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error updating user:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });
 
