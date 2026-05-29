@@ -129,7 +129,7 @@ body.dark-theme .rating-badge {
   color: #FFFFFF;
 }
 
-/* Кнопки действий - как в настройках читалки */
+/* Кнопки действий - ИДЕНТИЧНО настройкам в читалке */
 .book-actions {
   display: flex;
   gap: 12px;
@@ -149,33 +149,33 @@ body.dark-theme .rating-badge {
   transition: none;
 }
 
-/* Светлая тема - неактивная кнопка */
+/* Светлая тема - неактивная кнопка (как в настройках) */
 .status-btn {
   color: #1A1A1A;
   border-color: #DFE2ED;
 }
 
-/* Светлая тема - активная кнопка */
+/* Светлая тема - активная кнопка (как в настройках) */
 .status-btn.active {
   background-color: #003BFF;
   border-color: #003BFF;
   color: white;
 }
 
-/* Тёмная тема - неактивная кнопка */
+/* Тёмная тема - неактивная кнопка (как в настройках) */
 body.dark-theme .status-btn {
   color: #E0E0E0;
   border-color: #404040;
 }
 
-/* Тёмная тема - активная кнопка */
+/* Тёмная тема - активная кнопка (как в настройках) */
 body.dark-theme .status-btn.active {
   background-color: #FFFFFF;
   border-color: #FFFFFF;
   color: #1A1A1A;
 }
 
-/* Убираем изменение цвета при наведении */
+/* Убираем ВСЕ изменения при наведении (как в настройках) */
 .status-btn:hover,
 .status-btn.active:hover {
   border-color: inherit;
@@ -190,7 +190,7 @@ body.dark-theme .status-btn.active:hover {
   background-color: inherit;
 }
 
-/* Ripple для кнопок статуса */
+/* Ripple для кнопок статуса (как в настройках) */
 .status-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -269,12 +269,12 @@ body.dark-theme .book-description p {
   color: #888;
 }
 
-/* Ripple эффект */
+/* Ripple эффект - ПРЕЖНЯЯ СКОРОСТЬ (как в настройках) */
 .ripple {
   position: absolute;
   border-radius: 50%;
   transform: scale(0);
-  animation: ripple-effect 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  animation: ripple-effect 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
