@@ -13,12 +13,8 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .settings-panel {
@@ -32,10 +28,8 @@
   animation: slideUp 0.3s ease;
 }
 
-/* Тёмная тема для панели настроек */
 body.dark-theme .settings-panel {
   background-color: #2A2A2A;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes slideUp {
@@ -82,7 +76,8 @@ body.dark-theme .settings-header h3 {
   align-items: center;
   justify-content: center;
   color: #666;
-  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .close-btn:hover {
@@ -96,7 +91,15 @@ body.dark-theme .close-btn {
 
 body.dark-theme .close-btn:hover {
   background-color: #3A3A3A;
-  color: #003BFF;
+  color: #FFFFFF;
+}
+
+.close-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .close-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .settings-section {
@@ -143,6 +146,8 @@ body.dark-theme .setting-label {
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative;
+  overflow: hidden;
 }
 
 body.dark-theme .theme-btn,
@@ -159,18 +164,25 @@ body.dark-theme .weight-btn {
   color: white;
 }
 
-.theme-btn:hover:not(.active), .size-btn:hover:not(.active), 
-.line-btn:hover:not(.active), .weight-btn:hover:not(.active) {
-  border-color: #003BFF;
-  color: #003BFF;
+body.dark-theme .theme-btn.active,
+body.dark-theme .size-btn.active,
+body.dark-theme .line-btn.active,
+body.dark-theme .weight-btn.active {
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: #1A1A1A;
 }
 
-body.dark-theme .theme-btn:hover:not(.active),
-body.dark-theme .size-btn:hover:not(.active),
-body.dark-theme .line-btn:hover:not(.active),
-body.dark-theme .weight-btn:hover:not(.active) {
-  border-color: #003BFF;
-  color: #003BFF;
+.theme-btn .ripple, .size-btn .ripple, 
+.line-btn .ripple, .weight-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .theme-btn .ripple,
+body.dark-theme .size-btn .ripple,
+body.dark-theme .line-btn .ripple,
+body.dark-theme .weight-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .align-control {
@@ -190,6 +202,8 @@ body.dark-theme .weight-btn:hover:not(.active) {
   justify-content: center;
   transition: all 0.2s;
   color: #666;
+  position: relative;
+  overflow: hidden;
 }
 
 body.dark-theme .align-btn {
@@ -203,9 +217,18 @@ body.dark-theme .align-btn {
   color: white;
 }
 
-.align-btn:hover:not(.active) {
-  border-color: #003BFF;
-  color: #003BFF;
+body.dark-theme .align-btn.active {
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+.align-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .align-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .setting-divider {
@@ -242,6 +265,8 @@ body.dark-theme .settings-footer {
   gap: 8px;
   transition: all 0.2s;
   color: #666;
+  position: relative;
+  overflow: hidden;
 }
 
 body.dark-theme .reset-btn {
@@ -252,4 +277,12 @@ body.dark-theme .reset-btn {
 .reset-btn:hover {
   border-color: #DC2626;
   color: #DC2626;
+}
+
+.reset-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .reset-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }

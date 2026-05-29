@@ -12,6 +12,25 @@ const defaultSettings = {
   textAlign: 'justify'
 };
 
+// Ripple эффект
+const createRipple = (event) => {
+  const button = event.currentTarget;
+  const ripple = document.createElement('span');
+  const rect = button.getBoundingClientRect();
+  const size = Math.max(button.clientWidth, button.clientHeight);
+  
+  ripple.classList.add('ripple');
+  ripple.style.width = ripple.style.height = `${size}px`;
+  ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+  ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+  
+  const oldRipples = button.querySelectorAll('.ripple');
+  oldRipples.forEach(r => r.remove());
+  
+  button.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+};
+
 export default function ReaderSettings({ onClose, onApply }) {
   const [settings, setSettings] = useState(defaultSettings);
   const { theme, toggleTheme } = useTheme();
@@ -59,7 +78,7 @@ export default function ReaderSettings({ onClose, onApply }) {
       <div className="settings-panel" onClick={(e) => e.stopPropagation()}>
         <div className="settings-header">
           <h3>Настройки чтения</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={onClose} onMouseDown={createRipple}>
             <X size={20} />
           </button>
         </div>
@@ -74,18 +93,16 @@ export default function ReaderSettings({ onClose, onApply }) {
             <div className="setting-control">
               <button 
                 className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
-                onClick={() => {
-                  if (theme !== 'light') toggleTheme();
-                }}
+                onClick={() => { if (theme !== 'light') toggleTheme(); }}
+                onMouseDown={createRipple}
               >
                 <Sun size={16} />
                 Светлая
               </button>
               <button 
                 className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
-                onClick={() => {
-                  if (theme !== 'dark') toggleTheme();
-                }}
+                onClick={() => { if (theme !== 'dark') toggleTheme(); }}
+                onMouseDown={createRipple}
               >
                 <Moon size={16} />
                 Тёмная
@@ -95,7 +112,6 @@ export default function ReaderSettings({ onClose, onApply }) {
 
           <div className="setting-divider"></div>
 
-          {/* Остальные настройки */}
           <div className="setting-item">
             <div className="setting-label">
               <span style={{ fontSize: '18px' }}>Aa</span>
@@ -105,24 +121,28 @@ export default function ReaderSettings({ onClose, onApply }) {
               <button 
                 className={`size-btn ${settings.fontSize === 'small' ? 'active' : ''}`}
                 onClick={() => handleFontSizeChange('small')}
+                onMouseDown={createRipple}
               >
                 Маленький
               </button>
               <button 
                 className={`size-btn ${settings.fontSize === 'normal' ? 'active' : ''}`}
                 onClick={() => handleFontSizeChange('normal')}
+                onMouseDown={createRipple}
               >
                 Средний
               </button>
               <button 
                 className={`size-btn ${settings.fontSize === 'large' ? 'active' : ''}`}
                 onClick={() => handleFontSizeChange('large')}
+                onMouseDown={createRipple}
               >
                 Большой
               </button>
               <button 
                 className={`size-btn ${settings.fontSize === 'xlarge' ? 'active' : ''}`}
                 onClick={() => handleFontSizeChange('xlarge')}
+                onMouseDown={createRipple}
               >
                 Очень большой
               </button>
@@ -138,18 +158,21 @@ export default function ReaderSettings({ onClose, onApply }) {
               <button 
                 className={`weight-btn ${settings.fontWeight === 'normal' ? 'active' : ''}`}
                 onClick={() => handleFontWeightChange('normal')}
+                onMouseDown={createRipple}
               >
                 Обычный
               </button>
               <button 
                 className={`weight-btn ${settings.fontWeight === 'medium' ? 'active' : ''}`}
                 onClick={() => handleFontWeightChange('medium')}
+                onMouseDown={createRipple}
               >
                 Полужирный
               </button>
               <button 
                 className={`weight-btn ${settings.fontWeight === 'bold' ? 'active' : ''}`}
                 onClick={() => handleFontWeightChange('bold')}
+                onMouseDown={createRipple}
               >
                 Жирный
               </button>
@@ -165,18 +188,21 @@ export default function ReaderSettings({ onClose, onApply }) {
               <button 
                 className={`line-btn ${settings.lineHeight === 'compact' ? 'active' : ''}`}
                 onClick={() => handleLineHeightChange('compact')}
+                onMouseDown={createRipple}
               >
                 Уплотнённый
               </button>
               <button 
                 className={`line-btn ${settings.lineHeight === 'normal' ? 'active' : ''}`}
                 onClick={() => handleLineHeightChange('normal')}
+                onMouseDown={createRipple}
               >
                 Обычный
               </button>
               <button 
                 className={`line-btn ${settings.lineHeight === 'loose' ? 'active' : ''}`}
                 onClick={() => handleLineHeightChange('loose')}
+                onMouseDown={createRipple}
               >
                 Разреженный
               </button>
@@ -192,24 +218,28 @@ export default function ReaderSettings({ onClose, onApply }) {
               <button 
                 className={`align-btn ${settings.textAlign === 'left' ? 'active' : ''}`}
                 onClick={() => handleTextAlignChange('left')}
+                onMouseDown={createRipple}
               >
                 <AlignLeft size={18} />
               </button>
               <button 
                 className={`align-btn ${settings.textAlign === 'center' ? 'active' : ''}`}
                 onClick={() => handleTextAlignChange('center')}
+                onMouseDown={createRipple}
               >
                 <AlignCenter size={18} />
               </button>
               <button 
                 className={`align-btn ${settings.textAlign === 'right' ? 'active' : ''}`}
                 onClick={() => handleTextAlignChange('right')}
+                onMouseDown={createRipple}
               >
                 <AlignRight size={18} />
               </button>
               <button 
                 className={`align-btn ${settings.textAlign === 'justify' ? 'active' : ''}`}
                 onClick={() => handleTextAlignChange('justify')}
+                onMouseDown={createRipple}
               >
                 <AlignJustify size={18} />
               </button>
@@ -218,7 +248,7 @@ export default function ReaderSettings({ onClose, onApply }) {
         </div>
 
         <div className="settings-footer">
-          <button className="reset-btn" onClick={resetSettings}>
+          <button className="reset-btn" onClick={resetSettings} onMouseDown={createRipple}>
             <RefreshCw size={16} />
             Сбросить настройки форматирования
           </button>

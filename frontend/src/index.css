@@ -28,12 +28,19 @@ button {
   background: none;
   border: none;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 button:active {
   transform: none;
 }
 
+/* ============================================
+   СВЕТЛАЯ ТЕМА (по умолчанию)
+   ============================================ */
+
+/* Основная кнопка (синяя, важная) */
 .btn-primary {
   background-color: #003BFF;
   color: white;
@@ -41,11 +48,14 @@ button:active {
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
   border: none;
 }
 
+.btn-primary .ripple {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Вторичная кнопка (обводка, неважная) */
 .btn-outline {
   background-color: transparent;
   color: #1A1A1A;
@@ -53,8 +63,42 @@ button:active {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
+}
+
+.btn-outline:hover {
+  border-color: #003BFF;
+  color: #003BFF;
+}
+
+.btn-outline .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка без рамки (например, назад) */
+.btn-ghost {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #003BFF;
+}
+
+.btn-ghost .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   ТЁМНАЯ ТЕМА
+   ============================================ */
+
+body.dark-theme .btn-primary {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+body.dark-theme .btn-primary .ripple {
+  background: rgba(0, 0, 0, 0.2);
 }
 
 body.dark-theme .btn-outline {
@@ -62,9 +106,40 @@ body.dark-theme .btn-outline {
   border-color: #404040;
 }
 
-.btn-outline:hover {
-  border-color: #003BFF;
-  color: #003BFF;
+body.dark-theme .btn-outline:hover {
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+}
+
+body.dark-theme .btn-outline .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-theme .btn-ghost {
+  color: #FFFFFF;
+}
+
+body.dark-theme .btn-ghost .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   RIPPLE ЭФФЕКТ (общий)
+   ============================================ */
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-effect 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  pointer-events: none;
+}
+
+@keyframes ripple-effect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
 }
 
 /* Контейнер */
@@ -74,6 +149,9 @@ body.dark-theme .btn-outline {
   padding: 0 20px;
 }
 
-/* Хедер приложения (App.css будет обновлён) */
-/* Футер приложения */
-/* Остальные глобальные стили будут в компонентах с поддержкой темы */
+/* Загрузка */
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #888888;
+}
