@@ -20,7 +20,6 @@
   height: 120px;
   border-radius: 60px;
   object-fit: cover;
-  /* Убираем рамку */
   border: none;
 }
 
@@ -53,7 +52,6 @@ body.dark-theme .profile-email {
   margin-bottom: 20px;
 }
 
-/* Кнопки как в проекте - убираем изменение обводки при наведении */
 .edit-profile-btn, .logout-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -67,43 +65,31 @@ body.dark-theme .profile-email {
   transition: none;
 }
 
-/* Светлая тема */
 .edit-profile-btn, .logout-btn {
   color: #1A1A1A;
   border-color: #DFE2ED;
 }
 
-/* Тёмная тема */
 body.dark-theme .edit-profile-btn,
 body.dark-theme .logout-btn {
   color: #E0E0E0;
   border-color: #404040;
 }
 
-/* Явно запрещаем любые изменения при наведении */
 .edit-profile-btn:hover, 
-.edit-profile-btn:focus, 
-.edit-profile-btn:active,
-.logout-btn:hover,
-.logout-btn:focus,
-.logout-btn:active {
+.logout-btn:hover {
   border-color: #DFE2ED !important;
   color: #1A1A1A !important;
   background-color: transparent !important;
 }
 
 body.dark-theme .edit-profile-btn:hover,
-body.dark-theme .edit-profile-btn:focus,
-body.dark-theme .edit-profile-btn:active,
-body.dark-theme .logout-btn:hover,
-body.dark-theme .logout-btn:focus,
-body.dark-theme .logout-btn:active {
+body.dark-theme .logout-btn:hover {
   border-color: #404040 !important;
   color: #E0E0E0 !important;
   background-color: transparent !important;
 }
 
-/* Ripple для кнопок */
 .edit-profile-btn .ripple, .logout-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -148,13 +134,11 @@ body.dark-theme .shelf-card {
   border-color: #404040;
 }
 
-/* Убираем анимации приподнятия и тени */
 .shelf-card:hover {
   transform: none;
   box-shadow: none;
 }
 
-/* Обычный цвет текста для всех полок */
 .shelf-info h3 {
   font-size: 16px;
   font-weight: 600;
@@ -175,7 +159,6 @@ body.dark-theme .shelf-info p {
   color: #AAAAAA;
 }
 
-/* Ripple для полок */
 .shelf-card .ripple {
   background: rgba(0, 0, 0, 0.1);
 }

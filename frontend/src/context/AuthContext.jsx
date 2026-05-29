@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -24,6 +25,7 @@ export function AuthProvider({ children }) {
         
         if (response.data && response.data.id) {
           setUser(response.data);
+          setToken(storedToken);
         } else {
           localStorage.removeItem('token');
         }
@@ -38,13 +40,15 @@ export function AuthProvider({ children }) {
     initAuth();
   }, []);
 
-  const login = (token, userData) => {
-    localStorage.setItem('token', token);
+  const login = (newToken, userData) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
     setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    setToken(null);
     setUser(null);
   };
 
@@ -53,7 +57,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, token, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -50,20 +50,24 @@ export default function EditProfileModal({ onClose }) {
     setError('');
     
     try {
-      // Проверяем, что токен существует
-      if (!token) {
-        throw new Error('No auth token');
-      }
+      let avatarUrl = avatarPreview;
       
-      // Для загрузки файла нужно будет использовать FormData
-      const formData = new FormData();
-      formData.append('username', username);
       if (avatarFile) {
+        // Загружаем файл на сервер
+        const formData = new FormData();
         formData.append('avatar', avatarFile);
+        
+        const uploadResponse = await axios.post(`${API_URL}/api/upload`, formData, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        avatarUrl = uploadResponse.data.url;
       }
       
       const response = await axios.put(`${API_URL}/api/auth/profile`,
-        { username, avatar_url: avatarPreview },
+        { username, avatar_url: avatarUrl },
         { 
           headers: { 
             'Authorization': `Bearer ${token}`,
@@ -71,10 +75,11 @@ export default function EditProfileModal({ onClose }) {
           } 
         }
       );
+      
       updateUser(response.data);
       onClose();
     } catch (err) {
-      console.error('Profile update error:', err.response?.status, err.response?.data);
+      console.error('Profile update error:', err);
       setError(err.response?.data?.error || 'Ошибка сохранения');
     } finally {
       setLoading(false);

@@ -10,6 +10,10 @@ const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
 const authMiddleware = require('./middleware/auth');
 
+const uploadRoutes = require('./routes/upload');
+app.use('/api/upload', authMiddleware, uploadRoutes);
+app.use('/uploads', express.static('uploads'));
+
 // ============================================
 // Все маршруты auth (но middleware применяем только к защищённым)
 // ============================================

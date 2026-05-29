@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import EditProfileModal from '../components/EditProfileModal';
 import './Profile.css';
 
-// Ripple эффект
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');
@@ -39,7 +38,6 @@ export default function Profile() {
   };
 
   const handleShelfClick = (shelfId) => {
-    // TODO: фильтрация книг по полке
     console.log('Shelf clicked:', shelfId);
   };
 
