@@ -7,47 +7,38 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(null);
 
-  // Функция для проверки токена и получения пользователя
-  const verifyTokenAndGetUser = async (storedToken) => {
-    if (!storedToken || storedToken === 'null' || storedToken === 'undefined') {
-      return false;
-    }
-    
-    try {
-      const response = await axios.get(`${API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${storedToken}` }
-      });
-      
-      if (response.data) {
-        setUser(response.data);
-        setToken(storedToken);
-        return true;
-      }
-      return false;
-    } catch (err) {
-      console.error('Token verification failed:', err.response?.status);
-      return false;
-    }
-  };
-
-  // Загрузка при монтировании
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = localStorage.getItem('token');
       
-      if (storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
-        const isValid = await verifyTokenAndGetUser(storedToken);
-        if (!isValid) {
-          // Токен невалидный — очищаем
-          localStorage.removeItem('token');
-          setToken(null);
-          setUser(null);
-        }
+      console.log('🔐 Initializing auth, token exists:', !!storedToken);
+      
+      if (!storedToken || storedToken === 'null' || storedToken === 'undefined') {
+        console.log('❌ No valid token found');
+        setLoading(false);
+        return;
       }
       
-      setLoading(false);
+      try {
+        console.log('🔍 Verifying token with server...');
+        const response = await axios.get(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${storedToken}` }
+        });
+        
+        if (response.data && response.data.id) {
+          console.log('✅ User authenticated:', response.data.username);
+          setUser(response.data);
+        } else {
+          console.log('❌ Invalid response from server');
+          localStorage.removeItem('token');
+        }
+      } catch (err) {
+        console.error('❌ Token verification failed:', err.response?.status, err.response?.data);
+        localStorage.removeItem('token');
+      } finally {
+        setLoading(false);
+      }
     };
     
     initAuth();
@@ -58,14 +49,14 @@ export function AuthProvider({ children }) {
       console.error('Invalid token provided to login');
       return;
     }
+    console.log('🔐 Logging in user:', userData.username);
     localStorage.setItem('token', newToken);
-    setToken(newToken);
     setUser(userData);
   };
 
   const logout = () => {
+    console.log('🔐 Logging out user');
     localStorage.removeItem('token');
-    setToken(null);
     setUser(null);
   };
 
@@ -74,7 +65,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, token, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -88,7 +88,10 @@ router.post('/login', async (req, res) => {
 router.get('/me', async (req, res) => {
   const userId = req.user?.userId;
   
+  console.log('🔍 /me called, userId:', userId);
+  
   if (!userId) {
+    console.log('❌ No userId in token');
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
@@ -99,9 +102,11 @@ router.get('/me', async (req, res) => {
     );
     
     if (result.rows.length === 0) {
+      console.log('❌ User not found in database:', userId);
       return res.status(404).json({ error: 'User not found' });
     }
     
+    console.log('✅ User found:', result.rows[0].username);
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error fetching user:', err);
