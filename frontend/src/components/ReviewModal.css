@@ -229,12 +229,12 @@ body.dark-theme .review-submit-btn .ripple {
 
 .review-delete-btn {
   background: none;
-  border: 1px solid #DC2626;
+  border: 1px solid #dfe2ed;
   padding: 8px 20px;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  color: #DC2626;
+  color: #666;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -250,12 +250,12 @@ body.dark-theme .review-submit-btn .ripple {
 }
 
 .review-delete-btn .ripple {
-  background: rgba(220, 38, 38, 0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 body.dark-theme .review-delete-btn {
-  border-color: #DC2626;
-  color: #DC2626;
+  border-color: #404040;
+  color: #ccc;
 }
 
 body.dark-theme .review-delete-btn.confirm {
