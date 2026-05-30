@@ -14,62 +14,16 @@ const pool = new Pool({
 
 const SENTENCES_PER_PAGE = 30;
 
-// ============================================
-// ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: разбить текст на предложения
-// ============================================
 function splitIntoSentences(text) {
   const sentenceRegex = /[^.!?]+[.!?]+["']?\s*/g;
   const matches = text.match(sentenceRegex);
-  
   if (!matches || matches.length === 0) {
     return [text];
   }
-  
   return matches;
 }
 
-// ============================================
-// 1. ПОЛУЧИТЬ ВСЕ КНИГИ (для ленты)
-// ============================================
-router.get('/', async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT id, title, author, cover_url, rating_avg, publication_year 
-      FROM books 
-      ORDER BY id
-    `);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching books:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// ============================================
-// 2. ПОЛУЧИТЬ КНИГУ ПО ID (без текста)
-// ============================================
-router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await pool.query(`
-      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count 
-      FROM books 
-      WHERE id = $1
-    `, [id]);
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Book not found' });
-    }
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error fetching book:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// ============================================
-// 3. ПОЛУЧИТЬ СТРАНИЦУ КНИГИ (разбивка по предложениям)
-// ============================================
+// Получить страницу книги (требует авторизации для прогресса)
 router.get('/:id/page/:pageNum', async (req, res) => {
   const { id, pageNum } = req.params;
   const userId = req.userId;
@@ -134,9 +88,7 @@ router.get('/:id/page/:pageNum', async (req, res) => {
   }
 });
 
-// ============================================
-// 4. СОХРАНИТЬ ПРОГРЕСС (только номер страницы)
-// ============================================
+// Сохранить прогресс
 router.post('/:id/progress', async (req, res) => {
   const { id } = req.params;
   const { position } = req.body;
@@ -144,10 +96,6 @@ router.post('/:id/progress', async (req, res) => {
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  if (!position || typeof position !== 'string') {
-    return res.status(400).json({ error: 'Invalid position format' });
   }
   
   try {
@@ -158,16 +106,14 @@ router.post('/:id/progress', async (req, res) => {
       DO UPDATE SET last_read_position = $3, updated_at = CURRENT_TIMESTAMP, status = 'reading'
     `, [userId, id, position]);
     
-    res.json({ success: true, progress: position });
+    res.json({ success: true });
   } catch (err) {
     console.error('Error saving progress:', err);
     res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });
 
-// ============================================
-// 5. УСТАНОВИТЬ СТАТУС КНИГИ (read/reading/want_to_read)
-// ============================================
+// Установить статус книги
 router.post('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -175,10 +121,6 @@ router.post('/:id/status', async (req, res) => {
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  if (!status || !['read', 'reading', 'want_to_read'].includes(status)) {
-    return res.status(400).json({ error: 'Invalid status' });
   }
   
   try {
@@ -196,9 +138,7 @@ router.post('/:id/status', async (req, res) => {
   }
 });
 
-// ============================================
-// 6. ПОЛУЧИТЬ СТАТУС КНИГИ ДЛЯ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
-// ============================================
+// Получить статус книги
 router.get('/:id/status', async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
@@ -209,9 +149,7 @@ router.get('/:id/status', async (req, res) => {
   
   try {
     const result = await pool.query(`
-      SELECT status 
-      FROM user_book_status 
-      WHERE user_id = $1 AND book_id = $2
+      SELECT status FROM user_book_status WHERE user_id = $1 AND book_id = $2
     `, [userId, id]);
     
     res.json({ status: result.rows[0]?.status || null });
@@ -221,9 +159,7 @@ router.get('/:id/status', async (req, res) => {
   }
 });
 
-// ============================================
-// 7. ПОЛУЧИТЬ ПРОГРЕСС КНИГИ ДЛЯ ПОЛЬЗОВАТЕЛЯ
-// ============================================
+// Получить прогресс
 router.get('/:id/progress', async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
@@ -234,28 +170,22 @@ router.get('/:id/progress', async (req, res) => {
   
   try {
     const result = await pool.query(`
-      SELECT last_read_position 
-      FROM user_book_status 
-      WHERE user_id = $1 AND book_id = $2
+      SELECT last_read_position FROM user_book_status WHERE user_id = $1 AND book_id = $2
     `, [userId, id]);
     
     const progress = result.rows[0]?.last_read_position || '1.0';
-    res.json({ progress: progress });
+    res.json({ progress });
   } catch (err) {
     console.error('Error fetching progress:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// ============================================
-// 8. ДОБАВИТЬ ОТЗЫВ (требует авторизации)
-// ============================================
+// Добавить отзыв
 router.post('/:id/reviews', async (req, res) => {
   const { id } = req.params;
   const { rating, comment } = req.body;
   const userId = req.userId;
-  
-  console.log(`📝 Saving review for book ${id}, user ${userId}, rating ${rating}`);
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -266,13 +196,10 @@ router.post('/:id/reviews', async (req, res) => {
   }
   
   try {
-    // Сначала удаляем старый отзыв, если есть
-    await pool.query(
-      'DELETE FROM reviews WHERE user_id = $1 AND book_id = $2',
-      [userId, id]
-    );
+    // Удаляем старый отзыв
+    await pool.query('DELETE FROM reviews WHERE user_id = $1 AND book_id = $2', [userId, id]);
     
-    // Добавляем новый отзыв
+    // Добавляем новый
     await pool.query(`
       INSERT INTO reviews (user_id, book_id, rating, comment, created_at, updated_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -281,16 +208,12 @@ router.post('/:id/reviews', async (req, res) => {
     // Обновляем средний рейтинг книги
     await pool.query(`
       UPDATE books 
-      SET rating_avg = (
-        SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
-      ),
-      rating_count = (
-        SELECT COUNT(*) FROM reviews WHERE book_id = $1
-      )
+      SET rating_avg = (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1),
+          rating_count = (SELECT COUNT(*) FROM reviews WHERE book_id = $1)
       WHERE id = $1
     `, [id]);
     
-    // Обновляем рейтинг в user_book_status
+    // Обновляем user_book_status
     await pool.query(`
       INSERT INTO user_book_status (user_id, book_id, rating, updated_at)
       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
@@ -298,7 +221,6 @@ router.post('/:id/reviews', async (req, res) => {
       DO UPDATE SET rating = $3, updated_at = CURRENT_TIMESTAMP
     `, [userId, id, rating]);
     
-    console.log('✅ Review saved successfully');
     res.json({ success: true });
   } catch (err) {
     console.error('Error saving review:', err);

@@ -15,24 +15,57 @@ const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
 const uploadRoutes = require('./routes/upload');
 const authMiddleware = require('./middleware/auth');
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+  ssl: { rejectUnauthorized: false }
+});
 
 // ============================================
 // Публичные маршруты (без middleware)
 // ============================================
 app.use('/api/auth', authRoutes);
 
-// Публичные маршруты для книг (например, получение отзывов)
+// Публичные GET маршруты для книг
+app.get('/api/books', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT id, title, author, cover_url, rating_avg, publication_year 
+      FROM books 
+      ORDER BY id
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching books:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/api/books/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(`
+      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count 
+      FROM books 
+      WHERE id = $1
+    `, [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching book:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 app.get('/api/books/:id/reviews', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
   const { id } = req.params;
   
   try {
