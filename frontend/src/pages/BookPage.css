@@ -47,7 +47,6 @@ body.dark-theme .back-button .ripple {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
-  margin-bottom: 48px;
 }
 
 .book-left-column {
@@ -265,7 +264,7 @@ body.dark-theme .status-btn.active .ripple {
 }
 
 .book-description {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .book-description h3 {
@@ -288,21 +287,15 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
-/* Блок отзывов - на полную ширину */
+/* Блок отзывов - внутри book-info, после описания */
 .book-reviews {
   width: 100%;
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 1px solid #DFE2ED;
-}
-
-body.dark-theme .book-reviews {
-  border-top-color: #404040;
+  margin-top: 40px;
 }
 
 .book-reviews h3 {
-  font-size: 22px;
-  margin-bottom: 24px;
+  font-size: 20px;
+  margin-bottom: 20px;
   font-weight: 500;
   color: #222;
 }
@@ -314,11 +307,11 @@ body.dark-theme .book-reviews h3 {
 .reviews-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .review-card {
-  padding: 20px;
+  padding: 16px;
   border: 1px solid #DFE2ED;
   border-radius: 12px;
   background: #FFFFFF;
@@ -380,12 +373,23 @@ body.dark-theme .review-date {
 
 .review-stars-display {
   display: flex;
-  gap: 4px;
-  font-size: 18px;
+  gap: 2px;
+  font-size: 16px;
 }
 
-.review-stars-display span {
-  font-size: 20px;
+/* Жёлтые звёзды для всех */
+.review-star-filled {
+  color: #F1C40F;
+}
+
+/* Пустые звёзды — светло-серые в светлой теме */
+.review-star-empty-light {
+  color: #DFE2ED;
+}
+
+/* Пустые звёзды — тёмно-серые в тёмной теме */
+body.dark-theme .review-star-empty-dark {
+  color: #555555;
 }
 
 .review-comment {
@@ -454,10 +458,6 @@ body.dark-theme .review-comment {
   }
   
   .review-stars-display {
-    font-size: 16px;
-  }
-  
-  .review-stars-display span {
-    font-size: 18px;
+    font-size: 14px;
   }
 }

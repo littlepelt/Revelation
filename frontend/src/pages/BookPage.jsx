@@ -32,10 +32,10 @@ const StarRating = ({ rating }) => {
   return (
     <div className="review-stars-display">
       {[...Array(fullStars)].map((_, i) => (
-        <span key={`full-${i}`}>★</span>
+        <span key={`full-${i}`} className="review-star-filled">★</span>
       ))}
       {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`}>☆</span>
+        <span key={`empty-${i}`} className="review-star-empty-light review-star-empty-dark">☆</span>
       ))}
     </div>
   );
