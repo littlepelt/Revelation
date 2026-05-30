@@ -12,7 +12,7 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-const SENTENCES_PER_PAGE = 30; // Количество предложений на страницу
+const SENTENCES_PER_PAGE = 30;
 
 // ============================================
 // ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: разбить текст на предложения
@@ -247,104 +247,8 @@ router.get('/:id/progress', async (req, res) => {
   }
 });
 
-// Получить рейтинг пользователя для книги
-router.get('/:id/rating', async (req, res) => {
-  const { id } = req.params;
-  const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  try {
-    const result = await pool.query(
-      'SELECT rating FROM user_book_status WHERE user_id = $1 AND book_id = $2',
-      [userId, id]
-    );
-    
-    res.json({ rating: result.rows[0]?.rating || null });
-  } catch (err) {
-    console.error('Error fetching rating:', err);
-    res.status(500).json({ error: 'Server error: ' + err.message });
-  }
-});
-
-// Установить рейтинг пользователя для книги
-router.post('/:id/rating', async (req, res) => {
-  const { id } = req.params;
-  const { rating } = req.body;
-  const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ error: 'Invalid rating, must be 1-5' });
-  }
-  
-  try {
-    // Обновляем или вставляем рейтинг
-    await pool.query(`
-      INSERT INTO user_book_status (user_id, book_id, rating, status, updated_at)
-      VALUES ($1, $2, $3, 'reading', CURRENT_TIMESTAMP)
-      ON CONFLICT (user_id, book_id) 
-      DO UPDATE SET rating = $3, updated_at = CURRENT_TIMESTAMP
-    `, [userId, id, rating]);
-    
-    // Обновляем средний рейтинг книги
-    await pool.query(`
-      UPDATE books 
-      SET rating_avg = (
-        SELECT COALESCE(AVG(rating), 0) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
-      ),
-      rating_count = (
-        SELECT COUNT(*) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
-      )
-      WHERE id = $1
-    `, [id]);
-    
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Error saving rating:', err);
-    res.status(500).json({ error: 'Server error: ' + err.message });
-  }
-});
-
 // ============================================
-// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (публичный - без авторизации)
-// ============================================
-router.get('/:id/reviews', async (req, res) => {
-  const { id } = req.params;
-  
-  console.log(`📖 Fetching reviews for book ${id}`);
-  
-  try {
-    const result = await pool.query(`
-      SELECT 
-        r.id,
-        r.rating,
-        r.comment,
-        r.created_at,
-        u.id as user_id,
-        u.username,
-        u.avatar_url
-      FROM reviews r
-      JOIN users u ON r.user_id = u.id
-      WHERE r.book_id = $1
-      ORDER BY r.created_at DESC
-    `, [id]);
-    
-    console.log(`✅ Found ${result.rows.length} reviews`);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching reviews:', err);
-    res.status(500).json({ error: 'Server error: ' + err.message });
-  }
-});
-
-// ============================================
-// 9. ДОБАВИТЬ ОТЗЫВ (требует авторизации)
+// 8. ДОБАВИТЬ ОТЗЫВ (требует авторизации)
 // ============================================
 router.post('/:id/reviews', async (req, res) => {
   const { id } = req.params;
@@ -354,17 +258,14 @@ router.post('/:id/reviews', async (req, res) => {
   console.log(`📝 Saving review for book ${id}, user ${userId}, rating ${rating}`);
   
   if (!userId) {
-    console.log('❌ No userId');
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
   if (!rating || rating < 1 || rating > 5) {
-    console.log('❌ Invalid rating:', rating);
     return res.status(400).json({ error: 'Invalid rating' });
   }
   
   try {
-    // Добавляем или обновляем отзыв
     await pool.query(`
       INSERT INTO reviews (user_id, book_id, rating, comment, created_at, updated_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -372,7 +273,6 @@ router.post('/:id/reviews', async (req, res) => {
       DO UPDATE SET rating = $3, comment = $4, updated_at = CURRENT_TIMESTAMP
     `, [userId, id, rating, comment || null]);
     
-    // Обновляем средний рейтинг книги
     await pool.query(`
       UPDATE books 
       SET rating_avg = (
@@ -384,7 +284,6 @@ router.post('/:id/reviews', async (req, res) => {
       WHERE id = $1
     `, [id]);
     
-    // Обновляем рейтинг в user_book_status
     await pool.query(`
       INSERT INTO user_book_status (user_id, book_id, rating, updated_at)
       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
@@ -397,42 +296,6 @@ router.post('/:id/reviews', async (req, res) => {
   } catch (err) {
     console.error('Error saving review:', err);
     res.status(500).json({ error: 'Server error: ' + err.message });
-  }
-});
-
-// ============================================
-// 10. УДАЛИТЬ ОТЗЫВ (опционально)
-// ============================================
-router.delete('/:id/reviews', async (req, res) => {
-  const { id } = req.params;
-  const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  try {
-    await pool.query(
-      'DELETE FROM reviews WHERE user_id = $1 AND book_id = $2',
-      [userId, id]
-    );
-    
-    // Обновляем средний рейтинг
-    await pool.query(`
-      UPDATE books 
-      SET rating_avg = (
-        SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
-      ),
-      rating_count = (
-        SELECT COUNT(*) FROM reviews WHERE book_id = $1
-      )
-      WHERE id = $1
-    `, [id]);
-    
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Error deleting review:', err);
-    res.status(500).json({ error: 'Server error' });
   }
 });
 

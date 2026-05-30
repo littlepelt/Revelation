@@ -16,10 +16,51 @@ const booksRoutes = require('./routes/books');
 const uploadRoutes = require('./routes/upload');
 const authMiddleware = require('./middleware/auth');
 
-// Публичные маршруты
+// ============================================
+// Публичные маршруты (без middleware)
+// ============================================
 app.use('/api/auth', authRoutes);
 
-// Защищённые маршруты
+// Публичные маршруты для книг (например, получение отзывов)
+app.get('/api/books/:id/reviews', async (req, res) => {
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  const { id } = req.params;
+  
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.created_at,
+        u.id as user_id,
+        u.username,
+        u.avatar_url
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      WHERE r.book_id = $1
+      ORDER BY r.created_at DESC
+    `, [id]);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ============================================
+// Защищённые маршруты (с middleware)
+// ============================================
 app.use('/api/books', authMiddleware, booksRoutes);
 app.use('/api/upload', authMiddleware, uploadRoutes);
 
@@ -39,29 +80,4 @@ syncBooks().catch(console.error);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
-});
-
-
-
-app.get('/api/check-reviews', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  try {
-    const result = await pool.query(`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'reviews'
-    `);
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
 });
