@@ -15,6 +15,7 @@ backend/dist/
 
 # Uploaded files
 backend/uploads/
+backend/data/
 
 # Logs
 *.log

@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    disk:
+      name: uploads-data
+      mountPath: /opt/render/project/src/backend/data
+      sizeGB: 1

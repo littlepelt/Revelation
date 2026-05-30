@@ -8,8 +8,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Статическая папка для загруженных файлов
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Статическая папка для загруженных файлов (новая постоянная папка)
+app.use('/avatars', express.static(path.join(__dirname, 'data/uploads')));
 
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
