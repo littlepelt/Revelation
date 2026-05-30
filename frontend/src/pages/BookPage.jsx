@@ -31,7 +31,12 @@ const StarRating = ({ rating }) => {
   
   return (
     <div className="review-stars-display">
-      {'★'.repeat(fullStars)}{'☆'.repeat(emptyStars)}
+      {[...Array(fullStars)].map((_, i) => (
+        <span key={`full-${i}`}>★</span>
+      ))}
+      {[...Array(emptyStars)].map((_, i) => (
+        <span key={`empty-${i}`}>☆</span>
+      ))}
     </div>
   );
 };

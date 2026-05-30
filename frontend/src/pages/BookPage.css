@@ -1,11 +1,8 @@
 .book-page {
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px 0;
-  min-height: calc(100vh - 120px);
+  padding: 20px;
 }
 
-/* Кнопка "Назад" */
 .back-button {
   background: none;
   border: 1px solid #DFE2ED;
@@ -28,18 +25,14 @@ body.dark-theme .back-button {
   border-color: #404040;
 }
 
-.back-button:hover,
-.back-button:focus,
-.back-button:active {
-  border-color: #DFE2ED;
-  color: #003BFF;
+.back-button:hover {
+  border-color: #DFE2ED !important;
+  color: #003BFF !important;
 }
 
-body.dark-theme .back-button:hover,
-body.dark-theme .back-button:focus,
-body.dark-theme .back-button:active {
-  border-color: #404040;
-  color: #FFFFFF;
+body.dark-theme .back-button:hover {
+  border-color: #404040 !important;
+  color: #FFFFFF !important;
 }
 
 .back-button .ripple {
@@ -50,14 +43,13 @@ body.dark-theme .back-button .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Основной контент - колонка для обложки и кнопки */
 .book-content {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
+  margin-bottom: 48px;
 }
 
-/* Левая колонка с обложкой и кнопкой */
 .book-left-column {
   display: flex;
   flex-direction: column;
@@ -66,7 +58,6 @@ body.dark-theme .back-button .ripple {
   flex-shrink: 0;
 }
 
-/* Обложка - без тени */
 .book-cover-large {
   width: 260px;
   border-radius: 12px;
@@ -79,7 +70,6 @@ body.dark-theme .back-button .ripple {
   display: block;
 }
 
-/* Кнопка "Читать книгу" - под обложкой, такой же ширины, с анимацией как у book-card */
 .read-button {
   width: 260px;
   border: none;
@@ -92,29 +82,22 @@ body.dark-theme .back-button .ripple {
   overflow: hidden;
   transition: transform 0.15s ease;
   transform: scale(1);
-}
-
-/* Светлая тема */
-.read-button {
   background-color: #003BFF;
   color: white;
 }
 
-/* Тёмная тема */
 body.dark-theme .read-button {
   background-color: #FFFFFF;
   color: #1A1A1A;
 }
 
-/* Анимация при нажатии (как у book-card) */
 .read-button:active {
   transform: scale(0.98);
   transition: transform 0.08s ease;
 }
 
-/* Убираем изменение opacity при наведении */
 .read-button:hover {
-  opacity: 1;
+  opacity: 0.9;
 }
 
 .read-button .ripple {
@@ -125,7 +108,50 @@ body.dark-theme .read-button .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Правая колонка с информацией */
+.review-button {
+  width: 260px;
+  background: none;
+  border: 1px solid #DFE2ED;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+  color: #1A1A1A;
+  border-color: #DFE2ED;
+}
+
+body.dark-theme .review-button {
+  color: #E0E0E0;
+  border-color: #404040;
+}
+
+.review-button:hover {
+  border-color: #DFE2ED !important;
+  color: #1A1A1A !important;
+  background-color: transparent !important;
+}
+
+body.dark-theme .review-button:hover {
+  border-color: #404040 !important;
+  color: #E0E0E0 !important;
+}
+
+.review-button .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .review-button .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .book-info {
   flex: 1;
 }
@@ -182,7 +208,6 @@ body.dark-theme .rating-badge {
   color: #FFFFFF;
 }
 
-/* Кнопки статуса */
 .book-actions {
   display: flex;
   gap: 12px;
@@ -199,6 +224,7 @@ body.dark-theme .rating-badge {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  transition: none;
   color: #1A1A1A;
   border-color: #DFE2ED;
 }
@@ -220,36 +246,10 @@ body.dark-theme .status-btn.active {
   color: #1A1A1A;
 }
 
-.status-btn:hover,
-.status-btn:focus,
-.status-btn:active {
-  border-color: #DFE2ED;
-  color: #1A1A1A;
-  background-color: transparent;
-}
-
-body.dark-theme .status-btn:hover,
-body.dark-theme .status-btn:focus,
-body.dark-theme .status-btn:active {
-  border-color: #404040;
-  color: #E0E0E0;
-  background-color: transparent;
-}
-
-.status-btn.active:hover,
-.status-btn.active:focus,
-.status-btn.active:active {
-  background-color: #003BFF;
-  border-color: #003BFF;
-  color: white;
-}
-
-body.dark-theme .status-btn.active:hover,
-body.dark-theme .status-btn.active:focus,
-body.dark-theme .status-btn.active:active {
-  background-color: #FFFFFF;
-  border-color: #FFFFFF;
-  color: #1A1A1A;
+.status-btn:hover {
+  border-color: inherit !important;
+  color: inherit !important;
+  background-color: transparent !important;
 }
 
 .status-btn .ripple {
@@ -264,7 +264,10 @@ body.dark-theme .status-btn.active .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Описание книги */
+.book-description {
+  margin-bottom: 32px;
+}
+
 .book-description h3 {
   font-size: 20px;
   margin-bottom: 12px;
@@ -285,102 +288,21 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
-.loading {
-  text-align: center;
-  padding: 60px;
-  color: #888;
-}
-
-.user-rating {
-  margin: 24px 0;
-  padding: 16px;
-  border: 1px solid #DFE2ED;
-  border-radius: 12px;
-}
-
-body.dark-theme .user-rating {
-  border-color: #404040;
-}
-
-.user-rating h4 {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: #444;
-}
-
-body.dark-theme .user-rating h4 {
-  color: #CCCCCC;
-}
-
-.star-btn {
-  transition: transform 0.1s ease;
-}
-
-.star-btn:active {
-  transform: scale(0.9);
-}
-
-.rating-loading {
-  font-size: 12px;
-  color: #888;
-  margin-left: 12px;
-}
-
-/* Кнопка "Написать отзыв" */
-.review-button {
-  width: 100%;
-  background: none;
-  border: 1px solid #DFE2ED;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  position: relative;
-  overflow: hidden;
-  transition: none;
-  color: #1A1A1A;
-  border-color: #DFE2ED;
-}
-
-body.dark-theme .review-button {
-  color: #E0E0E0;
-  border-color: #404040;
-}
-
-.review-button:hover {
-  border-color: #DFE2ED !important;
-  color: #1A1A1A !important;
-  background-color: transparent !important;
-}
-
-body.dark-theme .review-button:hover {
-  border-color: #404040 !important;
-  color: #E0E0E0 !important;
-}
-
-.review-button .ripple {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-body.dark-theme .review-button .ripple {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Блок отзывов */
+/* Блок отзывов - на полную ширину */
 .book-reviews {
-  margin-top: 40px;
+  width: 100%;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid #DFE2ED;
+}
+
+body.dark-theme .book-reviews {
+  border-top-color: #404040;
 }
 
 .book-reviews h3 {
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 22px;
+  margin-bottom: 24px;
   font-weight: 500;
   color: #222;
 }
@@ -392,11 +314,11 @@ body.dark-theme .book-reviews h3 {
 .reviews-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .review-card {
-  padding: 16px;
+  padding: 20px;
   border: 1px solid #DFE2ED;
   border-radius: 12px;
   background: #FFFFFF;
@@ -457,9 +379,13 @@ body.dark-theme .review-date {
 }
 
 .review-stars-display {
-  color: #F1C40F;
-  font-size: 14px;
-  letter-spacing: 2px;
+  display: flex;
+  gap: 4px;
+  font-size: 18px;
+}
+
+.review-stars-display span {
+  font-size: 20px;
 }
 
 .review-comment {
@@ -479,7 +405,12 @@ body.dark-theme .review-comment {
   font-size: 14px;
 }
 
-/* Адаптив */
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #888;
+}
+
 @media (max-width: 768px) {
   .book-content {
     flex-direction: column;
@@ -495,7 +426,8 @@ body.dark-theme .review-comment {
     width: 220px;
   }
   
-  .read-button {
+  .read-button,
+  .review-button {
     width: 220px;
   }
   
@@ -519,5 +451,13 @@ body.dark-theme .review-comment {
   .back-button {
     width: 40px;
     height: 40px;
+  }
+  
+  .review-stars-display {
+    font-size: 16px;
+  }
+  
+  .review-stars-display span {
+    font-size: 18px;
   }
 }
