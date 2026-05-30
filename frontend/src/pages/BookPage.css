@@ -47,6 +47,7 @@ body.dark-theme .back-button .ripple {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
+  margin-bottom: 48px;
 }
 
 .book-left-column {
@@ -287,10 +288,16 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
-/* Блок отзывов - внутри book-info, после описания */
+/* Блок отзывов - отдельно после book-content */
 .book-reviews {
   width: 100%;
-  margin-top: 40px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid #DFE2ED;
+}
+
+body.dark-theme .book-reviews {
+  border-top-color: #404040;
 }
 
 .book-reviews h3 {
@@ -369,26 +376,21 @@ body.dark-theme .review-date {
 
 .review-rating {
   margin-bottom: 8px;
-}
-
-.review-stars-display {
   display: flex;
   gap: 2px;
   font-size: 16px;
 }
 
-/* Жёлтые звёзды для всех */
+/* Залитые звёзды с разным цветом */
 .review-star-filled {
   color: #F1C40F;
 }
 
-/* Пустые звёзды — светло-серые в светлой теме */
-.review-star-empty-light {
+.review-star-unfilled {
   color: #DFE2ED;
 }
 
-/* Пустые звёзды — тёмно-серые в тёмной теме */
-body.dark-theme .review-star-empty-dark {
+body.dark-theme .review-star-unfilled {
   color: #555555;
 }
 
@@ -457,7 +459,7 @@ body.dark-theme .review-comment {
     height: 40px;
   }
   
-  .review-stars-display {
+  .review-rating {
     font-size: 14px;
   }
 }

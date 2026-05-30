@@ -30,12 +30,12 @@ const StarRating = ({ rating }) => {
   const emptyStars = 5 - fullStars;
   
   return (
-    <div className="review-stars-display">
+    <div className="review-rating">
       {[...Array(fullStars)].map((_, i) => (
         <span key={`full-${i}`} className="review-star-filled">★</span>
       ))}
       {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`} className="review-star-empty-light review-star-empty-dark">☆</span>
+        <span key={`empty-${i}`} className="review-star-unfilled">★</span>
       ))}
     </div>
   );
@@ -58,13 +58,11 @@ export default function BookPage() {
       try {
         const token = localStorage.getItem('token');
         
-        // Загружаем книгу
-        const bookRes = await axios.get(`${API_URL}/api/books/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // Загружаем книгу (публичный запрос)
+        const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
         setBook(bookRes.data);
         
-        // Загружаем отзывы (публичный доступ, без токена)
+        // Загружаем отзывы (публичный запрос)
         try {
           const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
           setReviews(reviewsRes.data);
@@ -73,28 +71,30 @@ export default function BookPage() {
           setReviews([]);
         }
         
-        // Загружаем прогресс чтения
-        try {
-          const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const progressStr = progressResponse.data.progress;
-          if (progressStr) {
-            const page = parseInt(progressStr.split('.')[0]) || 1;
-            setSavedPage(page);
+        // Загружаем прогресс чтения (требует токен)
+        if (token) {
+          try {
+            const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            const progressStr = progressResponse.data.progress;
+            if (progressStr) {
+              const page = parseInt(progressStr.split('.')[0]) || 1;
+              setSavedPage(page);
+            }
+          } catch (progressErr) {
+            console.error('Ошибка загрузки прогресса:', progressErr);
           }
-        } catch (progressErr) {
-          console.error('Ошибка загрузки прогресса:', progressErr);
-        }
-        
-        // Загружаем статус книги
-        try {
-          const statusResponse = await axios.get(`${API_URL}/api/books/${id}/status`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUserStatus(statusResponse.data.status);
-        } catch (statusErr) {
-          console.error('Ошибка загрузки статуса:', statusErr);
+          
+          // Загружаем статус книги (требует токен)
+          try {
+            const statusResponse = await axios.get(`${API_URL}/api/books/${id}/status`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            setUserStatus(statusResponse.data.status);
+          } catch (statusErr) {
+            console.error('Ошибка загрузки статуса:', statusErr);
+          }
         }
         
       } catch (err) {
@@ -131,35 +131,32 @@ export default function BookPage() {
   };
 
   const handleAddReview = async (rating, comment) => {
-  setReviewLoading(true);
-  try {
-    const token = localStorage.getItem('token');
-    
-    console.log('Saving review...');
-    await axios.post(`${API_URL}/api/books/${id}/reviews`,
-      { rating, comment },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    
-    console.log('Review saved, fetching updated data...');
-    
-    // Обновляем отзывы (публичный)
-    const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
-    setReviews(reviewsRes.data);
-    
-    // Обновляем книгу (публичный)
-    const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
-    setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
-    
-    console.log('Data updated successfully');
-    setShowReviewModal(false);
-  } catch (err) {
-    console.error('Error saving review:', err.response?.status, err.response?.data);
-    alert('Не удалось сохранить отзыв');
-  } finally {
-    setReviewLoading(false);
-  }
-};
+    setReviewLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Сохраняем отзыв
+      await axios.post(`${API_URL}/api/books/${id}/reviews`,
+        { rating, comment },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Обновляем список отзывов (публичный)
+      const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
+      setReviews(reviewsRes.data);
+      
+      // Обновляем книгу (публичный)
+      const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
+      setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
+      
+      setShowReviewModal(false);
+    } catch (err) {
+      console.error('Ошибка сохранения отзыва:', err);
+      alert('Не удалось сохранить отзыв');
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
   if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
@@ -175,6 +172,7 @@ export default function BookPage() {
       </button>
       
       <div className="book-content">
+        {/* Левая колонка: обложка + кнопки */}
         <div className="book-left-column">
           <div className="book-cover-large">
             <img 
@@ -201,6 +199,7 @@ export default function BookPage() {
           </button>
         </div>
         
+        {/* Правая колонка: информация о книге */}
         <div className="book-info">
           <h1>{book.title}</h1>
           <h2>{book.author}</h2>
@@ -243,48 +242,48 @@ export default function BookPage() {
             <h3>Описание</h3>
             <p>{book.description || 'Описание отсутствует'}</p>
           </div>
-          
-          <div className="book-reviews">
-            <h3>Отзывы ({reviews.length})</h3>
-            <div className="reviews-list">
-              {reviews.length === 0 ? (
-                <div className="no-reviews">Пока нет отзывов. Будьте первым!</div>
-              ) : (
-                reviews.map(review => (
-                  <div key={review.id} className="review-card">
-                    <div className="review-author">
-                      <div 
-                        className="review-author-avatar"
-                        onClick={() => navigate(`/user/${review.username}`)}
-                      >
-                        <img 
-                          src={review.avatar_url || 'https://placehold.net/8.png'} 
-                          alt={review.username}
-                        />
-                      </div>
-                      <div 
-                        className="review-author-info"
-                        onClick={() => navigate(`/user/${review.username}`)}
-                      >
-                        <strong>{review.username}</strong>
-                        <span className="review-date">
-                          {new Date(review.created_at).toLocaleDateString('ru-RU')}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="review-rating">
-                      <StarRating rating={review.rating} />
-                    </div>
-                    {review.comment && (
-                      <div className="review-comment">
-                        {review.comment}
-                      </div>
-                    )}
+        </div>
+      </div>
+      
+      {/* Блок отзывов - отдельно после book-content */}
+      <div className="book-reviews">
+        <h3>Отзывы ({reviews.length})</h3>
+        <div className="reviews-list">
+          {reviews.length === 0 ? (
+            <div className="no-reviews">Пока нет отзывов. Будьте первым!</div>
+          ) : (
+            reviews.map(review => (
+              <div key={review.id} className="review-card">
+                <div className="review-author">
+                  <div 
+                    className="review-author-avatar"
+                    onClick={() => navigate(`/user/${review.username}`)}
+                  >
+                    <img 
+                      src={review.avatar_url || 'https://via.placeholder.com/40x40?text=Avatar'} 
+                      alt={review.username}
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/40x40?text=Avatar'; }}
+                    />
                   </div>
-                ))
-              )}
-            </div>
-          </div>
+                  <div 
+                    className="review-author-info"
+                    onClick={() => navigate(`/user/${review.username}`)}
+                  >
+                    <strong>{review.username}</strong>
+                    <span className="review-date">
+                      {new Date(review.created_at).toLocaleDateString('ru-RU')}
+                    </span>
+                  </div>
+                </div>
+                <StarRating rating={review.rating} />
+                {review.comment && (
+                  <div className="review-comment">
+                    {review.comment}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
