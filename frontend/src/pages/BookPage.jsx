@@ -126,30 +126,35 @@ export default function BookPage() {
   };
 
   const handleAddReview = async (rating, comment) => {
-    setReviewLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_URL}/api/books/${id}/reviews`,
-        { rating, comment },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      // Обновляем список отзывов
-      const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
-      setReviews(reviewsRes.data);
-      
-      // Обновляем рейтинг книги
-      const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
-      setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
-      
-      setShowReviewModal(false);
-    } catch (err) {
-      console.error('Ошибка сохранения отзыва:', err);
-      alert('Не удалось сохранить отзыв');
-    } finally {
-      setReviewLoading(false);
-    }
-  };
+  setReviewLoading(true);
+  try {
+    const token = localStorage.getItem('token');
+    
+    console.log('Saving review...');
+    await axios.post(`${API_URL}/api/books/${id}/reviews`,
+      { rating, comment },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    console.log('Review saved, fetching updated data...');
+    
+    // Обновляем отзывы (публичный)
+    const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
+    setReviews(reviewsRes.data);
+    
+    // Обновляем книгу (публичный)
+    const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
+    setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
+    
+    console.log('Data updated successfully');
+    setShowReviewModal(false);
+  } catch (err) {
+    console.error('Error saving review:', err.response?.status, err.response?.data);
+    alert('Не удалось сохранить отзыв');
+  } finally {
+    setReviewLoading(false);
+  }
+};
 
   if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
@@ -248,7 +253,7 @@ export default function BookPage() {
                         onClick={() => navigate(`/user/${review.username}`)}
                       >
                         <img 
-                          src={review.avatar_url || 'https://via.placeholder.com/40x40?text=Avatar'} 
+                          src={review.avatar_url || 'https://placehold.net/8.png'} 
                           alt={review.username}
                         />
                       </div>
