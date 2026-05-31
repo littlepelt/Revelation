@@ -4,6 +4,7 @@
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 ALTER TABLE user_book_status ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating >= 1 AND rating <= 5);
+ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT;
 
 -- ============================================
 -- 2. СОЗДАНИЕ ТАБЛИЦЫ ОТЗЫВОВ
@@ -40,6 +41,7 @@ CREATE TABLE IF NOT EXISTS books (
   cover_url TEXT,
   publication_year INTEGER,
   file_path VARCHAR(255),
+  tags TEXT,
   rating_avg DECIMAL(3,2) DEFAULT 0,
   rating_count INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

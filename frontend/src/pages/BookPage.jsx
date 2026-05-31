@@ -290,6 +290,14 @@ export default function BookPage() {
               Буду читать
             </button>
           </div>
+
+          {book.tags && book.tags.length > 0 && (
+            <div className="book-tags">
+              {book.tags.split(',').map((tag, index) => (
+                <span key={index} className="book-tag">{tag}</span>
+              ))}
+            </div>
+          )}
           
           <div className="book-description">
             <h3>Описание</h3>
