@@ -269,4 +269,36 @@ router.delete('/:id/reviews', async (req, res) => {
   }
 });
 
+// ============================================
+// 11. ПОЛУЧИТЬ ПОСЛЕДНИЕ ОТЗЫВЫ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ
+// ============================================
+router.get('/reviews/latest', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.created_at,
+        r.book_id,
+        u.id as user_id,
+        u.username,
+        u.avatar_url,
+        b.title as book_title,
+        b.author as book_author,
+        b.cover_url as book_cover_url
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      JOIN books b ON r.book_id = b.id
+      ORDER BY r.created_at DESC
+      LIMIT 3
+    `);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching latest reviews:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
