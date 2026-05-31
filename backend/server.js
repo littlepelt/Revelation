@@ -10,6 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Статическая папка для загруженных файлов
 app.use('/avatars', express.static(path.join(__dirname, 'data/uploads')));
+app.use('/covers', express.static(path.join(__dirname, 'books/covers')));
 
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
