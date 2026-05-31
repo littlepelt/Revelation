@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Статическая папка для загруженных файлов (новая постоянная папка)
+// Статическая папка для загруженных файлов
 app.use('/avatars', express.static(path.join(__dirname, 'data/uploads')));
 
 const authRoutes = require('./routes/auth');
@@ -67,7 +67,6 @@ app.get('/api/books/:id', async (req, res) => {
 
 app.get('/api/books/:id/reviews', async (req, res) => {
   const { id } = req.params;
-  
   try {
     const result = await pool.query(`
       SELECT 
@@ -87,6 +86,35 @@ app.get('/api/books/:id/reviews', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/api/books/reviews/latest', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.created_at,
+        r.book_id,
+        u.id as user_id,
+        u.username,
+        u.avatar_url,
+        b.title as book_title,
+        b.author as book_author,
+        b.cover_url as book_cover_url
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      JOIN books b ON r.book_id = b.id
+      ORDER BY r.created_at DESC
+      LIMIT 3
+    `);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching latest reviews:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
