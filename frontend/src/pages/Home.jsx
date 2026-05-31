@@ -62,7 +62,7 @@ export default function Home() {
         setTopRatedBooks(topRated);
         
         // Последние отзывы
-        const reviewsRes = await axios.get(`${API_URL}/api/reviews/latest`);
+        const reviewsRes = await axios.get(`${API_URL}/api/books/reviews/latest`);
         setRecentReviews(reviewsRes.data);
         
       } catch (err) {
