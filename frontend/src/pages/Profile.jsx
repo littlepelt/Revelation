@@ -181,7 +181,7 @@ export default function Profile() {
                       <div className="shelf-book-rating">
                         <StarRating rating={book.user_rating} />
                         <span className="rating-value">
-                          {book.user_rating ? `${book.user_rating} / 5` : 'Не оценено'}
+                          {book.user_rating ? book.user_rating : 'Нет оценок'}
                         </span>
                       </div>
                     </div>
