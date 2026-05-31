@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Compass, Star, MessageCircle, BookOpen } from 'lucide-react';
 import './Home.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -84,7 +83,6 @@ export default function Home() {
         {/* Блок "Последнее" */}
         <section className="home-section">
           <div className="section-header">
-            <BookOpen size={24} />
             <h2>Последнее</h2>
           </div>
           <div className="books-grid-large">
@@ -117,24 +115,23 @@ export default function Home() {
         {/* Блок "Лучшее" */}
         <section className="home-section">
           <div className="section-header">
-            <Star size={24} />
             <h2>Лучшее</h2>
           </div>
-          <div className="books-grid">
+          <div className="books-list-vertical">
             {topRatedBooks.map(book => (
               <div 
                 key={book.id} 
-                className="home-book-card"
+                className="home-book-card-vertical"
                 onClick={() => navigate(`/book/${book.id}`)}
                 onMouseDown={createRipple}
               >
-                <div className="home-book-cover">
+                <div className="home-book-cover-vertical">
                   <img 
-                    src={book.cover_url || 'https://via.placeholder.com/120x180?text=No+Cover'} 
+                    src={book.cover_url || 'https://via.placeholder.com/80x120?text=No+Cover'} 
                     alt={book.title}
                   />
                 </div>
-                <div className="home-book-info">
+                <div className="home-book-info-vertical">
                   <h3>{book.title}</h3>
                   <p>{book.author}</p>
                   <div className="home-book-rating">
@@ -150,7 +147,6 @@ export default function Home() {
         {/* Блок "Оценивают" */}
         <section className="home-section">
           <div className="section-header">
-            <MessageCircle size={24} />
             <h2>Оценивают</h2>
           </div>
           <div className="reviews-list">
@@ -162,7 +158,7 @@ export default function Home() {
                     onClick={() => navigate(`/book/${review.book_id}`)}
                   >
                     <img 
-                      src={review.book_cover_url || 'https://via.placeholder.com/40x60?text=No+Cover'} 
+                      src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
                       alt={review.book_title}
                     />
                   </div>
@@ -182,6 +178,7 @@ export default function Home() {
                     <img 
                       src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
                       alt={review.username}
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/32x32?text=Avatar'; }}
                     />
                   </div>
                   <div 
