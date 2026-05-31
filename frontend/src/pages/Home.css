@@ -116,6 +116,36 @@ body.dark-theme .home-book-card-large p {
   color: #AAAAAA;
 }
 
+.home-book-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.home-rating-stars {
+  display: flex;
+  gap: 3px;
+  font-size: 16px;
+}
+
+.home-rating-stars .star-filled {
+  color: #F1C40F;
+}
+
+.home-rating-stars .star-empty {
+  color: #DFE2ED;
+}
+
+body.dark-theme .home-rating-stars .star-empty {
+  color: #555555;
+}
+
+.home-book-rating span {
+  font-size: 14px;
+  color: #888;
+}
+
 /* Карточки книг (Лучшее) - как в AllBooks */
 .books-list-vertical {
   display: flex;
@@ -208,37 +238,7 @@ body.dark-theme .home-book-info-vertical p {
   color: #AAAAAA;
 }
 
-.home-book-rating {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.home-rating-stars {
-  display: flex;
-  gap: 2px;
-  font-size: 12px;
-}
-
-.home-rating-stars .star-filled {
-  color: #F1C40F;
-}
-
-.home-rating-stars .star-empty {
-  color: #DFE2ED;
-}
-
-body.dark-theme .home-rating-stars .star-empty {
-  color: #555555;
-}
-
-.home-book-rating span {
-  font-size: 12px;
-  color: #888;
-}
-
-/* Карточки отзывов */
+/* Карточки отзывов - без обводки, фона и padding */
 .reviews-list {
   display: flex;
   flex-direction: column;
@@ -246,15 +246,9 @@ body.dark-theme .home-rating-stars .star-empty {
 }
 
 .home-review-card {
-  padding: 16px;
-  border: 1px solid #DFE2ED;
-  border-radius: 12px;
-  background: #FFFFFF;
-}
-
-body.dark-theme .home-review-card {
-  background: #2A2A2A;
-  border-color: #404040;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .review-book-info {
@@ -301,7 +295,7 @@ body.dark-theme .review-book-details p {
 .review-author-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 10px;
   cursor: pointer;
 }
@@ -319,9 +313,16 @@ body.dark-theme .review-book-details p {
   object-fit: cover;
 }
 
+.review-author-details {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .review-author-details strong {
-  display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: #222;
 }
 
@@ -330,15 +331,19 @@ body.dark-theme .review-author-details strong {
 }
 
 .review-date {
-  font-size: 11px;
+  font-size: 14px;
   color: #888;
+}
+
+body.dark-theme .review-date {
+  color: #AAAAAA;
 }
 
 .home-review-card .review-rating {
   margin-bottom: 8px;
   display: flex;
-  gap: 2px;
-  font-size: 12px;
+  gap: 3px;
+  font-size: 16px;
 }
 
 .home-review-card .review-rating .star-filled {
@@ -349,10 +354,15 @@ body.dark-theme .review-author-details strong {
   color: #DFE2ED;
 }
 
+body.dark-theme .home-review-card .review-rating .star-empty {
+  color: #555555;
+}
+
 .home-review-card .review-comment {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
   color: #444;
+  margin-top: 4px;
 }
 
 body.dark-theme .home-review-card .review-comment {
@@ -455,5 +465,10 @@ body.dark-theme .genre-tag {
     width: 100%;
     height: auto;
     aspect-ratio: 2 / 3;
+  }
+  
+  .review-author-details {
+    flex-direction: column;
+    gap: 4px;
   }
 }

@@ -216,14 +216,6 @@ export default function BookPage() {
 
   return (
     <div className="book-page">
-      <button 
-        className="back-button"
-        onClick={() => navigate('/')}
-        onMouseDown={createRipple}
-      >
-        <ArrowLeft size={20} />
-      </button>
-      
       <div className="book-content">
         {/* Левая колонка: обложка + кнопки */}
         <div className="book-left-column">
@@ -260,9 +252,15 @@ export default function BookPage() {
           <div className="book-meta">
             <span className="year-badge">{book.publication_year}</span>
             <div className="rating-badge">
-              <span className="rating-star">★</span>
-              <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
-              <span className="rating-count">({book.rating_count || 0} оценок)</span>
+              <div className="rating-stars">
+                {[...Array(Math.floor(book.rating_avg || 0))].map((_, i) => (
+                  <span key={`full-${i}`} className="star-filled">★</span>
+                ))}
+                {[...Array(5 - Math.floor(book.rating_avg || 0))].map((_, i) => (
+                  <span key={`empty-${i}`} className="star-empty">★</span>
+                ))}
+              </div>
+              <span className="rating-value">({book.rating_count || 0} оценок)</span>
             </div>
           </div>
           
