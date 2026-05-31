@@ -37,15 +37,12 @@ function parseBookFile(filePath) {
   
   const text = content.replace(/===МЕТАДАННЫЕ===\n[\s\S]*?\n===КОНЕЦ МЕТАДАННЫХ===\n/, '');
   
-  // Формируем URL обложки
   let coverUrl = null;
   if (metadata['Обложка']) {
     if (metadata['Обложка'].startsWith('/covers/')) {
-      // Локальная обложка
       const coverFileName = path.basename(metadata['Обложка']);
       coverUrl = `${process.env.API_URL || 'https://revelation-5zzx.onrender.com'}/covers/${coverFileName}`;
     } else {
-      // Внешний URL
       coverUrl = metadata['Обложка'];
     }
   }
@@ -79,16 +76,24 @@ async function syncBooks() {
     const filePath = path.join(BOOKS_DIR, file);
     const book = parseBookFile(filePath);
     
-    const result = await pool.query('SELECT id FROM books WHERE title = $1', [book.title]);
+    // Проверяем, существует ли книга
+    const result = await pool.query('SELECT id FROM books WHERE file_path = $1', [book.fileName]);
     
     if (result.rows.length === 0) {
+      // Новая книга — добавляем
       await pool.query(`
         INSERT INTO books (title, author, publication_year, cover_url, file_path, description)
         VALUES ($1, $2, $3, $4, $5, $6)
       `, [book.title, book.author, book.year, book.coverUrl, book.fileName, book.description]);
-      console.log(`✅ Добавлена книга: ${book.title}`);
+      console.log(`✅ Добавлена новая книга: ${book.title}`);
     } else {
-      console.log(`⏭️ Книга уже существует: ${book.title}`);
+      // Существующая книга — обновляем
+      await pool.query(`
+        UPDATE books 
+        SET title = $1, author = $2, publication_year = $3, cover_url = $4, description = $5
+        WHERE file_path = $6
+      `, [book.title, book.author, book.year, book.coverUrl, book.description, book.fileName]);
+      console.log(`🔄 Обновлена книга: ${book.title}`);
     }
   }
 }
