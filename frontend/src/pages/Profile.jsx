@@ -180,9 +180,6 @@ export default function Profile() {
                       <p>{book.author}</p>
                       <div className="shelf-book-rating">
                         <StarRating rating={book.user_rating} />
-                        <span className="rating-value">
-                          {book.user_rating ? book.user_rating : 'Нет оценок'}
-                        </span>
                       </div>
                     </div>
                   </div>
