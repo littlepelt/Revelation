@@ -293,10 +293,11 @@ body.dark-theme .review-book-details p {
 }
 
 .review-author-info {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
   cursor: pointer;
 }
 
@@ -305,6 +306,7 @@ body.dark-theme .review-book-details p {
   height: 32px;
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .review-author-avatar img {
@@ -314,7 +316,6 @@ body.dark-theme .review-book-details p {
 }
 
 .review-author-details {
-  flex: 1;
   display: flex;
   align-items: baseline;
   gap: 12px;

@@ -260,7 +260,7 @@ export default function BookPage() {
                   <span key={`empty-${i}`} className="star-empty">★</span>
                 ))}
               </div>
-              <span className="rating-value">({book.rating_count || 0} оценок)</span>
+              <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
             </div>
           </div>
           

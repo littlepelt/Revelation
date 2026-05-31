@@ -9,6 +9,7 @@
   flex-wrap: wrap;
 }
 
+/* Левая колонка - аватар и кнопки */
 .profile-left {
   flex-shrink: 0;
   width: 260px;
@@ -95,6 +96,7 @@ body.dark-theme .logout-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Правая колонка - полки */
 .profile-right {
   flex: 1;
   min-width: 200px;
@@ -150,6 +152,7 @@ body.dark-theme .shelf-tab .ripple {
   gap: 0;
 }
 
+/* Карточка книги в профиле - как в "Лучшее" на главной */
 .shelf-book-card {
   display: flex;
   padding: 20px 0;
@@ -163,9 +166,13 @@ body.dark-theme .shelf-tab .ripple {
   border: none;
   border-radius: 12px;
   transform: scale(1);
-  box-shadow: none;
   will-change: transform;
   text-decoration: none;
+}
+
+.shelf-book-card:active {
+  transform: scale(0.95);
+  transition: transform 0.08s ease;
 }
 
 .shelf-book-card:hover {
@@ -174,11 +181,6 @@ body.dark-theme .shelf-tab .ripple {
 
 body.dark-theme .shelf-book-card:hover {
   background-color: #2A2A2A;
-}
-
-.shelf-book-card:active {
-  transform: scale(0.95);
-  transition: transform 0.08s ease;
 }
 
 .shelf-book-cover {
@@ -232,9 +234,15 @@ body.dark-theme .shelf-book-info p {
 
 .shelf-book-rating {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.shelf-book-stars {
+  display: flex;
   gap: 3px;
   font-size: 16px;
-  margin-bottom: 4px;
 }
 
 .shelf-book-stars-filled {
@@ -249,12 +257,12 @@ body.dark-theme .shelf-book-stars-empty {
   color: #555555;
 }
 
-.shelf-book-year {
-  color: #888888;
-  font-size: 13px;
+.shelf-book-rating span {
+  font-size: 14px;
+  color: #888;
 }
 
-body.dark-theme .shelf-book-year {
+body.dark-theme .shelf-book-rating span {
   color: #AAAAAA;
 }
 
@@ -279,6 +287,7 @@ body.dark-theme .shelf-book-card .ripple {
   color: #888;
 }
 
+/* Адаптив */
 @media (max-width: 768px) {
   .profile-container {
     flex-direction: column;
@@ -319,5 +328,13 @@ body.dark-theme .shelf-book-card .ripple {
   
   .shelf-book-info h4 {
     font-size: 16px;
+  }
+  
+  .shelf-book-stars {
+    font-size: 14px;
+  }
+  
+  .shelf-book-rating span {
+    font-size: 12px;
   }
 }

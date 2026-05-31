@@ -268,7 +268,7 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
-/* Блок отзывов - без обводки, фона и padding */
+/* Блок отзывов */
 .book-reviews {
   width: 100%;
   margin-top: 0;
@@ -311,6 +311,7 @@ body.dark-theme .book-reviews h3 {
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .review-author-avatar img {
@@ -322,7 +323,7 @@ body.dark-theme .book-reviews h3 {
 .review-author-info {
   flex: 1;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
   cursor: pointer;
@@ -427,8 +428,7 @@ body.dark-theme .review-comment {
   }
   
   .review-author-info {
-    flex-direction: column;
-    gap: 4px;
+    flex-wrap: wrap;
   }
   
   .review-rating {
