@@ -15,7 +15,7 @@
   flex-shrink: 0;
 }
 
-/* Секции - без иконок и разделительных линий */
+/* Секции */
 .home-section {
   margin-bottom: 48px;
 }
@@ -59,8 +59,24 @@ body.dark-theme .home-book-card-large {
 }
 
 .home-book-card-large:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
   transition: transform 0.08s ease;
+}
+
+.home-book-card-large:hover {
+  background-color: #F9F9F9;
+}
+
+body.dark-theme .home-book-card-large:hover {
+  background-color: #3A3A3A;
+}
+
+.home-book-card-large .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .home-book-card-large .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .home-book-cover-large {
@@ -123,7 +139,7 @@ body.dark-theme .home-book-card-large p {
 }
 
 .home-book-card-vertical:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
   transition: transform 0.08s ease;
 }
 
@@ -133,6 +149,14 @@ body.dark-theme .home-book-card-large p {
 
 body.dark-theme .home-book-card-vertical:hover {
   background-color: #2A2A2A;
+}
+
+.home-book-card-vertical .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .home-book-card-vertical .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .home-book-cover-vertical {

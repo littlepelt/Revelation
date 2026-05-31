@@ -150,57 +150,61 @@ export default function Home() {
             <h2>Оценивают</h2>
           </div>
           <div className="reviews-list">
-            {recentReviews.map(review => (
-              <div key={review.id} className="home-review-card">
-                <div className="review-book-info">
-                  <div 
-                    className="review-book-cover"
-                    onClick={() => navigate(`/book/${review.book_id}`)}
-                  >
-                    <img 
-                      src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
-                      alt={review.book_title}
-                    />
+            {recentReviews.length === 0 ? (
+              <div className="no-reviews">Пока нет отзывов</div>
+            ) : (
+              recentReviews.map(review => (
+                <div key={review.id} className="home-review-card">
+                  <div className="review-book-info">
+                    <div 
+                      className="review-book-cover"
+                      onClick={() => navigate(`/book/${review.book_id}`)}
+                    >
+                      <img 
+                        src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
+                        alt={review.book_title}
+                      />
+                    </div>
+                    <div 
+                      className="review-book-details"
+                      onClick={() => navigate(`/book/${review.book_id}`)}
+                    >
+                      <h4>{review.book_title}</h4>
+                      <p>{review.book_author}</p>
+                    </div>
                   </div>
-                  <div 
-                    className="review-book-details"
-                    onClick={() => navigate(`/book/${review.book_id}`)}
-                  >
-                    <h4>{review.book_title}</h4>
-                    <p>{review.book_author}</p>
+                  <div className="review-author-info">
+                    <div 
+                      className="review-author-avatar"
+                      onClick={() => navigate(`/user/${review.username}`)}
+                    >
+                      <img 
+                        src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
+                        alt={review.username}
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/32x32?text=Avatar'; }}
+                      />
+                    </div>
+                    <div 
+                      className="review-author-details"
+                      onClick={() => navigate(`/user/${review.username}`)}
+                    >
+                      <strong>{review.username}</strong>
+                      <span className="review-date">
+                        {new Date(review.created_at).toLocaleDateString('ru-RU')}
+                      </span>
+                    </div>
                   </div>
+                  <div className="review-rating">
+                    <StarRating rating={review.rating} />
+                  </div>
+                  {review.comment && (
+                    <div className="review-comment">
+                      {review.comment}
+                    </div>
+                  )}
                 </div>
-                <div className="review-author-info">
-                  <div 
-                    className="review-author-avatar"
-                    onClick={() => navigate(`/user/${review.username}`)}
-                  >
-                    <img 
-                      src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
-                      alt={review.username}
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/32x32?text=Avatar'; }}
-                    />
-                  </div>
-                  <div 
-                    className="review-author-details"
-                    onClick={() => navigate(`/user/${review.username}`)}
-                  >
-                    <strong>{review.username}</strong>
-                    <span className="review-date">
-                      {new Date(review.created_at).toLocaleDateString('ru-RU')}
-                    </span>
-                  </div>
-                </div>
-                <div className="review-rating">
-                  <StarRating rating={review.rating} />
-                </div>
-                {review.comment && (
-                  <div className="review-comment">
-                    {review.comment}
-                  </div>
-                )}
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </div>
