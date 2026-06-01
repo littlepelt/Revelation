@@ -7,19 +7,43 @@
 -- DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================
--- 2. СОЗДАНИЕ ТАБЛИЦ ЗАНОВО
+-- 1. ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ КОЛОНОК (без удаления данных)
 -- ============================================
 
-CREATE TABLE users (
+ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE user_book_status ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating >= 1 AND rating <= 5);
+ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
+
+-- ============================================
+-- 2. СОЗДАНИЕ ТАБЛИЦЫ ОТЗЫВОВ
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS reviews (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================
+-- 3. СОЗДАНИЕ ОСТАЛЬНЫХ ТАБЛИЦ (если их нет)
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(100) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   avatar_url TEXT,
+  is_admin BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE books (
+CREATE TABLE IF NOT EXISTS books (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
@@ -33,7 +57,7 @@ CREATE TABLE books (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user_book_status (
+CREATE TABLE IF NOT EXISTS user_book_status (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
   status VARCHAR(20) CHECK (status IN ('read', 'reading', 'want_to_read')),
@@ -41,14 +65,4 @@ CREATE TABLE user_book_status (
   rating INTEGER CHECK (rating >= 1 AND rating <= 5),
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, book_id)
-);
-
-CREATE TABLE reviews (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
-  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  comment TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

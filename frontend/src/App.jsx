@@ -7,6 +7,8 @@ import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
 import ReadBook from './pages/ReadBook';
 import BooksByTag from './pages/BooksByTag';
+import { Shield } from 'lucide-react';
+import AdminPanel from './pages/AdminPanel';
 import { useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
@@ -53,6 +55,11 @@ function AppContent() {
             <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
+            {user?.is_admin && (
+              <Link to="/admin" className="admin-link" onMouseDown={createRipple}>
+                <Shield size={20} />
+              </Link>
+            )}
           </div>
         </header>
       )}
@@ -67,6 +74,7 @@ function AppContent() {
           <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
           <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
           <Route path="/books/tag/:tag" element={user ? <BooksByTag /> : <Navigate to="/login" />} />
+          <Route path="/admin" element={user?.is_admin ? <AdminPanel /> : <Navigate to="/" />} />
         </Routes>
       </main>
 

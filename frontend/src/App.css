@@ -176,6 +176,46 @@ body.dark-theme .footer-link .ripple {
   color: #888888;
 }
 
+.admin-link {
+  background: none;
+  border: 1px solid #DFE2ED;
+  width: 44px;
+  height: 44px;
+  border-radius: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+}
+
+body.dark-theme .admin-link {
+  color: #E0E0E0;
+  border-color: #1A1A1A;
+}
+
+.admin-link:hover {
+  border-color: #DFE2ED;
+  color: #1A1A1A;
+}
+
+body.dark-theme .admin-link:hover {
+  border-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.admin-link .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .admin-link .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* Адаптив */
 @media (max-width: 768px) {
   .app-main {

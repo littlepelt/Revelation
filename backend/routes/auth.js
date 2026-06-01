@@ -220,4 +220,115 @@ router.put('/profile', authMiddleware, async (req, res) => {
   }
 });
 
+// В конец файла добавить:
+
+// ============================================
+// АДМИН-МАРШРУТЫ
+// ============================================
+
+// Middleware для проверки прав администратора
+const isAdmin = async (req, res, next) => {
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query('SELECT is_admin FROM users WHERE id = $1', [userId]);
+    if (!result.rows[0]?.is_admin) {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+    next();
+  } catch (err) {
+    console.error('Admin check error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Получить всех пользователей (только для админа)
+router.get('/admin/users', authMiddleware, isAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username, email, avatar_url, is_admin, created_at FROM users ORDER BY id');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Удалить пользователя (только для админа)
+router.delete('/admin/users/:id', authMiddleware, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    // Проверяем, не удаляем ли мы самого админа
+    const currentUser = await pool.query('SELECT is_admin FROM users WHERE id = $1', [req.userId]);
+    if (currentUser.rows[0]?.is_admin && parseInt(id) === req.userId) {
+      return res.status(400).json({ error: 'Cannot delete yourself' });
+    }
+    
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Получить все отзывы (только для админа)
+router.get('/admin/reviews', authMiddleware, isAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.created_at,
+        u.username as user_username,
+        b.title as book_title
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      JOIN books b ON r.book_id = b.id
+      ORDER BY r.created_at DESC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Удалить отзыв (только для админа)
+router.delete('/admin/reviews/:id', authMiddleware, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    // Получаем book_id для обновления рейтинга
+    const reviewResult = await pool.query('SELECT book_id FROM reviews WHERE id = $1', [id]);
+    const bookId = reviewResult.rows[0]?.book_id;
+    
+    await pool.query('DELETE FROM reviews WHERE id = $1', [id]);
+    
+    // Обновляем средний рейтинг книги
+    if (bookId) {
+      await pool.query(`
+        UPDATE books 
+        SET rating_avg = (
+          SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
+        ),
+        rating_count = (
+          SELECT COUNT(*) FROM reviews WHERE book_id = $1
+        )
+        WHERE id = $1
+      `, [bookId]);
+    }
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting review:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
