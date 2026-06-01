@@ -75,6 +75,12 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
       return;
     }
     
+    // При создании новой книги текстовый файл обязателен
+    if (!isEdit && !textFile) {
+      alert('Для новой книги необходимо загрузить текстовый файл (.txt)');
+      return;
+    }
+    
     setUploading(true);
     
     let coverUrl = book?.cover_url || '';
@@ -112,6 +118,7 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
           }
         });
         textUrl = textRes.data.url;
+        console.log('Text uploaded to:', textUrl);
       } catch (err) {
         console.error('Text upload error:', err);
         alert('Ошибка загрузки текста');
@@ -192,8 +199,9 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
           </div>
 
           <div className="book-form-field">
-            <label>Текст книги (TXT)</label>
+            <label>Текст книги (TXT) {!isEdit && '*'}</label>
             <input type="file" accept=".txt" onChange={handleTextChange} />
+            {isEdit && textFile && <span className="file-selected">Выбран новый файл</span>}
           </div>
 
           <div className="book-form-field">
