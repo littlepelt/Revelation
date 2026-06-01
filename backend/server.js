@@ -145,9 +145,7 @@ app.get('/api/check-tags', async (req, res) => {
 });
 
 
-
-
-app.get('/api/add-tags-column', async (req, res) => {
+app.get('/api/debug-book', async (req, res) => {
   const { Pool } = require('pg');
   const pool = new Pool({
     user: process.env.DB_USER,
@@ -159,21 +157,12 @@ app.get('/api/add-tags-column', async (req, res) => {
   });
   
   try {
-    await pool.query('ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT');
-    res.json({ success: true, message: 'Tags column added' });
+    const result = await pool.query('SELECT id, title, tags FROM books WHERE id = 1');
+    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
-
-app.post('/api/books/resync', async (req, res) => {
-  const { syncBooks } = require('./utils/bookParser');
-  await syncBooks();
-  res.json({ success: true });
-});
-
 
 
 // ============================================
