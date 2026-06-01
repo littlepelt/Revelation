@@ -166,7 +166,7 @@ router.post('/:id/progress', async (req, res) => {
 });
 
 // ============================================
-// 5. УСТАНОВИТЬ СТАТУС КНИГИ (read/reading/want_to_read)
+// 5. УСТАНОВИТЬ СТАТУС КНИГИ (read/reading/want_to_read или null)
 // ============================================
 router.post('/:id/status', async (req, res) => {
   const { id } = req.params;
@@ -175,6 +175,20 @@ router.post('/:id/status', async (req, res) => {
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  // Если status === null — удаляем запись
+  if (status === null) {
+    try {
+      await pool.query(
+        'DELETE FROM user_book_status WHERE user_id = $1 AND book_id = $2',
+        [userId, id]
+      );
+      return res.json({ success: true });
+    } catch (err) {
+      console.error('Error deleting status:', err);
+      return res.status(500).json({ error: 'Server error' });
+    }
   }
   
   if (!status || !['read', 'reading', 'want_to_read'].includes(status)) {
@@ -408,7 +422,6 @@ router.get('/reviews/latest', async (req, res) => {
 router.get('/tag/:tag', async (req, res) => {
   const { tag } = req.params;
   
-  // Маппинг английских тегов на русские
   const tagMapping = {
     'classic': 'Классика',
     'psychological': 'Психологический роман',

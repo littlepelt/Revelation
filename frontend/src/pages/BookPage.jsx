@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { PenLine } from 'lucide-react';
+import { PenLine, ChevronDown, Check } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import StarRating from '../components/StarRating';
 import './BookPage.css';
@@ -26,7 +26,6 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Функция для преобразования русского тега в английский URL
 const getEnglishTag = (russianTag) => {
   const mapping = {
     'Классика': 'classic',
@@ -49,12 +48,13 @@ export default function BookPage() {
   const [loading, setLoading] = useState(true);
   const [userStatus, setUserStatus] = useState(null);
   const [savedPage, setSavedPage] = useState(1);
-  const [statusLoading, setStatusLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewLoading, setReviewLoading] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,8 +127,26 @@ export default function BookPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setUserStatus(status);
+      setDropdownOpen(false);
     } catch (err) {
       console.error('Ошибка сохранения статуса:', err);
+    } finally {
+      setStatusLoading(false);
+    }
+  };
+
+  const removeFromShelf = async () => {
+    setStatusLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_URL}/api/books/${id}/status`, 
+        { status: null },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUserStatus(null);
+      setDropdownOpen(false);
+    } catch (err) {
+      console.error('Ошибка удаления с полки:', err);
     } finally {
       setStatusLoading(false);
     }
@@ -204,6 +222,14 @@ export default function BookPage() {
   if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
 
+  const statusOptions = [
+    { value: 'reading', label: 'Читаю' },
+    { value: 'read', label: 'Прочитано' },
+    { value: 'want_to_read', label: 'Буду читать' }
+  ];
+
+  const currentStatusLabel = statusOptions.find(opt => opt.value === userStatus)?.label || 'Добавить на полку';
+
   return (
     <div className="book-page">
       <div className="book-content">
@@ -215,13 +241,51 @@ export default function BookPage() {
             />
           </div>
           
-          <button 
-            className="read-button" 
-            onClick={handleRead}
-            onMouseDown={createRipple}
-          >
-            Читать книгу
-          </button>
+          <div className="read-button-container">
+            <button 
+              className="read-button-main" 
+              onClick={handleRead}
+              onMouseDown={createRipple}
+            >
+              Читать книгу
+            </button>
+            <div className="dropdown-wrapper">
+              <button 
+                className="read-button-dropdown"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                onMouseDown={createRipple}
+              >
+                <ChevronDown size={18} />
+              </button>
+              {dropdownOpen && (
+                <div className="dropdown-menu">
+                  {statusOptions.map(option => (
+                    <button
+                      key={option.value}
+                      className={`dropdown-item ${userStatus === option.value ? 'active' : ''}`}
+                      onClick={() => setStatus(option.value)}
+                      disabled={statusLoading}
+                    >
+                      {userStatus === option.value && <Check size={14} />}
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
+                  {userStatus && (
+                    <>
+                      <div className="dropdown-divider"></div>
+                      <button
+                        className="dropdown-item remove"
+                        onClick={removeFromShelf}
+                        disabled={statusLoading}
+                      >
+                        Убрать с полки
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
           
           <button 
             className="review-button" 
@@ -251,7 +315,6 @@ export default function BookPage() {
             </div>
           </div>
           
-          {/* Теги книги */}
           {book.tags && book.tags.length > 0 && (
             <div className="book-tags">
               {book.tags.split(',').map((tag, index) => {
@@ -269,33 +332,6 @@ export default function BookPage() {
               })}
             </div>
           )}
-          
-          <div className="book-actions">
-            <button 
-              className={`status-btn ${userStatus === 'reading' ? 'active' : ''}`}
-              onClick={() => setStatus('reading')}
-              onMouseDown={createRipple}
-              disabled={statusLoading}
-            >
-              Читаю
-            </button>
-            <button 
-              className={`status-btn ${userStatus === 'read' ? 'active' : ''}`}
-              onClick={() => setStatus('read')}
-              onMouseDown={createRipple}
-              disabled={statusLoading}
-            >
-              Прочитано
-            </button>
-            <button 
-              className={`status-btn ${userStatus === 'want_to_read' ? 'active' : ''}`}
-              onClick={() => setStatus('want_to_read')}
-              onMouseDown={createRipple}
-              disabled={statusLoading}
-            >
-              Буду читать
-            </button>
-          </div>
           
           <div className="book-description">
             <h3>Описание</h3>
