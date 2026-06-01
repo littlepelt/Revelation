@@ -1,6 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
-const { getBookText } = require('../utils/bookParser');
+const { getBookTextAsync } = require('../utils/bookParser');
 const router = express.Router();
 
 const pool = new Pool({
@@ -87,7 +87,6 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     }
     
     const book = bookResult.rows[0];
-    const { getBookTextAsync } = require('../utils/bookParser');
     const fullText = await getBookTextAsync(book.file_path);
     
     const sentences = splitIntoSentences(fullText);
@@ -178,7 +177,6 @@ router.post('/:id/status', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // Если status === null — удаляем только статус, НЕ удаляем отзыв
   if (status === null) {
     try {
       await pool.query(
@@ -263,7 +261,7 @@ router.get('/:id/progress', async (req, res) => {
 });
 
 // ============================================
-// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ
+// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (с лайками)
 // ============================================
 router.get('/:id/reviews', async (req, res) => {
   const { id } = req.params;
@@ -275,6 +273,8 @@ router.get('/:id/reviews', async (req, res) => {
         r.rating,
         r.comment,
         r.created_at,
+        r.likes,
+        r.dislikes,
         u.id as user_id,
         u.username,
         u.avatar_url
@@ -308,16 +308,13 @@ router.post('/:id/reviews', async (req, res) => {
   }
   
   try {
-    // Удаляем старый отзыв
     await pool.query('DELETE FROM reviews WHERE user_id = $1 AND book_id = $2', [userId, id]);
     
-    // Добавляем новый
     await pool.query(`
       INSERT INTO reviews (user_id, book_id, rating, comment, created_at, updated_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
     `, [userId, id, rating, comment || null]);
     
-    // Обновляем средний рейтинг книги
     await pool.query(`
       UPDATE books 
       SET rating_avg = (
@@ -329,7 +326,6 @@ router.post('/:id/reviews', async (req, res) => {
       WHERE id = $1
     `, [id]);
     
-    // Обновляем user_book_status
     await pool.query(`
       INSERT INTO user_book_status (user_id, book_id, rating, updated_at)
       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
@@ -396,6 +392,8 @@ router.get('/reviews/latest', async (req, res) => {
         r.rating,
         r.comment,
         r.created_at,
+        r.likes,
+        r.dislikes,
         r.book_id,
         u.id as user_id,
         u.username,
@@ -423,7 +421,7 @@ router.get('/reviews/latest', async (req, res) => {
 router.get('/tag/:tag', async (req, res) => {
   const { tag } = req.params;
   
-    const tagMapping = {
+  const tagMapping = {
     'classic': 'Классика',
     'psychological': 'Психологический роман',
     'russian': 'Русская литература',
@@ -472,20 +470,17 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
   }
   
   try {
-    // Проверяем, есть ли уже реакция пользователя
     const existing = await pool.query(
       'SELECT reaction_type FROM review_reactions WHERE user_id = $1 AND review_id = $2',
       [userId, reviewId]
     );
     
-    // Начинаем транзакцию
     await pool.query('BEGIN');
     
     if (existing.rows.length > 0) {
       const oldReaction = existing.rows[0].reaction_type;
       
       if (oldReaction === reaction) {
-        // Убираем реакцию
         await pool.query(
           'DELETE FROM review_reactions WHERE user_id = $1 AND review_id = $2',
           [userId, reviewId]
@@ -497,7 +492,6 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
           await pool.query('UPDATE reviews SET dislikes = dislikes - 1 WHERE id = $1', [reviewId]);
         }
       } else {
-        // Меняем реакцию
         await pool.query(
           'UPDATE review_reactions SET reaction_type = $1 WHERE user_id = $2 AND review_id = $3',
           [reaction, userId, reviewId]
@@ -510,7 +504,6 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
         }
       }
     } else {
-      // Новая реакция
       await pool.query(
         'INSERT INTO review_reactions (user_id, review_id, reaction_type) VALUES ($1, $2, $3)',
         [userId, reviewId, reaction]
@@ -525,7 +518,6 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
     
     await pool.query('COMMIT');
     
-    // Возвращаем обновлённые данные
     const result = await pool.query(
       'SELECT likes, dislikes FROM reviews WHERE id = $1',
       [reviewId]
@@ -547,7 +539,7 @@ router.get('/reviews/:reviewId/reaction', async (req, res) => {
   const userId = req.userId;
   
   if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.json({ reaction: null });
   }
   
   try {

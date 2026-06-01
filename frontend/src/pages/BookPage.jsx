@@ -26,7 +26,6 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Функция для преобразования русского тега в английский URL
 const getEnglishTag = (russianTag) => {
   const mapping = {
     'Классика': 'classic',
@@ -70,28 +69,23 @@ export default function BookPage() {
         const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
         setBook(bookRes.data);
         
-        try {
-          const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
-          setReviews(reviewsRes.data);
-          
-          // Загружаем реакции пользователя на отзывы
-          if (token && reviewsRes.data.length > 0) {
-            const reactionsMap = {};
-            for (const review of reviewsRes.data) {
-              try {
-                const reactionRes = await axios.get(`${API_URL}/api/books/reviews/${review.id}/reaction`, {
-                  headers: { Authorization: `Bearer ${token}` }
-                });
-                reactionsMap[review.id] = reactionRes.data.reaction;
-              } catch (e) {
-                console.error('Error fetching reaction:', e);
-              }
+        const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
+        setReviews(reviewsRes.data);
+        
+        // Загружаем реакции пользователя на отзывы
+        if (token && reviewsRes.data.length > 0) {
+          const reactionsMap = {};
+          for (const review of reviewsRes.data) {
+            try {
+              const reactionRes = await axios.get(`${API_URL}/api/books/reviews/${review.id}/reaction`, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              reactionsMap[review.id] = reactionRes.data.reaction;
+            } catch (e) {
+              console.error('Error fetching reaction:', e);
             }
-            setUserReactions(reactionsMap);
           }
-        } catch (reviewsErr) {
-          console.error('Ошибка загрузки отзывов:', reviewsErr);
-          setReviews([]);
+          setUserReactions(reactionsMap);
         }
         
         if (token) {
@@ -238,15 +232,17 @@ export default function BookPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      // Обновляем отзыв в списке
       setReviews(prev => prev.map(review => 
         review.id === reviewId 
           ? { ...review, likes: response.data.likes, dislikes: response.data.dislikes }
           : review
       ));
       
-      // Обновляем реакцию пользователя
-      setUserReactions(prev => ({ ...prev, [reviewId]: reaction }));
+      if (response.data.userReaction === null) {
+        setUserReactions(prev => ({ ...prev, [reviewId]: null }));
+      } else {
+        setUserReactions(prev => ({ ...prev, [reviewId]: reaction }));
+      }
     } catch (err) {
       console.error('Error posting reaction:', err);
     } finally {
