@@ -22,12 +22,6 @@ body.dark-theme .admin-header h1 {
   display: flex;
   gap: 12px;
   margin-bottom: 24px;
-  border-bottom: 1px solid #DFE2ED;
-  padding-bottom: 12px;
-}
-
-body.dark-theme .admin-tabs {
-  border-bottom-color: #1A1A1A;
 }
 
 .admin-tab {
@@ -133,6 +127,28 @@ body.dark-theme .admin-table th {
   border-bottom: none;
 }
 
+/* Аватар в таблице пользователей */
+.admin-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.admin-user-link {
+  color: #003BFF;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-user-link:hover {
+  text-decoration: underline;
+}
+
+body.dark-theme .admin-user-link {
+  color: #FFFFFF;
+}
+
 .review-comment-cell {
   max-width: 250px;
   white-space: nowrap;
@@ -164,8 +180,7 @@ body.dark-theme .admin-table th {
   background: rgba(220, 38, 38, 0.2);
 }
 
-/* Добавь в конец файла */
-
+/* Стили для вкладки книг */
 .admin-books-header {
   display: flex;
   justify-content: flex-end;
@@ -232,6 +247,24 @@ body.dark-theme .admin-edit-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.rating-stars .star-filled {
+  color: #F1C40F;
+}
+
+.rating-stars .star-empty {
+  color: #DFE2ED;
+}
+
+body.dark-theme .rating-stars .star-empty {
+  color: #555555;
+}
+
 @media (max-width: 768px) {
   .admin-header h1 {
     font-size: 24px;
@@ -245,5 +278,10 @@ body.dark-theme .admin-edit-btn .ripple {
   
   .review-comment-cell {
     max-width: 120px;
+  }
+  
+  .admin-user-avatar {
+    width: 24px;
+    height: 24px;
   }
 }

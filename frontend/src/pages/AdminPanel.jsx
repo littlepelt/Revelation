@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Trash2, Users, MessageCircle, BookOpen, Plus, Edit } from 'lucide-react';
+import { Trash2, Plus, Edit } from 'lucide-react';
 import BookFormModal from '../components/BookFormModal';
 import './AdminPanel.css';
 
@@ -24,7 +25,24 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
+const StarRating = ({ rating }) => {
+  const fullStars = Math.floor(rating || 0);
+  const emptyStars = 5 - fullStars;
+  
+  return (
+    <div className="rating-stars">
+      {[...Array(fullStars)].map((_, i) => (
+        <span key={`full-${i}`} className="star-filled">★</span>
+      ))}
+      {[...Array(emptyStars)].map((_, i) => (
+        <span key={`empty-${i}`} className="star-empty">★</span>
+      ))}
+    </div>
+  );
+};
+
 export default function AdminPanel() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -158,7 +176,6 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('users')}
           onMouseDown={createRipple}
         >
-          <Users size={18} />
           Пользователи
         </button>
         <button 
@@ -166,7 +183,6 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('reviews')}
           onMouseDown={createRipple}
         >
-          <MessageCircle size={18} />
           Отзывы
         </button>
         <button 
@@ -174,7 +190,6 @@ export default function AdminPanel() {
           onClick={() => setActiveTab('books')}
           onMouseDown={createRipple}
         >
-          <BookOpen size={18} />
           Книги
         </button>
       </div>
@@ -189,6 +204,7 @@ export default function AdminPanel() {
               <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Аватар</th>
                   <th>Имя пользователя</th>
                   <th>Email</th>
                   <th>Админ</th>
@@ -200,7 +216,22 @@ export default function AdminPanel() {
                 {users.map(user => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
-                    <td>{user.username}</td>
+                    <td>
+                      <img 
+                        src={user.avatar_url || '/Avatar.png'} 
+                        alt={user.username}
+                        className="admin-user-avatar"
+                        onError={(e) => { e.target.src = '/Avatar.png'; }}
+                      />
+                    </td>
+                    <td>
+                      <span 
+                        className="admin-user-link"
+                        onClick={() => navigate(`/user/${user.username}`)}
+                      >
+                        {user.username}
+                      </span>
+                    </td>
                     <td>{user.email}</td>
                     <td>{user.is_admin ? 'Да' : 'Нет'}</td>
                     <td>{new Date(user.created_at).toLocaleDateString('ru-RU')}</td>
@@ -239,9 +270,18 @@ export default function AdminPanel() {
                 {reviews.map(review => (
                   <tr key={review.id}>
                     <td>{review.id}</td>
-                    <td>{review.user_username}</td>
+                    <td>
+                      <span 
+                        className="admin-user-link"
+                        onClick={() => navigate(`/user/${review.user_username}`)}
+                      >
+                        {review.user_username}
+                      </span>
+                    </td>
                     <td>{review.book_title}</td>
-                    <td>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</td>
+                    <td>
+                      <StarRating rating={review.rating} />
+                    </td>
                     <td className="review-comment-cell">{review.comment || '—'}</td>
                     <td>{new Date(review.created_at).toLocaleDateString('ru-RU')}</td>
                     <td>
@@ -291,7 +331,12 @@ export default function AdminPanel() {
                       <td>{book.title}</td>
                       <td>{book.author}</td>
                       <td>{book.publication_year || '—'}</td>
-                      <td>{book.rating_avg ? `${book.rating_avg} (${book.rating_count})` : 'Нет оценок'}</td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <StarRating rating={book.rating_avg} />
+                          <span>({book.rating_count || 0})</span>
+                        </div>
+                      </td>
                       <td>
                         <div className="admin-actions">
                           <button 
