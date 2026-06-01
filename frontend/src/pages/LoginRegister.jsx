@@ -49,6 +49,11 @@ export default function LoginRegister() {
         throw new Error('Invalid token received');
       }
       
+      // Если при регистрации нет аватарки, добавляем стандартную
+      if (!isLogin && !response.data.user.avatar_url) {
+        response.data.user.avatar_url = '/Avatar.png';
+      }
+      
       login(response.data.token, response.data.user);
       navigate('/');
     } catch (err) {

@@ -34,7 +34,6 @@ body.dark-theme .app-header {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
 }
 
 .logo-img {
