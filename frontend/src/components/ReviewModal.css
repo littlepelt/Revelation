@@ -17,10 +17,12 @@
   width: 90%;
   max-width: 500px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid #DFE2ED;
 }
 
 body.dark-theme .review-modal-panel {
   background: #000000;
+  border: 1px solid #1A1A1A;
 }
 
 .review-modal-header {
@@ -266,14 +268,4 @@ body.dark-theme .review-delete-btn.confirm {
 
 body.dark-theme .review-delete-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
-}
-
-.modal-panel,
-.settings-panel {
-  border: 1px solid #DFE2ED;
-}
-
-body.dark-theme .modal-panel,
-body.dark-theme .settings-panel {
-  border: 1px solid #1A1A1A;
 }
