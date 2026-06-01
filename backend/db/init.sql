@@ -7,16 +7,18 @@
 -- DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================
--- 1. ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ КОЛОНОК
+-- 1. ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ КОЛОНОК (без удаления данных)
 -- ============================================
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 ALTER TABLE user_book_status ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating >= 1 AND rating <= 5);
 ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
+ALTER TABLE reviews ADD COLUMN IF NOT EXISTS likes INTEGER DEFAULT 0;
+ALTER TABLE reviews ADD COLUMN IF NOT EXISTS dislikes INTEGER DEFAULT 0;
 
 -- ============================================
--- 2. СОЗДАНИЕ ТАБЛИЦЫ ОТЗЫВОВ
+-- 2. СОЗДАНИЕ ТАБЛИЦЫ ОТЗЫВОВ (если нет)
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS reviews (
@@ -32,7 +34,7 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- ============================================
--- 3. СОЗДАНИЕ ТАБЛИЦЫ ЛАЙКОВ ПОЛЬЗОВАТЕЛЕЙ
+-- 3. СОЗДАНИЕ ТАБЛИЦЫ РЕАКЦИЙ НА ОТЗЫВЫ
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS review_reactions (
