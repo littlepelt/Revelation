@@ -28,7 +28,7 @@ function parseBookFile(filePath) {
     const colonIndex = line.indexOf(':');
     if (colonIndex > 0) {
       const key = line.substring(0, colonIndex).trim();
-      const value = line.substring(colonIndex + 1).trim();
+      let value = line.substring(colonIndex + 1).trim();
       if (key && value) {
         metadata[key] = value;
       }
@@ -47,13 +47,19 @@ function parseBookFile(filePath) {
     }
   }
   
+  // Получаем теги (если есть)
+  let tags = '';
+  if (metadata['Теги']) {
+    tags = metadata['Теги'];
+  }
+  
   return {
     title: metadata['Название'] || 'Unknown',
     author: metadata['Автор'] || 'Unknown',
     year: parseInt(metadata['Год']) || null,
     coverUrl: coverUrl,
     description: metadata['Описание'] || null,
-    tags: metadata['Теги'] || '',
+    tags: tags,
     text: text,
     fileName: path.basename(filePath)
   };
@@ -74,24 +80,28 @@ async function syncBooks() {
   }
   
   for (const file of files) {
-    const filePath = path.join(BOOKS_DIR, file);
-    const book = parseBookFile(filePath);
-    
-    const result = await pool.query('SELECT id FROM books WHERE file_path = $1', [book.fileName]);
-    
-    if (result.rows.length === 0) {
-      await pool.query(`
-        INSERT INTO books (title, author, publication_year, cover_url, file_path, description, tags)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-      `, [book.title, book.author, book.year, book.coverUrl, book.fileName, book.description, book.tags]);
-      console.log(`✅ Добавлена новая книга: ${book.title}`);
-    } else {
-      await pool.query(`
-        UPDATE books 
-        SET title = $1, author = $2, publication_year = $3, cover_url = $4, description = $5, tags = $6
-        WHERE file_path = $7
-      `, [book.title, book.author, book.year, book.coverUrl, book.description, book.tags, book.fileName]);
-      console.log(`🔄 Обновлена книга: ${book.title}`);
+    try {
+      const filePath = path.join(BOOKS_DIR, file);
+      const book = parseBookFile(filePath);
+      
+      const result = await pool.query('SELECT id FROM books WHERE file_path = $1', [book.fileName]);
+      
+      if (result.rows.length === 0) {
+        await pool.query(`
+          INSERT INTO books (title, author, publication_year, cover_url, file_path, description, tags)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `, [book.title, book.author, book.year, book.coverUrl, book.fileName, book.description, book.tags]);
+        console.log(`✅ Добавлена новая книга: ${book.title}`);
+      } else {
+        await pool.query(`
+          UPDATE books 
+          SET title = $1, author = $2, publication_year = $3, cover_url = $4, description = $5, tags = $6
+          WHERE file_path = $7
+        `, [book.title, book.author, book.year, book.coverUrl, book.description, book.tags, book.fileName]);
+        console.log(`🔄 Обновлена книга: ${book.title}`);
+      }
+    } catch (err) {
+      console.error(`❌ Ошибка при обработке файла ${file}:`, err.message);
     }
   }
 }
