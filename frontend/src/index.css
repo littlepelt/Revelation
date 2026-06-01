@@ -160,5 +160,3 @@ body.dark-theme .btn-ghost .ripple {
 body.dark-theme .star-empty {
   color: #444444;
 }
-
-/* Убираем глобальные стили для rating-value - они будут в компонентах */
