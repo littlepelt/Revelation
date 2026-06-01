@@ -141,6 +141,12 @@ app.get('/api/migrate-tags', async (req, res) => {
   }
 });
 
+app.post('/api/books/sync', async (req, res) => {
+  const { syncBooks } = require('./utils/bookParser');
+  await syncBooks();
+  res.json({ success: true });
+});
+
 // ============================================
 // Защищённые маршруты (с middleware)
 // ============================================

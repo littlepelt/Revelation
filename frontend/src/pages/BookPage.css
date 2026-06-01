@@ -205,7 +205,7 @@ body.dark-theme .book-tag {
   flex-wrap: wrap;
 }
 
-/* Кнопки статуса - полностью запрещаем изменения при наведении */
+/* Кнопки статуса */
 .status-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -237,30 +237,34 @@ body.dark-theme .status-btn.active {
   color: #1A1A1A;
 }
 
-/* КАТЕГОРИЧЕСКИ ЗАПРЕЩАЕМ ЛЮБЫЕ ИЗМЕНЕНИЯ ПРИ НАВЕДЕНИИ */
+/* Запрещаем любые изменения при наведении */
 .status-btn:hover,
-.status-btn:focus,
-.status-btn:active,
-.status-btn.active:hover,
-.status-btn.active:focus,
-.status-btn.active:active {
-  border-color: inherit !important;
-  color: inherit !important;
-  background-color: inherit !important;
+.status-btn.active:hover {
+  background-color: transparent;
+  border-color: #DFE2ED;
+  color: #1A1A1A;
 }
 
 body.dark-theme .status-btn:hover,
-body.dark-theme .status-btn:focus,
-body.dark-theme .status-btn:active,
-body.dark-theme .status-btn.active:hover,
-body.dark-theme .status-btn.active:focus,
-body.dark-theme .status-btn.active:active {
-  border-color: inherit !important;
-  color: inherit !important;
-  background-color: inherit !important;
+body.dark-theme .status-btn.active:hover {
+  background-color: transparent;
+  border-color: #404040;
+  color: #E0E0E0;
 }
 
-/* Ripple для кнопок статуса */
+/* Активная кнопка при наведении НЕ МЕНЯЕТСЯ */
+.status-btn.active:hover {
+  background-color: #003BFF;
+  border-color: #003BFF;
+  color: white;
+}
+
+body.dark-theme .status-btn.active:hover {
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
 .status-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
