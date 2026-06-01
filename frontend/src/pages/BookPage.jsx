@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, PenLine } from 'lucide-react';
+import { PenLine } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import StarRating from '../components/StarRating';
 import './BookPage.css';
@@ -206,14 +206,6 @@ export default function BookPage() {
 
   return (
     <div className="book-page">
-      <button 
-        className="back-button"
-        onClick={() => navigate('/')}
-        onMouseDown={createRipple}
-      >
-        <ArrowLeft size={20} />
-      </button>
-      
       <div className="book-content">
         <div className="book-left-column">
           <div className="book-cover-large">
@@ -260,7 +252,7 @@ export default function BookPage() {
             </div>
           </div>
           
-          {/* Теги книги - кликабельные */}
+          {/* Теги книги */}
           {book.tags && book.tags.length > 0 && (
             <div className="book-tags">
               {book.tags.split(',').map((tag, index) => {
