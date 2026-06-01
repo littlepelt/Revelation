@@ -7,7 +7,7 @@
 -- DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================
--- 1. ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ КОЛОНОК (без удаления данных)
+-- 1. ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ КОЛОНОК
 -- ============================================
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
@@ -25,12 +25,27 @@ CREATE TABLE IF NOT EXISTS reviews (
   book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   comment TEXT,
+  likes INTEGER DEFAULT 0,
+  dislikes INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================
--- 3. СОЗДАНИЕ ОСТАЛЬНЫХ ТАБЛИЦ (если их нет)
+-- 3. СОЗДАНИЕ ТАБЛИЦЫ ЛАЙКОВ ПОЛЬЗОВАТЕЛЕЙ
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS review_reactions (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  review_id INTEGER REFERENCES reviews(id) ON DELETE CASCADE,
+  reaction_type VARCHAR(10) CHECK (reaction_type IN ('like', 'dislike')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, review_id)
+);
+
+-- ============================================
+-- 4. СОЗДАНИЕ ОСТАЛЬНЫХ ТАБЛИЦ (если их нет)
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS users (

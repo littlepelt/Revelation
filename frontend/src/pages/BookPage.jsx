@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { PenLine, ChevronDown, Check } from 'lucide-react';
+import { ArrowLeft, PenLine, ThumbsUp, ThumbsDown } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import StarRating from '../components/StarRating';
 import './BookPage.css';
@@ -26,6 +26,7 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
+// Функция для преобразования русского тега в английский URL
 const getEnglishTag = (russianTag) => {
   const mapping = {
     'Классика': 'classic',
@@ -58,6 +59,8 @@ export default function BookPage() {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [userReactions, setUserReactions] = useState({});
+  const [reactionLoading, setReactionLoading] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +73,22 @@ export default function BookPage() {
         try {
           const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
           setReviews(reviewsRes.data);
+          
+          // Загружаем реакции пользователя на отзывы
+          if (token && reviewsRes.data.length > 0) {
+            const reactionsMap = {};
+            for (const review of reviewsRes.data) {
+              try {
+                const reactionRes = await axios.get(`${API_URL}/api/books/reviews/${review.id}/reaction`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                reactionsMap[review.id] = reactionRes.data.reaction;
+              } catch (e) {
+                console.error('Error fetching reaction:', e);
+              }
+            }
+            setUserReactions(reactionsMap);
+          }
         } catch (reviewsErr) {
           console.error('Ошибка загрузки отзывов:', reviewsErr);
           setReviews([]);
@@ -210,6 +229,31 @@ export default function BookPage() {
     }
   };
 
+  const handleReaction = async (reviewId, reaction) => {
+    setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API_URL}/api/books/reviews/${reviewId}/react`,
+        { reaction },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Обновляем отзыв в списке
+      setReviews(prev => prev.map(review => 
+        review.id === reviewId 
+          ? { ...review, likes: response.data.likes, dislikes: response.data.dislikes }
+          : review
+      ));
+      
+      // Обновляем реакцию пользователя
+      setUserReactions(prev => ({ ...prev, [reviewId]: reaction }));
+    } catch (err) {
+      console.error('Error posting reaction:', err);
+    } finally {
+      setReactionLoading(prev => ({ ...prev, [reviewId]: false }));
+    }
+  };
+
   const openReviewModal = () => {
     const existing = reviews.find(r => r.user_id === currentUserId);
     if (existing) {
@@ -230,8 +274,6 @@ export default function BookPage() {
     { value: 'read', label: 'Прочитано' },
     { value: 'want_to_read', label: 'Буду читать' }
   ];
-
-  const currentStatusLabel = statusOptions.find(opt => opt.value === userStatus)?.label || 'Добавить на полку';
 
   return (
     <div className="book-page">
@@ -350,19 +392,21 @@ export default function BookPage() {
           ) : (
             reviews.map(review => (
               <div key={review.id} className="review-card">
-                <div 
-                  className="review-author review-author-clickable"
-                  onClick={() => navigate(`/user/${review.username}`)}
-                  onMouseDown={createRipple}
-                >
-                  <div className="review-author-avatar">
+                <div className="review-author">
+                  <div 
+                    className="review-author-avatar"
+                    onClick={() => navigate(`/user/${review.username}`)}
+                  >
                     <img 
                       src={review.avatar_url || '/Avatar.png'} 
                       alt={review.username}
                       onError={(e) => { e.target.src = '/Avatar.png'; }}
                     />
                   </div>
-                  <div className="review-author-info">
+                  <div 
+                    className="review-author-info"
+                    onClick={() => navigate(`/user/${review.username}`)}
+                  >
                     <strong>{review.username}</strong>
                     <span className="review-date">
                       {new Date(review.created_at).toLocaleDateString('ru-RU')}
@@ -375,6 +419,27 @@ export default function BookPage() {
                     {review.comment}
                   </div>
                 )}
+                
+                <div className="review-reactions">
+                  <button 
+                    className={`reaction-btn ${userReactions[review.id] === 'like' ? 'active' : ''}`}
+                    onClick={() => handleReaction(review.id, 'like')}
+                    disabled={reactionLoading[review.id]}
+                    onMouseDown={createRipple}
+                  >
+                    <ThumbsUp size={16} />
+                    <span>{review.likes || 0}</span>
+                  </button>
+                  <button 
+                    className={`reaction-btn ${userReactions[review.id] === 'dislike' ? 'active' : ''}`}
+                    onClick={() => handleReaction(review.id, 'dislike')}
+                    disabled={reactionLoading[review.id]}
+                    onMouseDown={createRipple}
+                  >
+                    <ThumbsDown size={16} />
+                    <span>{review.dislikes || 0}</span>
+                  </button>
+                </div>
               </div>
             ))
           )}

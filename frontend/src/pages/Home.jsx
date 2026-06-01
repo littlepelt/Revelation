@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import StarRating from '../components/StarRating';
 import './Home.css';
 
@@ -24,35 +25,20 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Функция для преобразования русского тега в английский URL
-const getEnglishTag = (russianTag) => {
-  const mapping = {
-    'Классика': 'classic',
-    'Психологический роман': 'psychological',
-    'Русская литература': 'russian',
-    'Английская литература': 'english',
-    'Древняя литература': 'ancient',
-    'Поэма': 'poem',
-    'Драма': 'drama',
-    'Роман': 'romance',
-    'Философия': 'philosophy',
-    'Приключения': 'adventure',
-    'Фантастика': 'fantasy',
-    'Детектив': 'detective'
-  };
-  return mapping[russianTag] || russianTag.toLowerCase();
-};
-
 export default function Home() {
   const navigate = useNavigate();
   const [recentBooks, setRecentBooks] = useState([]);
   const [topRatedBooks, setTopRatedBooks] = useState([]);
   const [recentReviews, setRecentReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userReactions, setUserReactions] = useState({});
+  const [reactionLoading, setReactionLoading] = useState({});
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
+        const token = localStorage.getItem('token');
+        
         const booksRes = await axios.get(`${API_URL}/api/books`);
         const allBooks = booksRes.data;
         const recent = [...allBooks].slice(-3).reverse();
@@ -66,6 +52,22 @@ export default function Home() {
         const reviewsRes = await axios.get(`${API_URL}/api/books/reviews/latest`);
         setRecentReviews(reviewsRes.data);
         
+        // Загружаем реакции пользователя на отзывы
+        if (token && reviewsRes.data.length > 0) {
+          const reactionsMap = {};
+          for (const review of reviewsRes.data) {
+            try {
+              const reactionRes = await axios.get(`${API_URL}/api/books/reviews/${review.id}/reaction`, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              reactionsMap[review.id] = reactionRes.data.reaction;
+            } catch (e) {
+              console.error('Error fetching reaction:', e);
+            }
+          }
+          setUserReactions(reactionsMap);
+        }
+        
       } catch (err) {
         console.error('Error fetching home data:', err);
       } finally {
@@ -75,6 +77,31 @@ export default function Home() {
     
     fetchHomeData();
   }, []);
+
+  const handleReaction = async (reviewId, reaction) => {
+    setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API_URL}/api/books/reviews/${reviewId}/react`,
+        { reaction },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Обновляем отзыв в списке
+      setRecentReviews(prev => prev.map(review => 
+        review.id === reviewId 
+          ? { ...review, likes: response.data.likes, dislikes: response.data.dislikes }
+          : review
+      ));
+      
+      // Обновляем реакцию пользователя
+      setUserReactions(prev => ({ ...prev, [reviewId]: reaction }));
+    } catch (err) {
+      console.error('Error posting reaction:', err);
+    } finally {
+      setReactionLoading(prev => ({ ...prev, [reviewId]: false }));
+    }
+  };
 
   if (loading) return <div className="loading">Загрузка...</div>;
 
@@ -150,27 +177,28 @@ export default function Home() {
           <div className="reviews-list">
             {recentReviews.map(review => (
               <div key={review.id} className="home-review-card">
-                <div 
-                  className="review-book-info"
-                  onClick={() => navigate(`/book/${review.book_id}`)}
-                  onMouseDown={createRipple}
-                >
-                  <div className="review-book-cover">
+                <div className="review-book-info">
+                  <div 
+                    className="review-book-cover"
+                    onClick={() => navigate(`/book/${review.book_id}`)}
+                    onMouseDown={createRipple}
+                  >
                     <img 
                       src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
                       alt={review.book_title}
                     />
                   </div>
-                  <div className="review-book-details">
+                  <div 
+                    className="review-book-details"
+                    onClick={() => navigate(`/book/${review.book_id}`)}
+                    onMouseDown={createRipple}
+                  >
                     <h4>{review.book_title}</h4>
                     <p>{review.book_author}</p>
                   </div>
                 </div>
-                <div 
-                  className="review-author-row"
-                  onClick={() => navigate(`/user/${review.username}`)}
-                  onMouseDown={createRipple}
-                >
+                
+                <div className="review-author-row">
                   <div className="review-author-avatar">
                     <img 
                       src={review.avatar_url || '/Avatar.png'} 
@@ -185,6 +213,7 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
+                
                 <div className="review-rating">
                   <StarRating rating={review.rating} />
                 </div>
@@ -193,6 +222,27 @@ export default function Home() {
                     {review.comment}
                   </div>
                 )}
+                
+                <div className="review-reactions">
+                  <button 
+                    className={`reaction-btn ${userReactions[review.id] === 'like' ? 'active' : ''}`}
+                    onClick={() => handleReaction(review.id, 'like')}
+                    disabled={reactionLoading[review.id]}
+                    onMouseDown={createRipple}
+                  >
+                    <ThumbsUp size={16} />
+                    <span>{review.likes || 0}</span>
+                  </button>
+                  <button 
+                    className={`reaction-btn ${userReactions[review.id] === 'dislike' ? 'active' : ''}`}
+                    onClick={() => handleReaction(review.id, 'dislike')}
+                    disabled={reactionLoading[review.id]}
+                    onMouseDown={createRipple}
+                  >
+                    <ThumbsDown size={16} />
+                    <span>{review.dislikes || 0}</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>

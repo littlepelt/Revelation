@@ -455,4 +455,112 @@ router.get('/tag/:tag', async (req, res) => {
   }
 });
 
+// ============================================
+// 13. ПОСТАВИТЬ ЛАЙК/ДИЗЛАЙК ОТЗЫВУ
+// ============================================
+router.post('/reviews/:reviewId/react', async (req, res) => {
+  const { reviewId } = req.params;
+  const { reaction } = req.body;
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  if (!reaction || !['like', 'dislike'].includes(reaction)) {
+    return res.status(400).json({ error: 'Invalid reaction' });
+  }
+  
+  try {
+    // Проверяем, есть ли уже реакция пользователя
+    const existing = await pool.query(
+      'SELECT reaction_type FROM review_reactions WHERE user_id = $1 AND review_id = $2',
+      [userId, reviewId]
+    );
+    
+    // Начинаем транзакцию
+    await pool.query('BEGIN');
+    
+    if (existing.rows.length > 0) {
+      const oldReaction = existing.rows[0].reaction_type;
+      
+      if (oldReaction === reaction) {
+        // Убираем реакцию
+        await pool.query(
+          'DELETE FROM review_reactions WHERE user_id = $1 AND review_id = $2',
+          [userId, reviewId]
+        );
+        
+        if (reaction === 'like') {
+          await pool.query('UPDATE reviews SET likes = likes - 1 WHERE id = $1', [reviewId]);
+        } else {
+          await pool.query('UPDATE reviews SET dislikes = dislikes - 1 WHERE id = $1', [reviewId]);
+        }
+      } else {
+        // Меняем реакцию
+        await pool.query(
+          'UPDATE review_reactions SET reaction_type = $1 WHERE user_id = $2 AND review_id = $3',
+          [reaction, userId, reviewId]
+        );
+        
+        if (reaction === 'like') {
+          await pool.query('UPDATE reviews SET likes = likes + 1, dislikes = dislikes - 1 WHERE id = $1', [reviewId]);
+        } else {
+          await pool.query('UPDATE reviews SET likes = likes - 1, dislikes = dislikes + 1 WHERE id = $1', [reviewId]);
+        }
+      }
+    } else {
+      // Новая реакция
+      await pool.query(
+        'INSERT INTO review_reactions (user_id, review_id, reaction_type) VALUES ($1, $2, $3)',
+        [userId, reviewId, reaction]
+      );
+      
+      if (reaction === 'like') {
+        await pool.query('UPDATE reviews SET likes = likes + 1 WHERE id = $1', [reviewId]);
+      } else {
+        await pool.query('UPDATE reviews SET dislikes = dislikes + 1 WHERE id = $1', [reviewId]);
+      }
+    }
+    
+    await pool.query('COMMIT');
+    
+    // Возвращаем обновлённые данные
+    const result = await pool.query(
+      'SELECT likes, dislikes FROM reviews WHERE id = $1',
+      [reviewId]
+    );
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    await pool.query('ROLLBACK');
+    console.error('Error processing reaction:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ============================================
+// 14. ПОЛУЧИТЬ РЕАКЦИЮ ПОЛЬЗОВАТЕЛЯ НА ОТЗЫВ
+// ============================================
+router.get('/reviews/:reviewId/reaction', async (req, res) => {
+  const { reviewId } = req.params;
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query(
+      'SELECT reaction_type FROM review_reactions WHERE user_id = $1 AND review_id = $2',
+      [userId, reviewId]
+    );
+    
+    res.json({ reaction: result.rows[0]?.reaction_type || null });
+  } catch (err) {
+    console.error('Error fetching reaction:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

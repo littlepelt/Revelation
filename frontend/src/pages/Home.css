@@ -375,6 +375,60 @@ body.dark-theme .review-comment {
   color: #CCCCCC;
 }
 
+/* Лайки и дизлайки в отзывах */
+.review-reactions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #DFE2ED;
+}
+
+body.dark-theme .review-reactions {
+  border-top-color: #1A1A1A;
+}
+
+.reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #888;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: none;
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-theme .reaction-btn {
+  color: #AAAAAA;
+}
+
+.reaction-btn.active {
+  color: #003BFF;
+}
+
+body.dark-theme .reaction-btn.active {
+  color: #FFFFFF;
+}
+
+.reaction-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.reaction-btn .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .reaction-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* Боковая панель - жанры */
 .sidebar-section {
   background: #FFFFFF;
@@ -420,16 +474,6 @@ body.dark-theme .sidebar-section h3 {
 }
 
 body.dark-theme .genre-tag {
-  background: #1A1A1A;
-  color: #CCCCCC;
-}
-
-.genre-tag:hover {
-  background: #F5F5F5;
-  color: #555;
-}
-
-body.dark-theme .genre-tag:hover {
   background: #1A1A1A;
   color: #CCCCCC;
 }
@@ -482,5 +526,13 @@ body.dark-theme .genre-tag:hover {
     width: 100%;
     height: auto;
     aspect-ratio: 2 / 3;
+  }
+  
+  .review-author-row {
+    flex-wrap: wrap;
+  }
+  
+  .review-reactions {
+    gap: 12px;
   }
 }

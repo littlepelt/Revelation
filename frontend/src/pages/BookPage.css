@@ -536,6 +536,60 @@ body.dark-theme .review-comment {
   color: #888;
 }
 
+/* Лайки и дизлайки */
+.review-reactions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #DFE2ED;
+}
+
+body.dark-theme .review-reactions {
+  border-top-color: #1A1A1A;
+}
+
+.reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #888;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: none;
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-theme .reaction-btn {
+  color: #AAAAAA;
+}
+
+.reaction-btn.active {
+  color: #003BFF;
+}
+
+body.dark-theme .reaction-btn.active {
+  color: #FFFFFF;
+}
+
+.reaction-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.reaction-btn .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .reaction-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 @media (max-width: 768px) {
   .book-content {
     flex-direction: column;
