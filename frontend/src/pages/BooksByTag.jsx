@@ -24,7 +24,6 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Маппинг тегов с английского на русский
 const tagNames = {
   'classic': 'Классика',
   'psychological': 'Психологический роман',
@@ -40,7 +39,8 @@ const tagNames = {
 export default function BooksByTag() {
   const { tag } = useParams();
   const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [pendingBookId, setPendingBookId] = useState(null);
 
@@ -50,10 +50,10 @@ export default function BooksByTag() {
     const fetchBooksByTag = async () => {
       try {
         const response = await axios.get(`${API_URL}/api/books/tag/${tag}`);
-        setBooks(response.data);
+        setAllBooks(response.data);
       } catch (err) {
         console.error('Error fetching books by tag:', err);
-        setBooks([]);
+        setAllBooks([]);
       } finally {
         setLoading(false);
       }
@@ -61,6 +61,14 @@ export default function BooksByTag() {
     
     fetchBooksByTag();
   }, [tag]);
+
+  const filteredBooks = allBooks.filter(book => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      book.title.toLowerCase().includes(searchLower) ||
+      book.author.toLowerCase().includes(searchLower)
+    );
+  });
 
   const handleMouseDown = (bookId, e) => {
     const card = e.currentTarget;
@@ -105,25 +113,19 @@ export default function BooksByTag() {
           type="text"
           className="search-input"
           placeholder="Поиск по названию или автору..."
-          onChange={(e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filtered = books.filter(book => 
-              book.title.toLowerCase().includes(searchTerm) ||
-              book.author.toLowerCase().includes(searchTerm)
-            );
-            // Здесь нужно обновить отображаемые книги
-          }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       <div className="books-list">
-        {books.length === 0 ? (
+        {filteredBooks.length === 0 ? (
           <div className="empty-library">
             <p className="empty-title">Книги не найдены</p>
             <p className="empty-subtitle">По тегу "{displayTagName}" нет книг</p>
           </div>
         ) : (
-          books.map(book => (
+          filteredBooks.map(book => (
             <div
               key={book.id}
               className="book-card"

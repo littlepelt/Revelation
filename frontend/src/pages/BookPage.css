@@ -3,21 +3,11 @@
   padding: 20px 0;
 }
 
-/* Блок с информацией о книге - белый, с бордером */
 .book-content {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
   margin-bottom: 48px;
-  background: #FFFFFF;
-  border: 1px solid #DFE2ED;
-  border-radius: 16px;
-  padding: 32px;
-}
-
-body.dark-theme .book-content {
-  background: #2A2A2A;
-  border-color: #404040;
 }
 
 .book-left-column {
@@ -310,19 +300,10 @@ body.dark-theme .book-description p {
   color: #888;
 }
 
-/* Блок с отзывами - белый, с бордером */
 .book-reviews {
   width: 100%;
-  background: #FFFFFF;
-  border: 1px solid #DFE2ED;
-  border-radius: 16px;
-  padding: 32px;
   margin-top: 0;
-}
-
-body.dark-theme .book-reviews {
-  background: #2A2A2A;
-  border-color: #404040;
+  padding-top: 0;
 }
 
 .book-reviews h3 {
@@ -445,7 +426,6 @@ body.dark-theme .review-comment {
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    padding: 20px;
   }
   
   .book-left-column {
@@ -480,10 +460,6 @@ body.dark-theme .review-comment {
   
   .book-tags {
     justify-content: center;
-  }
-  
-  .book-reviews {
-    padding: 20px;
   }
   
   .review-author-info {
