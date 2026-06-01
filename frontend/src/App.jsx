@@ -1,13 +1,11 @@
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Sun, Moon, Compass, Library, User } from 'lucide-react';
+import { Sun, Moon, Compass, Library, User, UserCog } from 'lucide-react';
 import Home from './pages/Home';
 import AllBooks from './pages/AllBooks';
 import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
 import ReadBook from './pages/ReadBook';
-import BooksByTag from './pages/BooksByTag';
-import { Shield } from 'lucide-react';
 import AdminPanel from './pages/AdminPanel';
 import { useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -52,14 +50,16 @@ function AppContent() {
             <Link to="/" className="logo-link" onMouseDown={createRipple}>
               <img src={logoSrc} alt="Logo" className="logo-img" />
             </Link>
-            <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
-            {user?.is_admin && (
-              <Link to="/admin" className="admin-link" onMouseDown={createRipple}>
-                <Shield size={20} />
-              </Link>
-            )}
+            <div className="header-right">
+              <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
+                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              </button>
+              {user?.is_admin && (
+                <Link to="/admin" className="admin-link" onMouseDown={createRipple}>
+                  <UserCog size={20} />
+                </Link>
+              )}
+            </div>
           </div>
         </header>
       )}
@@ -73,7 +73,7 @@ function AppContent() {
           <Route path="/user/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
           <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
-          <Route path="/books/tag/:tag" element={user ? <BooksByTag /> : <Navigate to="/login" />} />
+          <Route path="/books/tag/:tag" element={user ? <AllBooks /> : <Navigate to="/login" />} />
           <Route path="/admin" element={user?.is_admin ? <AdminPanel /> : <Navigate to="/" />} />
         </Routes>
       </main>

@@ -144,8 +144,7 @@ app.get('/api/check-tags', async (req, res) => {
   }
 });
 
-
-app.get('/api/make-admin', async (req, res) => {
+/* app.get('/api/make-admin', async (req, res) => {
   const { Pool } = require('pg');
   const pool = new Pool({
     user: process.env.DB_USER,
@@ -163,11 +162,7 @@ app.get('/api/make-admin', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
-
-
-
+}); */
 
 // Публичные GET маршруты для книг по тегам
 app.get('/api/books/tag/:tag', async (req, res) => {

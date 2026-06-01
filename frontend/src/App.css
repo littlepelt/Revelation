@@ -56,6 +56,13 @@ body.dark-theme .logo-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Правая группа кнопок */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* Кнопка переключения темы */
 .theme-toggle-btn {
   background: none;
@@ -79,16 +86,12 @@ body.dark-theme .theme-toggle-btn {
   border-color: #1A1A1A;
 }
 
-.theme-toggle-btn:hover,
-.theme-toggle-btn:focus,
-.theme-toggle-btn:active {
+.theme-toggle-btn:hover {
   border-color: #DFE2ED;
   color: #1A1A1A;
 }
 
-body.dark-theme .theme-toggle-btn:hover,
-body.dark-theme .theme-toggle-btn:focus,
-body.dark-theme .theme-toggle-btn:active {
+body.dark-theme .theme-toggle-btn:hover {
   border-color: #1A1A1A;
   color: #E0E0E0;
 }
@@ -98,6 +101,47 @@ body.dark-theme .theme-toggle-btn:active {
 }
 
 body.dark-theme .theme-toggle-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Кнопка админ-панели */
+.admin-link {
+  background: none;
+  border: 1px solid #DFE2ED;
+  width: 44px;
+  height: 44px;
+  border-radius: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+}
+
+body.dark-theme .admin-link {
+  color: #E0E0E0;
+  border-color: #1A1A1A;
+}
+
+.admin-link:hover {
+  border-color: #DFE2ED;
+  color: #1A1A1A;
+}
+
+body.dark-theme .admin-link:hover {
+  border-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.admin-link .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .admin-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -176,46 +220,6 @@ body.dark-theme .footer-link .ripple {
   color: #888888;
 }
 
-.admin-link {
-  background: none;
-  border: 1px solid #DFE2ED;
-  width: 44px;
-  height: 44px;
-  border-radius: 44px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1A1A1A;
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  transition: none;
-}
-
-body.dark-theme .admin-link {
-  color: #E0E0E0;
-  border-color: #1A1A1A;
-}
-
-.admin-link:hover {
-  border-color: #DFE2ED;
-  color: #1A1A1A;
-}
-
-body.dark-theme .admin-link:hover {
-  border-color: #1A1A1A;
-  color: #E0E0E0;
-}
-
-.admin-link .ripple {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-body.dark-theme .admin-link .ripple {
-  background: rgba(255, 255, 255, 0.15);
-}
-
 /* Адаптив */
 @media (max-width: 768px) {
   .app-main {
@@ -231,9 +235,14 @@ body.dark-theme .admin-link .ripple {
     width: 40px;
   }
   
-  .theme-toggle-btn {
+  .theme-toggle-btn,
+  .admin-link {
     width: 40px;
     height: 40px;
+  }
+  
+  .header-right {
+    gap: 8px;
   }
   
   .footer-container {
