@@ -263,6 +263,14 @@ export default function BookPage() {
               <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
             </div>
           </div>
+
+          {book.tags && book.tags.length > 0 && (
+            <div className="book-tags">
+              {book.tags.split(',').map((tag, index) => (
+                <span key={index} className="book-tag">{tag.trim()}</span>
+              ))}
+            </div>
+          )}
           
           <div className="book-actions">
             <button 
@@ -290,19 +298,6 @@ export default function BookPage() {
               Буду читать
             </button>
           </div>
-
-          {book.tags && book.tags.length > 0 && (
-            <div className="book-tags">
-              {typeof book.tags === 'string' 
-                ? book.tags.split(',').map((tag, index) => (
-                    <span key={index} className="book-tag">{tag.trim()}</span>
-                  ))
-                : book.tags.map((tag, index) => (
-                    <span key={index} className="book-tag">{tag}</span>
-                  ))
-              }
-            </div>
-          )}
           
           <div className="book-description">
             <h3>Описание</h3>

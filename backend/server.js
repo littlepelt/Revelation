@@ -144,27 +144,6 @@ app.get('/api/check-tags', async (req, res) => {
   }
 });
 
-
-app.get('/api/debug-book', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  try {
-    const result = await pool.query('SELECT id, title, tags FROM books WHERE id = 1');
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 // ============================================
 // Защищённые маршруты (с middleware)
 // ============================================
