@@ -422,10 +422,11 @@ router.get('/reviews/latest', async (req, res) => {
 router.get('/tag/:tag', async (req, res) => {
   const { tag } = req.params;
   
-  const tagMapping = {
+    const tagMapping = {
     'classic': 'Классика',
     'psychological': 'Психологический роман',
     'russian': 'Русская литература',
+    'english': 'Английская литература',
     'drama': 'Драма',
     'romance': 'Роман',
     'philosophy': 'Философия',

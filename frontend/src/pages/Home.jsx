@@ -30,6 +30,7 @@ const getEnglishTag = (russianTag) => {
     'Классика': 'classic',
     'Психологический роман': 'psychological',
     'Русская литература': 'russian',
+    'Английская литература': 'english',
     'Драма': 'drama',
     'Роман': 'romance',
     'Философия': 'philosophy',
@@ -200,6 +201,7 @@ export default function Home() {
             <Link to="/books/tag/classic" className="genre-tag">Классика</Link>
             <Link to="/books/tag/psychological" className="genre-tag">Психологический роман</Link>
             <Link to="/books/tag/russian" className="genre-tag">Русская литература</Link>
+            <Link to="/books/tag/english" className="genre-tag">Английская литература</Link>
             <Link to="/books/tag/drama" className="genre-tag">Драма</Link>
             <Link to="/books/tag/romance" className="genre-tag">Роман</Link>
             <Link to="/books/tag/philosophy" className="genre-tag">Философия</Link>

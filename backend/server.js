@@ -161,6 +161,7 @@ app.get('/api/books/tag/:tag', async (req, res) => {
     'classic': 'Классика',
     'psychological': 'Психологический роман',
     'russian': 'Русская литература',
+    'english': 'Английская литература',
     'drama': 'Драма',
     'romance': 'Роман',
     'philosophy': 'Философия',
