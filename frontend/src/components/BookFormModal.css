@@ -1,0 +1,185 @@
+.book-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.book-modal-panel {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 550px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid #DFE2ED;
+}
+
+body.dark-theme .book-modal-panel {
+  background: #000000;
+  border-color: #1A1A1A;
+}
+
+.book-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #DFE2ED;
+}
+
+body.dark-theme .book-modal-header {
+  border-bottom-color: #1A1A1A;
+}
+
+.book-modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  margin: 0;
+}
+
+body.dark-theme .book-modal-header h3 {
+  color: #E0E0E0;
+}
+
+.book-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-modal-close:hover {
+  background: #F9F9F9;
+}
+
+body.dark-theme .book-modal-close {
+  color: #AAAAAA;
+}
+
+body.dark-theme .book-modal-close:hover {
+  background: #1A1A1A;
+}
+
+.book-modal-body {
+  padding: 24px;
+}
+
+.book-form-field {
+  margin-bottom: 20px;
+}
+
+.book-form-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+body.dark-theme .book-form-field label {
+  color: #CCCCCC;
+}
+
+.book-form-field input,
+.book-form-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #DFE2ED;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #FFFFFF;
+}
+
+body.dark-theme .book-form-field input,
+body.dark-theme .book-form-field textarea {
+  background: #000000;
+  border-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.book-form-field input:focus,
+.book-form-field textarea:focus {
+  outline: none;
+  border-color: #003BFF;
+}
+
+.book-cover-preview {
+  margin-top: 12px;
+}
+
+.book-cover-preview img {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.book-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #DFE2ED;
+}
+
+body.dark-theme .book-modal-footer {
+  border-top-color: #1A1A1A;
+}
+
+.book-cancel-btn {
+  background: none;
+  border: 1px solid #DFE2ED;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #666;
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-theme .book-cancel-btn {
+  border-color: #1A1A1A;
+  color: #CCCCCC;
+}
+
+.book-submit-btn {
+  background: #003BFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+body.dark-theme .book-submit-btn {
+  background: #FFFFFF;
+  color: #000000;
+}
+
+.book-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

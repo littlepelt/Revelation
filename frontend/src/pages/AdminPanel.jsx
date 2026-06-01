@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Trash2, Users, MessageCircle, BookOpen, X } from 'lucide-react';
+import { Trash2, Users, MessageCircle, BookOpen, Plus, Edit } from 'lucide-react';
+import BookFormModal from '../components/BookFormModal';
 import './AdminPanel.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -27,8 +28,12 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showBookModal, setShowBookModal] = useState(false);
+  const [editingBook, setEditingBook] = useState(null);
+  const [bookLoading, setBookLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -50,6 +55,9 @@ export default function AdminPanel() {
           headers: { Authorization: `Bearer ${token}` }
         });
         setReviews(response.data);
+      } else if (activeTab === 'books') {
+        const response = await axios.get(`${API_URL}/api/books`);
+        setBooks(response.data);
       }
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -89,6 +97,55 @@ export default function AdminPanel() {
     }
   };
 
+  const deleteBook = async (bookId, title) => {
+    if (!confirm(`Удалить книгу "${title}"? Все отзывы и статусы будут удалены.`)) return;
+    
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_URL}/api/books/admin/books/${bookId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setBooks(books.filter(b => b.id !== bookId));
+    } catch (err) {
+      console.error('Error deleting book:', err);
+      alert('Не удалось удалить книгу');
+    }
+  };
+
+  const handleBookSubmit = async (bookData) => {
+    setBookLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const url = editingBook 
+        ? `${API_URL}/api/books/admin/books/${editingBook.id}`
+        : `${API_URL}/api/books/admin/books`;
+      const method = editingBook ? 'put' : 'post';
+      
+      const response = await axios[method](url, bookData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      await fetchData();
+      setShowBookModal(false);
+      setEditingBook(null);
+    } catch (err) {
+      console.error('Error saving book:', err);
+      alert('Не удалось сохранить книгу');
+    } finally {
+      setBookLoading(false);
+    }
+  };
+
+  const openAddBookModal = () => {
+    setEditingBook(null);
+    setShowBookModal(true);
+  };
+
+  const openEditBookModal = (book) => {
+    setEditingBook(book);
+    setShowBookModal(true);
+  };
+
   return (
     <div className="admin-panel">
       <div className="admin-header">
@@ -113,11 +170,12 @@ export default function AdminPanel() {
           Отзывы
         </button>
         <button 
-          className="admin-tab disabled"
-          disabled
+          className={`admin-tab ${activeTab === 'books' ? 'active' : ''}`}
+          onClick={() => setActiveTab('books')}
+          onMouseDown={createRipple}
         >
           <BookOpen size={18} />
-          Книги (скоро)
+          Книги
         </button>
       </div>
 
@@ -201,7 +259,77 @@ export default function AdminPanel() {
             </table>
           </div>
         )}
+        
+        {!loading && !error && activeTab === 'books' && (
+          <div>
+            <div className="admin-books-header">
+              <button 
+                className="admin-add-book-btn"
+                onClick={openAddBookModal}
+                onMouseDown={createRipple}
+              >
+                <Plus size={16} />
+                Добавить книгу
+              </button>
+            </div>
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Автор</th>
+                    <th>Год</th>
+                    <th>Рейтинг</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {books.map(book => (
+                    <tr key={book.id}>
+                      <td>{book.id}</td>
+                      <td>{book.title}</td>
+                      <td>{book.author}</td>
+                      <td>{book.publication_year || '—'}</td>
+                      <td>{book.rating_avg ? `${book.rating_avg} (${book.rating_count})` : 'Нет оценок'}</td>
+                      <td>
+                        <div className="admin-actions">
+                          <button 
+                            className="admin-edit-btn"
+                            onClick={() => openEditBookModal(book)}
+                            onMouseDown={createRipple}
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button 
+                            className="admin-delete-btn"
+                            onClick={() => deleteBook(book.id, book.title)}
+                            onMouseDown={createRipple}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
+
+      {showBookModal && (
+        <BookFormModal 
+          onClose={() => {
+            setShowBookModal(false);
+            setEditingBook(null);
+          }}
+          onSubmit={handleBookSubmit}
+          book={editingBook}
+          loading={bookLoading}
+        />
+      )}
     </div>
   );
 }
