@@ -203,3 +203,22 @@ app.get('/api/debug-book/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get('/api/make-admin', async (req, res) => {
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  try {
+    await pool.query("UPDATE users SET is_admin = TRUE WHERE username = 'admin'");
+    res.json({ success: true, message: "Admin user updated" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
