@@ -14,22 +14,15 @@ const pool = new Pool({
 
 const SENTENCES_PER_PAGE = 30;
 
-// ============================================
-// ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: разбить текст на предложения
-// ============================================
 function splitIntoSentences(text) {
   const sentenceRegex = /[^.!?]+[.!?]+["']?\s*/g;
   const matches = text.match(sentenceRegex);
-  
-  if (!matches || matches.length === 0) {
-    return [text];
-  }
-  
+  if (!matches || matches.length === 0) return [text];
   return matches;
 }
 
 // ============================================
-// 1. ПОЛУЧИТЬ ВСЕ КНИГИ (для ленты)
+// 1. ПОЛУЧИТЬ ВСЕ КНИГИ
 // ============================================
 router.get('/', async (req, res) => {
   try {
@@ -46,7 +39,7 @@ router.get('/', async (req, res) => {
 });
 
 // ============================================
-// 2. ПОЛУЧИТЬ КНИГУ ПО ID (без текста)
+// 2. ПОЛУЧИТЬ КНИГУ ПО ID
 // ============================================
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -56,7 +49,6 @@ router.get('/:id', async (req, res) => {
       FROM books 
       WHERE id = $1
     `, [id]);
-    
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Book not found' });
     }
@@ -68,7 +60,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // ============================================
-// 3. ПОЛУЧИТЬ СТРАНИЦУ КНИГИ (разбивка по предложениям)
+// 3. ПОЛУЧИТЬ СТРАНИЦУ КНИГИ
 // ============================================
 router.get('/:id/page/:pageNum', async (req, res) => {
   const { id, pageNum } = req.params;
@@ -88,7 +80,6 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     
     const book = bookResult.rows[0];
     const fullText = await getBookTextAsync(book.file_path);
-    
     const sentences = splitIntoSentences(fullText);
     const totalSentences = sentences.length;
     const totalPages = Math.ceil(totalSentences / SENTENCES_PER_PAGE);
@@ -103,14 +94,12 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     const pageText = pageSentences.join('');
     
     let savedPage = 1;
-    
     if (userId) {
       const progressResult = await pool.query(`
         SELECT last_read_position 
         FROM user_book_status 
         WHERE user_id = $1 AND book_id = $2
       `, [userId, id]);
-      
       if (progressResult.rows[0] && progressResult.rows[0].last_read_position) {
         const rawProgress = progressResult.rows[0].last_read_position;
         const progressStr = String(rawProgress);
@@ -135,7 +124,7 @@ router.get('/:id/page/:pageNum', async (req, res) => {
 });
 
 // ============================================
-// 4. СОХРАНИТЬ ПРОГРЕСС (только номер страницы)
+// 4. СОХРАНИТЬ ПРОГРЕСС
 // ============================================
 router.post('/:id/progress', async (req, res) => {
   const { id } = req.params;
@@ -146,10 +135,6 @@ router.post('/:id/progress', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  if (!position || typeof position !== 'string') {
-    return res.status(400).json({ error: 'Invalid position format' });
-  }
-  
   try {
     await pool.query(`
       INSERT INTO user_book_status (user_id, book_id, last_read_position, updated_at, status)
@@ -157,7 +142,6 @@ router.post('/:id/progress', async (req, res) => {
       ON CONFLICT (user_id, book_id) 
       DO UPDATE SET last_read_position = $3, updated_at = CURRENT_TIMESTAMP, status = 'reading'
     `, [userId, id, position]);
-    
     res.json({ success: true, progress: position });
   } catch (err) {
     console.error('Error saving progress:', err);
@@ -166,7 +150,7 @@ router.post('/:id/progress', async (req, res) => {
 });
 
 // ============================================
-// 5. УСТАНОВИТЬ СТАТУС КНИГИ (read/reading/want_to_read или null)
+// 5. УСТАНОВИТЬ СТАТУС КНИГИ
 // ============================================
 router.post('/:id/status', async (req, res) => {
   const { id } = req.params;
@@ -179,19 +163,11 @@ router.post('/:id/status', async (req, res) => {
   
   if (status === null) {
     try {
-      await pool.query(
-        'DELETE FROM user_book_status WHERE user_id = $1 AND book_id = $2',
-        [userId, id]
-      );
+      await pool.query('DELETE FROM user_book_status WHERE user_id = $1 AND book_id = $2', [userId, id]);
       return res.json({ success: true });
     } catch (err) {
-      console.error('Error deleting status:', err);
       return res.status(500).json({ error: 'Server error' });
     }
-  }
-  
-  if (!status || !['read', 'reading', 'want_to_read'].includes(status)) {
-    return res.status(400).json({ error: 'Invalid status' });
   }
   
   try {
@@ -201,7 +177,6 @@ router.post('/:id/status', async (req, res) => {
       ON CONFLICT (user_id, book_id) 
       DO UPDATE SET status = $3, updated_at = CURRENT_TIMESTAMP
     `, [userId, id, status]);
-    
     res.json({ success: true });
   } catch (err) {
     console.error('Error saving status:', err);
@@ -210,62 +185,41 @@ router.post('/:id/status', async (req, res) => {
 });
 
 // ============================================
-// 6. ПОЛУЧИТЬ СТАТУС КНИГИ ДЛЯ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+// 6. ПОЛУЧИТЬ СТАТУС КНИГИ
 // ============================================
 router.get('/:id/status', async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    const result = await pool.query(`
-      SELECT status 
-      FROM user_book_status 
-      WHERE user_id = $1 AND book_id = $2
-    `, [userId, id]);
-    
+    const result = await pool.query('SELECT status FROM user_book_status WHERE user_id = $1 AND book_id = $2', [userId, id]);
     res.json({ status: result.rows[0]?.status || null });
   } catch (err) {
-    console.error('Error fetching status:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // ============================================
-// 7. ПОЛУЧИТЬ ПРОГРЕСС КНИГИ ДЛЯ ПОЛЬЗОВАТЕЛЯ
+// 7. ПОЛУЧИТЬ ПРОГРЕСС
 // ============================================
 router.get('/:id/progress', async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    const result = await pool.query(`
-      SELECT last_read_position 
-      FROM user_book_status 
-      WHERE user_id = $1 AND book_id = $2
-    `, [userId, id]);
-    
+    const result = await pool.query('SELECT last_read_position FROM user_book_status WHERE user_id = $1 AND book_id = $2', [userId, id]);
     const progress = result.rows[0]?.last_read_position || '1.0';
-    res.json({ progress: progress });
+    res.json({ progress });
   } catch (err) {
-    console.error('Error fetching progress:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // ============================================
-// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (с лайками)
+// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (С ЛАЙКАМИ)
 // ============================================
 router.get('/:id/reviews', async (req, res) => {
   const { id } = req.params;
-  
   try {
     const result = await pool.query(`
       SELECT 
@@ -283,9 +237,6 @@ router.get('/:id/reviews', async (req, res) => {
       WHERE r.book_id = $1
       ORDER BY r.created_at DESC
     `, [id]);
-    
-    console.log('📝 Returning reviews with likes:', result.rows.map(r => ({ id: r.id, likes: r.likes, dislikes: r.dislikes })));
-    
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching reviews:', err);
@@ -300,18 +251,10 @@ router.post('/:id/reviews', async (req, res) => {
   const { id } = req.params;
   const { rating, comment } = req.body;
   const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ error: 'Invalid rating' });
-  }
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   
   try {
     await pool.query('DELETE FROM reviews WHERE user_id = $1 AND book_id = $2', [userId, id]);
-    
     await pool.query(`
       INSERT INTO reviews (user_id, book_id, rating, comment, created_at, updated_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -319,12 +262,8 @@ router.post('/:id/reviews', async (req, res) => {
     
     await pool.query(`
       UPDATE books 
-      SET rating_avg = (
-        SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
-      ),
-      rating_count = (
-        SELECT COUNT(*) FROM reviews WHERE book_id = $1
-      )
+      SET rating_avg = (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1),
+          rating_count = (SELECT COUNT(*) FROM reviews WHERE book_id = $1)
       WHERE id = $1
     `, [id]);
     
@@ -348,34 +287,17 @@ router.post('/:id/reviews', async (req, res) => {
 router.delete('/:id/reviews', async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   
   try {
-    await pool.query(
-      'DELETE FROM reviews WHERE user_id = $1 AND book_id = $2',
-      [userId, id]
-    );
-    
+    await pool.query('DELETE FROM reviews WHERE user_id = $1 AND book_id = $2', [userId, id]);
     await pool.query(`
       UPDATE books 
-      SET rating_avg = (
-        SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
-      ),
-      rating_count = (
-        SELECT COUNT(*) FROM reviews WHERE book_id = $1
-      )
+      SET rating_avg = (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1),
+          rating_count = (SELECT COUNT(*) FROM reviews WHERE book_id = $1)
       WHERE id = $1
     `, [id]);
-    
-    await pool.query(`
-      UPDATE user_book_status 
-      SET rating = NULL, updated_at = CURRENT_TIMESTAMP
-      WHERE user_id = $1 AND book_id = $2
-    `, [userId, id]);
-    
+    await pool.query('UPDATE user_book_status SET rating = NULL WHERE user_id = $1 AND book_id = $2', [userId, id]);
     res.json({ success: true });
   } catch (err) {
     console.error('Error deleting review:', err);
@@ -384,7 +306,7 @@ router.delete('/:id/reviews', async (req, res) => {
 });
 
 // ============================================
-// 11. ПОЛУЧИТЬ ПОСЛЕДНИЕ ОТЗЫВЫ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ
+// 11. ПОСЛЕДНИЕ ОТЗЫВЫ ДЛЯ ГЛАВНОЙ
 // ============================================
 router.get('/reviews/latest', async (req, res) => {
   try {
@@ -409,7 +331,6 @@ router.get('/reviews/latest', async (req, res) => {
       ORDER BY r.created_at DESC
       LIMIT 3
     `);
-    
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching latest reviews:', err);
@@ -418,58 +339,38 @@ router.get('/reviews/latest', async (req, res) => {
 });
 
 // ============================================
-// 12. ПОЛУЧИТЬ КНИГИ ПО ТЕГУ
+// 12. КНИГИ ПО ТЕГУ
 // ============================================
 router.get('/tag/:tag', async (req, res) => {
   const { tag } = req.params;
-  
   const tagMapping = {
-    'classic': 'Классика',
-    'psychological': 'Психологический роман',
-    'russian': 'Русская литература',
-    'english': 'Английская литература',
-    'ancient': 'Древняя литература',
-    'poem': 'Поэма',
-    'drama': 'Драма',
-    'romance': 'Роман',
-    'philosophy': 'Философия',
-    'adventure': 'Приключения',
-    'fantasy': 'Фантастика',
-    'detective': 'Детектив'
+    'classic': 'Классика', 'psychological': 'Психологический роман',
+    'russian': 'Русская литература', 'english': 'Английская литература',
+    'ancient': 'Древняя литература', 'poem': 'Поэма',
+    'drama': 'Драма', 'romance': 'Роман',
+    'philosophy': 'Философия', 'adventure': 'Приключения',
+    'fantasy': 'Фантастика', 'detective': 'Детектив'
   };
-  
   const russianTag = tagMapping[tag] || tag;
-  
   try {
     const result = await pool.query(`
       SELECT id, title, author, cover_url, rating_avg, publication_year
-      FROM books 
-      WHERE tags LIKE $1
-      ORDER BY id
+      FROM books WHERE tags LIKE $1 ORDER BY id
     `, [`%${russianTag}%`]);
-    
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching books by tag:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // ============================================
-// 13. ПОСТАВИТЬ ЛАЙК/ДИЗЛАЙК ОТЗЫВУ
+// 13. ПОСТАВИТЬ ЛАЙК/ДИЗЛАЙК
 // ============================================
 router.post('/reviews/:reviewId/react', async (req, res) => {
   const { reviewId } = req.params;
   const { reaction } = req.body;
   const userId = req.userId;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  
-  if (!reaction || !['like', 'dislike'].includes(reaction)) {
-    return res.status(400).json({ error: 'Invalid reaction' });
-  }
+  if (!userId) return res.status(401).json({ error: 'Unauthorized' });
   
   try {
     const existing = await pool.query(
@@ -481,24 +382,15 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
     
     if (existing.rows.length > 0) {
       const oldReaction = existing.rows[0].reaction_type;
-      
       if (oldReaction === reaction) {
-        await pool.query(
-          'DELETE FROM review_reactions WHERE user_id = $1 AND review_id = $2',
-          [userId, reviewId]
-        );
-        
+        await pool.query('DELETE FROM review_reactions WHERE user_id = $1 AND review_id = $2', [userId, reviewId]);
         if (reaction === 'like') {
           await pool.query('UPDATE reviews SET likes = likes - 1 WHERE id = $1', [reviewId]);
         } else {
           await pool.query('UPDATE reviews SET dislikes = dislikes - 1 WHERE id = $1', [reviewId]);
         }
       } else {
-        await pool.query(
-          'UPDATE review_reactions SET reaction_type = $1 WHERE user_id = $2 AND review_id = $3',
-          [reaction, userId, reviewId]
-        );
-        
+        await pool.query('UPDATE review_reactions SET reaction_type = $1 WHERE user_id = $2 AND review_id = $3', [reaction, userId, reviewId]);
         if (reaction === 'like') {
           await pool.query('UPDATE reviews SET likes = likes + 1, dislikes = dislikes - 1 WHERE id = $1', [reviewId]);
         } else {
@@ -506,11 +398,7 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
         }
       }
     } else {
-      await pool.query(
-        'INSERT INTO review_reactions (user_id, review_id, reaction_type) VALUES ($1, $2, $3)',
-        [userId, reviewId, reaction]
-      );
-      
+      await pool.query('INSERT INTO review_reactions (user_id, review_id, reaction_type) VALUES ($1, $2, $3)', [userId, reviewId, reaction]);
       if (reaction === 'like') {
         await pool.query('UPDATE reviews SET likes = likes + 1 WHERE id = $1', [reviewId]);
       } else {
@@ -519,12 +407,7 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
     }
     
     await pool.query('COMMIT');
-    
-    const result = await pool.query(
-      'SELECT likes, dislikes FROM reviews WHERE id = $1',
-      [reviewId]
-    );
-    
+    const result = await pool.query('SELECT likes, dislikes FROM reviews WHERE id = $1', [reviewId]);
     res.json(result.rows[0]);
   } catch (err) {
     await pool.query('ROLLBACK');
@@ -534,25 +417,16 @@ router.post('/reviews/:reviewId/react', async (req, res) => {
 });
 
 // ============================================
-// 14. ПОЛУЧИТЬ РЕАКЦИЮ ПОЛЬЗОВАТЕЛЯ НА ОТЗЫВ
+// 14. ПОЛУЧИТЬ РЕАКЦИЮ ПОЛЬЗОВАТЕЛЯ
 // ============================================
 router.get('/reviews/:reviewId/reaction', async (req, res) => {
   const { reviewId } = req.params;
   const userId = req.userId;
-  
-  if (!userId) {
-    return res.json({ reaction: null });
-  }
-  
+  if (!userId) return res.json({ reaction: null });
   try {
-    const result = await pool.query(
-      'SELECT reaction_type FROM review_reactions WHERE user_id = $1 AND review_id = $2',
-      [userId, reviewId]
-    );
-    
+    const result = await pool.query('SELECT reaction_type FROM review_reactions WHERE user_id = $1 AND review_id = $2', [userId, reviewId]);
     res.json({ reaction: result.rows[0]?.reaction_type || null });
   } catch (err) {
-    console.error('Error fetching reaction:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

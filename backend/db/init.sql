@@ -1,5 +1,14 @@
 -- ============================================
--- 2. СОЗДАНИЕ ТАБЛИЦ ЗАНОВО
+-- 1. ПРИНУДИТЕЛЬНАЯ ОЧИСТКА
+-- ============================================
+DROP TABLE IF EXISTS review_reactions CASCADE;
+DROP TABLE IF EXISTS user_book_status CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS books CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- ============================================
+-- 2. СОЗДАНИЕ ТАБЛИЦ
 -- ============================================
 
 CREATE TABLE users (
