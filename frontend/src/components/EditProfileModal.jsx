@@ -55,15 +55,21 @@ export default function EditProfileModal({ onClose }) {
       // Сначала загружаем аватар, если выбран новый файл
       if (avatarFile) {
         const formData = new FormData();
-        formData.append('avatar', avatarFile);
-        
-        const uploadResponse = await axios.post(`${API_URL}/api/upload`, formData, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        avatarUrl = uploadResponse.data.url;
+        formData.append('file', avatarFile);  // <-- ИМЯ ПОЛЯ ДОЛЖНО БЫТЬ "file"
+        try {
+          const uploadRes = await axios.post(`${API_URL}/api/upload`, formData, {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          avatarUrl = uploadRes.data.url;
+        } catch (err) {
+          console.error('Avatar upload error:', err);
+          alert('Ошибка загрузки аватара');
+          setLoading(false);
+          return;
+        }
       }
       
       // Обновляем профиль

@@ -12,48 +12,51 @@ const imagekit = new ImageKit({
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+  const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'text/plain'];
   if (allowed.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only images allowed'), false);
+    cb(new Error('Only images and txt files allowed'), false);
   }
 };
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   fileFilter
 });
 
 router.post('/', upload.single('file'), async (req, res) => {
-  console.log('🔵 Upload request received');
-  console.log('📁 File:', req.file ? req.file.originalname : 'NO FILE');
-  console.log('👤 User ID:', req.userId);
-  
   if (!req.file) {
-    console.log('❌ No file');
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
   try {
-    console.log('📤 Uploading to ImageKit...');
     const timestamp = Date.now();
     const random = Math.round(Math.random() * 1E9);
     const fileExtension = req.file.originalname.split('.').pop();
-    const fileName = `avatars/${timestamp}-${random}.${fileExtension}`;
+    const fileType = req.file.mimetype === 'text/plain' ? 'texts' : 'covers';
+    const fileName = `${fileType}/${timestamp}-${random}.${fileExtension}`;
+
+    let fileBuffer = req.file.buffer;
+    let isBase64 = false;
+    
+    // Для текстовых файлов конвертируем в base64
+    if (req.file.mimetype === 'text/plain') {
+      fileBuffer = req.file.buffer.toString('base64');
+      isBase64 = true;
+    }
 
     const result = await imagekit.upload({
-      file: req.file.buffer.toString('base64'),
+      file: isBase64 ? fileBuffer : fileBuffer.toString('base64'),
       fileName: fileName,
       useUniqueFileName: true,
-      folder: '/avatars',
+      folder: `/${fileType}`,
     });
 
-    console.log('✅ Upload successful:', result.url);
     res.json({ url: result.url });
   } catch (error) {
-    console.error('❌ Upload error:', error);
+    console.error('Upload error:', error);
     res.status(500).json({ error: 'Upload failed: ' + error.message });
   }
 });
