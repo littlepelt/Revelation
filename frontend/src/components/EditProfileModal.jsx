@@ -52,10 +52,9 @@ export default function EditProfileModal({ onClose }) {
     try {
       let avatarUrl = user?.avatar_url || '';
       
-      // Сначала загружаем аватар, если выбран новый файл
       if (avatarFile) {
         const formData = new FormData();
-        formData.append('file', avatarFile);  // <-- ИМЯ ПОЛЯ ДОЛЖНО БЫТЬ "file"
+        formData.append('file', avatarFile);
         try {
           const uploadRes = await axios.post(`${API_URL}/api/upload`, formData, {
             headers: { 
@@ -72,7 +71,6 @@ export default function EditProfileModal({ onClose }) {
         }
       }
       
-      // Обновляем профиль
       const response = await axios.put(`${API_URL}/api/auth/profile`,
         { username, avatar_url: avatarUrl },
         { 

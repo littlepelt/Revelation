@@ -127,7 +127,6 @@ body.dark-theme .admin-table th {
   border-bottom: none;
 }
 
-/* Аватар в таблице пользователей */
 .admin-user-avatar {
   width: 32px;
   height: 32px;
@@ -135,7 +134,6 @@ body.dark-theme .admin-table th {
   object-fit: cover;
 }
 
-/* Обложка книги в таблице */
 .admin-book-cover {
   width: 40px;
   height: 60px;
@@ -188,7 +186,6 @@ body.dark-theme .admin-user-link {
   background: rgba(220, 38, 38, 0.2);
 }
 
-/* Стили для вкладки книг */
 .admin-books-header {
   display: flex;
   justify-content: flex-end;

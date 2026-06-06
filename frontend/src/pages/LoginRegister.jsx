@@ -24,7 +24,6 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Функция проверки email
 const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
   return emailRegex.test(email);
@@ -44,9 +43,8 @@ export default function LoginRegister() {
     e.preventDefault();
     setError('');
     
-    // Проверка email при регистрации
     if (!isLogin && !isValidEmail(email)) {
-      setError('Введите корректный email (например, name@example.com)');
+      setError('Введите корректный email');
       return;
     }
     

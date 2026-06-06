@@ -1,4 +1,3 @@
-/* Убираем скроллбар у body */
 body.read-mode {
   overflow: hidden;
   position: fixed;
@@ -22,7 +21,6 @@ body.dark-theme .read-container {
   background-color: #000000;
 }
 
-/* Хедер - анимация */
 .read-header {
   flex-shrink: 0;
   background: #FFFFFF;
@@ -54,7 +52,6 @@ body.dark-theme .read-header {
   border-bottom-color: #1A1A1A;
 }
 
-/* Кнопка "Назад" */
 .back-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -120,7 +117,6 @@ body.dark-theme .read-title p {
   color: #AAAAAA;
 }
 
-/* Контент - будет растягиваться */
 .read-content {
   flex: 1;
   overflow-y: auto;
@@ -132,7 +128,6 @@ body.dark-theme .read-title p {
   transition: all 0.3s ease;
 }
 
-/* Когда хедер и футер скрыты - контент растягивается на весь экран */
 .read-container:has(.read-header.hidden) .read-content {
   flex: 1;
   max-height: 100%;
@@ -148,7 +143,6 @@ body.dark-theme .read-content p {
   color: #E0E0E0;
 }
 
-/* Кастомный скроллбар */
 .read-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -179,7 +173,6 @@ body.dark-theme .read-content::-webkit-scrollbar-thumb:hover {
   background: #555555;
 }
 
-/* Классы для динамических настроек */
 .read-content.font-size-small p { font-size: 14px; }
 .read-content.font-size-normal p { font-size: 18px; }
 .read-content.font-size-large p { font-size: 22px; }
@@ -198,7 +191,6 @@ body.dark-theme .read-content::-webkit-scrollbar-thumb:hover {
 .read-content.text-align-right p { text-align: right; }
 .read-content.text-align-justify p { text-align: justify; }
 
-/* Футер - анимация */
 .read-footer {
   flex-shrink: 0;
   background: #FFFFFF;

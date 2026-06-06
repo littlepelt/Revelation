@@ -269,3 +269,33 @@ body.dark-theme .review-delete-btn.confirm {
 body.dark-theme .review-delete-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
+
+.review-modal-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.review-modal-panel::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 4px;
+}
+
+.review-modal-panel::-webkit-scrollbar-thumb {
+  background: #C1C1C1;
+  border-radius: 4px;
+}
+
+.review-modal-panel::-webkit-scrollbar-thumb:hover {
+  background: #A8A8A8;
+}
+
+body.dark-theme .review-modal-panel::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+
+body.dark-theme .review-modal-panel::-webkit-scrollbar-thumb {
+  background: #444444;
+}
+
+body.dark-theme .review-modal-panel::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}

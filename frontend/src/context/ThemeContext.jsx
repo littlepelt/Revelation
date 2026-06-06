@@ -13,7 +13,6 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, theme);
     
-    // Применяем тему к body
     if (theme === 'dark') {
       document.body.classList.add('dark-theme');
     } else {

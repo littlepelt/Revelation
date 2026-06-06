@@ -12,7 +12,6 @@ const defaultSettings = {
   textAlign: 'justify'
 };
 
-// Ripple эффект
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');

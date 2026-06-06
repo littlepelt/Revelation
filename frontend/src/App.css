@@ -1,11 +1,9 @@
-/* Обёртка приложения */
 .app-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Хедер */
 .app-header {
   background-color: #FFFFFF;
   border-bottom: 1px solid #E9E9E9;
@@ -56,14 +54,12 @@ body.dark-theme .logo-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Правая группа кнопок */
 .header-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* Кнопка переключения темы */
 .theme-toggle-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -104,7 +100,6 @@ body.dark-theme .theme-toggle-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Кнопка админ-панели */
 .admin-link {
   background: none;
   border: 1px solid #DFE2ED;
@@ -145,7 +140,6 @@ body.dark-theme .admin-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Основной контент */
 .app-main {
   flex: 1;
   max-width: 1080px;
@@ -154,7 +148,6 @@ body.dark-theme .admin-link .ripple {
   width: 100%;
 }
 
-/* Футер */
 .app-footer {
   background-color: #FFFFFF;
   border-top: 1px solid #E9E9E9;
@@ -220,7 +213,6 @@ body.dark-theme .footer-link .ripple {
   color: #888888;
 }
 
-/* Адаптив */
 @media (max-width: 768px) {
   .app-main {
     padding: 0 16px;

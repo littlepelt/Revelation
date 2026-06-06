@@ -148,7 +148,6 @@ body.dark-theme .login-toggle-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Нет hover-эффектов */
 .login-submit-btn:hover,
 .login-toggle-btn:hover {
   opacity: 1;

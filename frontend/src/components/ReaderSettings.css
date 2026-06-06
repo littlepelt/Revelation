@@ -277,3 +277,33 @@ body.dark-theme .modal-panel,
 body.dark-theme .settings-panel {
   border: 1px solid #1A1A1A;
 }
+
+.settings-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-panel::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 4px;
+}
+
+.settings-panel::-webkit-scrollbar-thumb {
+  background: #C1C1C1;
+  border-radius: 4px;
+}
+
+.settings-panel::-webkit-scrollbar-thumb:hover {
+  background: #A8A8A8;
+}
+
+body.dark-theme .settings-panel::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+
+body.dark-theme .settings-panel::-webkit-scrollbar-thumb {
+  background: #444444;
+}
+
+body.dark-theme .settings-panel::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}

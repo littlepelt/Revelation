@@ -123,7 +123,6 @@ body.dark-theme .rating-value {
   color: #AAAAAA;
 }
 
-/* Карточки книг (Лучшее) */
 .books-list-vertical {
   display: flex;
   flex-direction: column;
@@ -207,7 +206,6 @@ body.dark-theme .home-book-info-vertical p {
   color: #AAAAAA;
 }
 
-/* Карточки отзывов на главной */
 .reviews-list {
   display: flex;
   flex-direction: column;
@@ -279,7 +277,6 @@ body.dark-theme .review-book-details p {
   color: #AAAAAA;
 }
 
-/* Кликабельный блок автора отзыва на главной */
 .review-author-row {
   display: flex;
   align-items: center;
@@ -420,7 +417,6 @@ body.dark-theme .reaction-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Боковая панель - жанры */
 .sidebar-section {
   background: #FFFFFF;
   border: 1px solid #DFE2ED;

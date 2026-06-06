@@ -75,7 +75,6 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
       return;
     }
     
-    // При создании новой книги текстовый файл обязателен
     if (!isEdit && !textFile) {
       alert('Для новой книги необходимо загрузить текстовый файл (.txt)');
       return;
@@ -86,7 +85,6 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
     let coverUrl = book?.cover_url || '';
     let textUrl = book?.file_path || '';
     
-    // Загружаем обложку
     if (coverFile) {
       const coverFormData = new FormData();
       coverFormData.append('file', coverFile);
@@ -106,7 +104,6 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
       }
     }
     
-    // Загружаем текст
     if (textFile) {
       const textFormData = new FormData();
       textFormData.append('file', textFile);

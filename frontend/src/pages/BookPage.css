@@ -370,7 +370,6 @@ body.dark-theme .book-reviews h3 {
   background: transparent;
 }
 
-/* Кликабельный блок автора отзыва */
 .review-author-clickable {
   cursor: pointer;
   position: relative;

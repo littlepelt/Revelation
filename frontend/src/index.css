@@ -16,13 +16,11 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Тёмная тема */
 body.dark-theme {
   background-color: #000000;
   color: #E0E0E0;
 }
 
-/* Кнопки */
 button {
   font-family: inherit;
   background: none;
@@ -36,11 +34,6 @@ button:active {
   transform: none;
 }
 
-/* ============================================
-   СВЕТЛАЯ ТЕМА (по умолчанию)
-   ============================================ */
-
-/* Основная кнопка (синяя, важная) */
 .btn-primary {
   background-color: #003BFF;
   color: white;
@@ -55,7 +48,6 @@ button:active {
   background: rgba(255, 255, 255, 0.4);
 }
 
-/* Вторичная кнопка (обводка, неважная) */
 .btn-outline {
   background-color: transparent;
   color: #1A1A1A;
@@ -69,7 +61,6 @@ button:active {
   background: rgba(0, 0, 0, 0.1);
 }
 
-/* Кнопка без рамки (например, назад) */
 .btn-ghost {
   background: none;
   border: none;
@@ -82,10 +73,6 @@ button:active {
 .btn-ghost .ripple {
   background: rgba(0, 0, 0, 0.08);
 }
-
-/* ============================================
-   ТЁМНАЯ ТЕМА
-   ============================================ */
 
 body.dark-theme .btn-primary {
   background-color: #FFFFFF;
@@ -113,10 +100,6 @@ body.dark-theme .btn-ghost .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ============================================
-   RIPPLE ЭФФЕКТ (общий)
-   ============================================ */
-
 .ripple {
   position: absolute;
   border-radius: 50%;
@@ -132,21 +115,18 @@ body.dark-theme .btn-ghost .ripple {
   }
 }
 
-/* Контейнер */
 .container {
   max-width: 1080px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Загрузка */
 .loading {
   text-align: center;
   padding: 60px;
   color: #888888;
 }
 
-/* Глобальные стили для звёзд */
 .star-filled {
   color: #F1C40F;
   font-size: 16px;
