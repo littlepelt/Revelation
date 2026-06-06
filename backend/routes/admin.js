@@ -11,7 +11,6 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Middleware для проверки прав администратора
 const isAdmin = async (req, res, next) => {
   const userId = req.userId;
   

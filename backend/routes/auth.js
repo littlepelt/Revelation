@@ -13,7 +13,6 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// Регистрация
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   
@@ -45,7 +44,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Логин
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   
@@ -82,7 +80,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Middleware для проверки токена
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   
@@ -102,7 +99,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// Получить текущего пользователя
 router.get('/me', authMiddleware, async (req, res) => {
   const userId = req.userId;
   
@@ -124,7 +120,6 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// Получить пользователя по username (публичный)
 router.get('/user/:username', async (req, res) => {
   const { username } = req.params;
   
@@ -145,7 +140,6 @@ router.get('/user/:username', async (req, res) => {
   }
 });
 
-// Получить книги пользователя по полке (публичный)
 router.get('/user/:username/shelf/:shelf', async (req, res) => {
   const { username, shelf } = req.params;
   const validShelves = ['reading', 'read', 'want_to_read'];
@@ -189,7 +183,6 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
   }
 });
 
-// Обновить профиль
 router.put('/profile', authMiddleware, async (req, res) => {
   const userId = req.userId;
   const { username, avatar_url } = req.body;

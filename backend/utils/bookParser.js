@@ -101,9 +101,7 @@ async function syncBooks() {
   }
 }
 
-// Универсальная функция получения текста (работает и с локальными файлами, и с URL)
 async function getBookTextAsync(source) {
-  // Если это URL
   if (source.startsWith('http://') || source.startsWith('https://')) {
     return new Promise((resolve, reject) => {
       https.get(source, (response) => {
@@ -118,13 +116,11 @@ async function getBookTextAsync(source) {
     });
   }
   
-  // Если это локальный файл
   const filePath = path.join(BOOKS_DIR, source);
   const content = fs.readFileSync(filePath, 'utf-8');
   return content.replace(/===МЕТАДАННЫЕ===\n[\s\S]*?\n===КОНЕЦ МЕТАДАННЫХ===\n/, '');
 }
 
-// Старая синхронная функция для совместимости (не используется, но оставляем)
 function getBookText(source) {
   if (source.startsWith('http')) {
     throw new Error('Use getBookTextAsync for URL');

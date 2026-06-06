@@ -11,7 +11,6 @@ module.exports = (req, res, next) => {
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // Явно передаём userId в req
     req.userId = decoded.userId;
     req.username = decoded.username;
     next();
