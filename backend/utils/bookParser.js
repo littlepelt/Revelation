@@ -116,7 +116,15 @@ async function getBookTextAsync(source) {
     });
   }
   
-  const filePath = path.join(BOOKS_DIR, source);
+  // Если source — наш относительный путь /api/uploads/texts/..., преобразуем в локальный
+let filePath;
+if (source.startsWith('/api/uploads/texts/')) {
+  const fileName = path.basename(source);
+  filePath = path.join(BOOKS_DIR, '_uploads', 'texts', fileName);
+} else {
+  filePath = path.join(BOOKS_DIR, source);
+}
+
   const content = fs.readFileSync(filePath, 'utf-8');
   return content.replace(/===МЕТАДАННЫЕ===\n[\s\S]*?\n===КОНЕЦ МЕТАДАННЫХ===\n/, '');
 }
