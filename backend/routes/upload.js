@@ -38,31 +38,17 @@ router.post('/', upload.single('file'), async (req, res) => {
     const fileType = req.file.mimetype === 'text/plain' ? 'texts' : 'covers';
     const fileName = `${timestamp}-${random}.${fileExtension}`;
 
-    let fileBuffer = req.file.buffer;
-    let isBase64 = false;
-
-    if (req.file.mimetype === 'text/plain') {
-      fileBuffer = req.file.buffer.toString('base64');
-      isBase64 = true;
-    }
-
     const result = await imagekit.upload({
-      file: isBase64 ? fileBuffer : fileBuffer.toString('base64'),
+      file: req.file.buffer.toString('base64'),
       fileName: fileName,
       useUniqueFileName: false,
       folder: `/${fileType}`,
     });
 
-    // Генерируем подписанный URL (работает даже с включённым Restrict unsigned URLs)
-    const signedUrl = imagekit.url({
-      src: result.url,
-      signed: true,
-      expireSeconds: 31536000, // 1 год
-    });
-
-    res.json({ url: signedUrl });
+    console.log('Uploaded to ImageKit:', result.url);
+    res.json({ url: result.url });
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('Upload error:', error.message);
     res.status(500).json({ error: 'Upload failed: ' + error.message });
   }
 });
