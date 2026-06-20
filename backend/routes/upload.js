@@ -22,7 +22,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter
 });
 
@@ -38,11 +38,9 @@ router.post('/', upload.single('file'), async (req, res) => {
     const fileType = req.file.mimetype === 'text/plain' ? 'texts' : 'covers';
     const fileName = `${timestamp}-${random}.${fileExtension}`;
 
-
     let fileBuffer = req.file.buffer;
     let isBase64 = false;
-    
-    // Для текстовых файлов конвертируем в base64
+
     if (req.file.mimetype === 'text/plain') {
       fileBuffer = req.file.buffer.toString('base64');
       isBase64 = true;
@@ -55,7 +53,14 @@ router.post('/', upload.single('file'), async (req, res) => {
       folder: `/${fileType}`,
     });
 
-    res.json({ url: result.url });
+    // Генерируем подписанный URL (работает даже с включённым Restrict unsigned URLs)
+    const signedUrl = imagekit.url({
+      src: result.url,
+      signed: true,
+      expireSeconds: 31536000, // 1 год
+    });
+
+    res.json({ url: signedUrl });
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ error: 'Upload failed: ' + error.message });
