@@ -258,21 +258,21 @@ export default function Home() {
         <div className="sidebar-section">
           <h3>Поиск по жанрам</h3>
           <div className="genres-list">
-            <Link to="/books/tag/classic" className="genre-tag">Классика</Link>
-            <Link to="/books/tag/poem" className="genre-tag">Поэма</Link>
-            <Link to="/books/tag/drama" className="genre-tag">Драма</Link>
-            <Link to="/books/tag/philosophy" className="genre-tag">Философия</Link>
-            <Link to="/books/tag/russian" className="genre-tag">Русская литература</Link>
-            <Link to="/books/tag/english" className="genre-tag">Английская литература</Link>
-            <Link to="/books/tag/german" className="genre-tag">Немецкая литература</Link>
-            <Link to="/books/tag/japanese" className="genre-tag">Японская литература</Link>
-            <Link to="/books/tag/italian" className="genre-tag">Итальянская литература</Link>
-            <Link to="/books/tag/ancient" className="genre-tag">Древняя литература</Link>
-            <Link to="/books/tag/psychological" className="genre-tag">Психологический роман</Link>
-            <Link to="/books/tag/romance" className="genre-tag">Роман</Link>
-            <Link to="/books/tag/adventure" className="genre-tag">Приключения</Link>
-            <Link to="/books/tag/fantasy" className="genre-tag">Фантастика</Link>
-            <Link to="/books/tag/detective" className="genre-tag">Детектив</Link>
+            <Link to="/books/tag/charter" className="genre-tag">Устав</Link>
+            <Link to="/books/tag/instruction" className="genre-tag">Наставление</Link>
+            <Link to="/books/tag/manual1" className="genre-tag">Руководство</Link>
+            <Link to="/books/tag/manual2" className="genre-tag">Пособие</Link>
+            <Link to="/books/tag/strategy" className="genre-tag">Стратегия</Link>
+            <Link to="/books/tag/tactics" className="genre-tag">Тактика</Link>
+            <Link to="/books/tag/combat_training" className="genre-tag">Боевая подготовка</Link>
+            <Link to="/books/tag/phys_training" className="genre-tag">Физ. подготовка</Link>
+            <Link to="/books/tag/musketry" className="genre-tag">Стрелковое дело</Link>
+            <Link to="/books/tag/engineering" className="genre-tag">Инженерное дело</Link>
+            <Link to="/books/tag/medicine" className="genre-tag">Медицина</Link>
+            <Link to="/books/tag/military_history" className="genre-tag">Военная история</Link>
+            <Link to="/books/tag/treatise" className="genre-tag">Трактат</Link>
+            <Link to="/books/tag/regulation" className="genre-tag">Регламент</Link>
+            <Link to="/books/tag/resolution" className="genre-tag">Постановление</Link>
           </div>
         </div>
       </aside>

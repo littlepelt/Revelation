@@ -92,21 +92,21 @@ app.get('/api/books/reviews/latest', async (req, res) => {
 app.get('/api/books/tag/:tag', async (req, res) => {
   const { tag } = req.params;
   const tagMapping = {
-    'classic': 'Классика',
-    'psychological': 'Психологический роман',
-    'russian': 'Русская литература',
-    'english': 'Английская литература',
-    'german': 'Немецкая литература',
-    'japanese': 'Японская литература',
-    'italian': 'Итальянская литература',
-    'ancient': 'Древняя литература',
-    'poem': 'Поэма',
-    'drama': 'Драма',
-    'romance': 'Роман',
-    'philosophy': 'Философия',
-    'adventure': 'Приключения',
-    'fantasy': 'Фантастика',
-    'detective': 'Детектив'
+    'charter': 'Устав',
+    'instruction': 'Наставление',
+    'manual1': 'Руководство',
+    'manual2': 'Пособие',
+    'strategy': 'Стратегия',
+    'tactics': 'Тактика',
+    'combat_training': 'Боевая подготовка',
+    'phys_training': 'Физ. подготовка',
+    'musketry': 'Стрелковое дело',
+    'engineering': 'Инженерное дело',
+    'medicine': 'Медицина',
+    'military_history': 'Военная история',
+    'treatise': 'Трактат',
+    'regulation': 'Регламент',
+    'resolution': 'Постановление'
   };
   const russianTag = tagMapping[tag] || tag;
   try {
