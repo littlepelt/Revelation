@@ -26,9 +26,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 15 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const ok = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'text/plain'];
+    const ok = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'text/plain', 'application/pdf'];
     cb(ok.includes(file.mimetype) ? null : new Error('Bad type'), ok.includes(file.mimetype));
   }
 });
@@ -36,7 +36,8 @@ const upload = multer({
 router.post('/', upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-  const sub = req.file.mimetype === 'text/plain' ? 'texts' : 'covers';
+  const isTextLike = req.file.mimetype === 'text/plain' || req.file.mimetype === 'application/pdf';
+  const sub = isTextLike ? 'texts' : 'covers';
   const host = req.get('host'); // revelation-api.onrender.com
   const fileUrl = `https://${host}/api/uploads/${sub}/${req.file.filename}`;
 

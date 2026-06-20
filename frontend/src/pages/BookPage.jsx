@@ -28,21 +28,21 @@ const createRipple = (event) => {
 
 const getEnglishTag = (russianTag) => {
   const mapping = {
-    'Классика': 'classic',
-    'Психологический роман': 'psychological',
-    'Русская литература': 'russian',
-    'Английская литература': 'english',
-    'Немецкая литература': 'german',
-    'Японская литература': 'japanese',
-    'Итальянская литература': 'italian',
-    'Древняя литература': 'ancient',
-    'Поэма': 'poem',
-    'Драма': 'drama',
-    'Роман': 'romance',
-    'Философия': 'philosophy',
-    'Приключения': 'adventure',
-    'Фантастика': 'fantasy',
-    'Детектив': 'detective'
+    'Устав': 'charter',
+    'Наставление': 'instruction',
+    'Руководство': 'manual1',
+    'Пособие': 'manual2',
+    'Стратегия': 'strategy',
+    'Тактика': 'tactics',
+    'Боевая подготовка': 'combat_training',
+    'Физ. подготовка': 'phys_training',
+    'Стрелковое дело': 'musketry',
+    'Инженерное дело': 'engineering',
+    'Медицина': 'medicine',
+    'Военная история': 'military_history',
+    'Трактат': 'treatise',
+    'Регламент': 'regulation',
+    'Постановление': 'resolution'
   };
   return mapping[russianTag] || russianTag.toLowerCase();
 };
