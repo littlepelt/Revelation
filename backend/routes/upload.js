@@ -36,7 +36,8 @@ router.post('/', upload.single('file'), async (req, res) => {
     const random = Math.round(Math.random() * 1E9);
     const fileExtension = req.file.originalname.split('.').pop();
     const fileType = req.file.mimetype === 'text/plain' ? 'texts' : 'covers';
-    const fileName = `${fileType}/${timestamp}-${random}.${fileExtension}`;
+    const fileName = `${timestamp}-${random}.${fileExtension}`;
+
 
     let fileBuffer = req.file.buffer;
     let isBase64 = false;
@@ -50,7 +51,7 @@ router.post('/', upload.single('file'), async (req, res) => {
     const result = await imagekit.upload({
       file: isBase64 ? fileBuffer : fileBuffer.toString('base64'),
       fileName: fileName,
-      useUniqueFileName: true,
+      useUniqueFileName: false,
       folder: `/${fileType}`,
     });
 
