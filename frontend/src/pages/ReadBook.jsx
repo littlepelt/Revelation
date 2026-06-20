@@ -69,19 +69,8 @@ export default function ReadBook() {
       });
       
       const data = response.data;
-
-      // Если это PDF — сохраняем специальный флаг
-      if (data.type === 'pdf') {
-        setBook(prev => ({ ...prev, ...data, isPdf: true }));
-        setTotalPages(1);
-        setLoading(false);
-        setIsPageChanging(false);
-        return;
-      }
-
       setBook(prev => ({ ...prev, ...data }));
       setTotalPages(data.totalPages);
-
       
       setTimeout(() => {
         if (contentRef.current) {
@@ -214,52 +203,6 @@ export default function ReadBook() {
   }
 
   if (!book) return null;
-
-  // Если это PDF — показываем встроенный просмотрщик
-if (book.isPdf) {
-  return (
-    <div className="read-container">
-      <div className={`read-header ${uiVisible ? 'visible' : 'hidden'}`}>
-        <button className="exit-btn" onClick={handleExit} onMouseDown={createRipple}>
-          <ArrowLeft size={20} />
-        </button>
-        <div className="header-info">
-          <h2>{book.title}</h2>
-          <span>{book.author}</span>
-        </div>
-        <div></div>
-      </div>
-
-      <div className="read-content" ref={contentRef} onClick={toggleUi}>
-        <iframe
-          src={book.url}
-          style={{
-            width: '100%',
-            height: 'calc(100vh - 120px)',
-            border: 'none',
-            borderRadius: '8px'
-          }}
-          title={book.title}
-        />
-      </div>
-
-      <div className={`read-footer ${uiVisible ? 'visible' : 'hidden'}`}>
-        <div className="page-info">PDF документ</div>
-        <button className="settings-btn" onClick={() => setShowSettings(true)} onMouseDown={createRipple}>
-          <Settings size={20} />
-        </button>
-      </div>
-
-      {showSettings && (
-        <ReaderSettings
-          onClose={() => setShowSettings(false)}
-          onApply={handleApplySettings}
-        />
-      )}
-    </div>
-  );
-}
-
 
   const paragraphs = book.text?.split('\n') || [];
 

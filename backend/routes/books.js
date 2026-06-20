@@ -79,34 +79,7 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     }
     
     const book = bookResult.rows[0];
-
-    // Если это PDF — отдаём URL для встраивания в iframe
-    if (book.file_path && book.file_path.endsWith('.pdf')) {
-      let savedPage = 1;
-      if (userId) {
-        const progressResult = await pool.query(
-          'SELECT last_read_position FROM user_book_status WHERE user_id = $1 AND book_id = $2',
-          [userId, id]
-        );
-        if (progressResult.rows[0] && progressResult.rows[0].last_read_position) {
-          const progressStr = String(progressResult.rows[0].last_read_position);
-          savedPage = parseInt(progressStr.split('.')[0]) || 1;
-        }
-      }
-      return res.json({
-        id: parseInt(id),
-        title: book.title,
-        author: book.author,
-        type: 'pdf',
-        url: book.file_path,
-        pageNumber: 1,
-        totalPages: 1,
-        savedPage: savedPage
-      });
-    }
-
     const fullText = await getBookTextAsync(book.file_path);
-
     const sentences = splitIntoSentences(fullText);
     const totalSentences = sentences.length;
     const totalPages = Math.ceil(totalSentences / SENTENCES_PER_PAGE);

@@ -76,7 +76,7 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
     }
     
     if (!isEdit && !textFile) {
-      alert('Для новой книги необходимо загрузить текстовый файл (.txt или .pdf)');
+      alert('Для новой книги необходимо загрузить текстовый файл (.txt)');
       return;
     }
     
@@ -195,7 +195,7 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
 
           <div className="book-form-field">
             <label>Текст книги (TXT) {!isEdit && '*'}</label>
-            <input type="file" accept=".txt, .pdf" onChange={handleTextChange} />
+            <input type="file" accept=".txt" onChange={handleTextChange} />
             {isEdit && textFile && <span className="file-selected">Выбран новый файл</span>}
           </div>
 
