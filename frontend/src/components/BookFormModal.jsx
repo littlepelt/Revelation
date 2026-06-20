@@ -92,7 +92,6 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
         const coverRes = await axios.post(`${API_URL}/api/upload`, coverFormData, {
           headers: { 
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'multipart/form-data'
           }
         });
         coverUrl = coverRes.data.url;
@@ -111,7 +110,6 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
         const textRes = await axios.post(`${API_URL}/api/upload`, textFormData, {
           headers: { 
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'multipart/form-data'
           }
         });
         textUrl = textRes.data.url;
@@ -181,7 +179,7 @@ export default function BookFormModal({ onClose, onSubmit, book, loading }) {
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              placeholder="Классика, Роман, Драма"
+              placeholder="Устав, Наставление, Руководство"
             />
           </div>
 
