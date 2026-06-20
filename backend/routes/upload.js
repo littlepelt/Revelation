@@ -1,56 +1,62 @@
 const express = require('express');
 const multer = require('multer');
-const ImageKit = require('imagekit');
+const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+// Папки для хранения (на уровень выше — backend/data/uploads/)
+const UPLOADS_DIR = path.join(__dirname, '..', 'data', 'uploads');
+const COVERS_DIR = path.join(UPLOADS_DIR, 'covers');
+const TEXTS_DIR = path.join(UPLOADS_DIR, 'texts');
+
+// Создаём папки, если их нет
+[UPLOADS_DIR, COVERS_DIR, TEXTS_DIR].forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
-const storage = multer.memoryStorage();
+// Multer: сохраняем в зависимости от типа файла
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isText = file.mimetype === 'text/plain';
+    cb(null, isText ? TEXTS_DIR : COVERS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const random = Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `${timestamp}-${random}${ext}`);
+  }
+});
 
 const fileFilter = (req, file, cb) => {
   const allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'text/plain'];
   if (allowed.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only images and txt files allowed'), false);
+    cb(new Error('Only images (jpg, png, gif) and txt files allowed'), false);
   }
 };
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15 МБ
   fileFilter
 });
 
-router.post('/', upload.single('file'), async (req, res) => {
+// POST /api/upload — загрузка обложки или текста
+router.post('/', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  try {
-    const timestamp = Date.now();
-    const random = Math.round(Math.random() * 1E9);
-    const fileExtension = req.file.originalname.split('.').pop();
-    const fileType = req.file.mimetype === 'text/plain' ? 'texts' : 'covers';
-    const fileName = `${timestamp}-${random}.${fileExtension}`;
+  const isText = req.file.mimetype === 'text/plain';
+  const subfolder = isText ? 'texts' : 'covers';
+  
+  // Формируем URL: /api/uploads/covers/файл.jpg или /api/uploads/texts/файл.txt
+  const fileUrl = `/api/uploads/${subfolder}/${req.file.filename}`;
 
-    const result = await imagekit.upload({
-      file: req.file.buffer.toString('base64'),
-      fileName: fileName,
-      useUniqueFileName: false,
-      folder: `/${fileType}`,
-    });
-
-    console.log('Uploaded to ImageKit:', result.url);
-    res.json({ url: result.url });
-  } catch (error) {
-    console.error('Upload error:', error.message);
-    res.status(500).json({ error: 'Upload failed: ' + error.message });
-  }
+  console.log(`✅ File saved: ${fileUrl}`);
+  res.json({ url: fileUrl });
 });
 
 module.exports = router;

@@ -9,6 +9,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/avatars', express.static(path.join(__dirname, 'data/uploads')));
+app.use('/api/uploads/covers', express.static(path.join(__dirname, 'data', 'uploads', 'covers')));
+app.use('/api/uploads/texts', express.static(path.join(__dirname, 'data', 'uploads', 'texts')));
+
 
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
