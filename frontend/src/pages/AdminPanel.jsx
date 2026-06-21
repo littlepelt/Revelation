@@ -218,10 +218,10 @@ export default function AdminPanel() {
                     <td>{user.id}</td>
                     <td>
                       <img 
-                        src={user.avatar_url || '/Avatar.png'} 
+                        src={user.avatar_url || '/Avatar.svg'} 
                         alt={user.username}
                         className="admin-user-avatar"
-                        onError={(e) => { e.target.src = '/Avatar.png'; }}
+                        onError={(e) => { e.target.src = '/Avatar.svg'; }}
                       />
                     </td>
                     <td>
