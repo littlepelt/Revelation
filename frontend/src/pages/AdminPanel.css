@@ -46,7 +46,7 @@ body.dark-theme .admin-tab {
 }
 
 .admin-tab.active {
-  color: #003BFF;
+  color: #007A3D;
 }
 
 body.dark-theme .admin-tab.active {
@@ -142,7 +142,7 @@ body.dark-theme .admin-table th {
 }
 
 .admin-user-link {
-  color: #003BFF;
+  color: #007A3D;
   text-decoration: none;
   cursor: pointer;
 }
@@ -196,7 +196,7 @@ body.dark-theme .admin-user-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #003BFF;
+  background: #007A3D;
   border: none;
   padding: 10px 16px;
   border-radius: 8px;

@@ -72,7 +72,7 @@ body.dark-theme .login-field input {
 
 .login-field input:focus {
   outline: none;
-  border-color: #003BFF;
+  border-color: #007A3D;
 }
 
 .login-field input:disabled {
@@ -82,7 +82,7 @@ body.dark-theme .login-field input {
 
 .login-submit-btn {
   width: 100%;
-  background-color: #003BFF;
+  background-color: #007A3D;
   border: none;
   padding: 12px;
   border-radius: 8px;

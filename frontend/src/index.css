@@ -35,7 +35,7 @@ button:active {
 }
 
 .btn-primary {
-  background-color: #003BFF;
+  background-color: #007A3D;
   color: white;
   padding: 10px 20px;
   border-radius: 8px;
@@ -67,7 +67,7 @@ button:active {
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  color: #003BFF;
+  color: #007A3D;
 }
 
 .btn-ghost .ripple {

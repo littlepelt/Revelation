@@ -64,7 +64,7 @@ body.dark-theme .read-header {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  color: #003BFF;
+  color: #007A3D;
   border-color: #DFE2ED;
 }
 
@@ -75,7 +75,7 @@ body.dark-theme .back-btn {
 
 .back-btn:hover {
   border-color: #DFE2ED;
-  color: #003BFF;
+  color: #007A3D;
 }
 
 body.dark-theme .back-btn:hover {
