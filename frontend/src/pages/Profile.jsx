@@ -108,9 +108,9 @@ export default function Profile() {
         <div className="profile-left">
           <div className="profile-avatar">
             <img 
-              src={profileUser.avatar_url || '/Avatar.png'} 
+              src={profileUser.avatar_url || '/Avatar.svg'} 
               alt={profileUser.username}
-              onError={(e) => { e.target.src = '/Avatar.png'; }}
+              onError={(e) => { e.target.src = '/Avatar.svg'; }}
             />
           </div>
           <div className="profile-username">

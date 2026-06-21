@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Зелёный круг -->
+  <circle cx="64" cy="64" r="64" fill="#007A3D"/>
+  <!-- Силуэт человека (белый) -->
+  <circle cx="64" cy="48" r="24" fill="white"/>
+  <path d="M24 100 C24 72 104 72 104 100" fill="white"/>
+</svg>

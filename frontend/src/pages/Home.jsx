@@ -206,9 +206,9 @@ export default function Home() {
                 >
                   <div className="review-author-avatar">
                     <img 
-                      src={review.avatar_url || '/Avatar.png'} 
+                      src={review.avatar_url || '/Avatar.svg'} 
                       alt={review.username}
-                      onError={(e) => { e.target.src = '/Avatar.png'; }}
+                      onError={(e) => { e.target.src = '/Avatar.svg'; }}
                     />
                   </div>
                   <div className="review-author-info">
